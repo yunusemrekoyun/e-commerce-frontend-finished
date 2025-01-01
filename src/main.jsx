@@ -8,13 +8,13 @@ import "slick-carousel/slick/slick-theme.css";
 import "./index.css";
 import ScrollToTop from "./components/ScrollToTop";
 
+// main.jsx
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-  <ScrollToTop />
+    <ScrollToTop />
     <CartProvider>
       <Layout>
         <App />
-        
       </Layout>
     </CartProvider>
   </BrowserRouter>

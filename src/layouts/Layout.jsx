@@ -1,4 +1,14 @@
-import { isAdmin } from "../config/isAdmin";
-import AdminLayout from "./AdminLayout";
-import MainLayout from "./MainLayout";
-export const Layout = isAdmin ? AdminLayout : MainLayout;
+/********************************************************
+ * /Applications/Works/e-commerce/frontend/src/layouts/Layout.jsx
+ ********************************************************/
+
+import PropTypes from "prop-types";
+
+export const Layout = ({ children }) => {
+  // Hiçbir şey sarmalamıyoruz
+  return <>{children}</>;
+};
+Layout.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+export default Layout;

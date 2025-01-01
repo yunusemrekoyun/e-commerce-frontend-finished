@@ -9,10 +9,12 @@ const Reviews = ({ active, singleProduct, setSingleProduct }) => {
   const [users, setUsers] = useState([]);
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
   const thisReview = [];
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await fetch(`${apiUrl}/api/users`);
+
         if (response.ok) {
           const data = await response.json();
           setUsers(data);
@@ -25,18 +27,22 @@ const Reviews = ({ active, singleProduct, setSingleProduct }) => {
     };
     fetchUsers();
   }, [apiUrl]);
-  singleProduct.reviews.forEach((review) => {
-    const matchingUsers = users?.filter((user) => user._id === review.user);
-    matchingUsers.forEach((matchingUser) => {
-      thisReview.push({
-        review: review,
-        user: matchingUser,
+
+  singleProduct &&
+    singleProduct.reviews.forEach((review) => {
+      const matchingUsers = users?.filter((user) => user._id === review.user);
+
+      matchingUsers.forEach((matchingUser) => {
+        thisReview.push({
+          review: review,
+          user: matchingUser,
+        });
       });
     });
-  });
+
   return (
     <div className={`tab-panel-reviews ${active}`}>
-      {singleProduct.reviews.length > 0 ? (
+      {singleProduct && singleProduct.reviews.length > 0 ? (
         <>
           <h3>2 reviews for Basic Colored Sweatpants With Elastic Hems</h3>
           <div className="comments">

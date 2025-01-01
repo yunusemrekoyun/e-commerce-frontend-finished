@@ -1,4 +1,7 @@
-import { Route, Routes } from "react-router-dom";
+/********************************************************
+ * /Applications/Works/e-commerce/frontend/src/App.jsx
+ ********************************************************/
+import { Route, Routes, Outlet } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import ShopPage from "./pages/ShopPage";
 import BlogPage from "./pages/BlogPage";
@@ -7,34 +10,50 @@ import CartPage from "./pages/CartPage";
 import AuthPage from "./pages/AuthPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
 import BlogDetailsPage from "./pages/BlogDetailsPage";
+import Success from "./pages/Success";
+import UserAccountPage from "./pages/UserAccountPage";
 import DashboardPage from "./pages/Admin/DashBoardPage";
-import "./App.css";
 import UserPage from "./pages/Admin/UserPage";
 import CategoryPage from "./pages/Admin/Categories/CategoryPage";
 import UpdateCategoryPage from "./pages/Admin/Categories/UpdateCategoryPage";
 import CreateCategoryPage from "./pages/Admin/Categories/CreateCategoryPage";
-import CreateProductPage from "./pages/Admin/Products/CreateProductPage";
 import ProductPage from "./pages/Admin/Products/ProductPage";
+import CreateProductPage from "./pages/Admin/Products/CreateProductPage";
 import UpdateProductPage from "./pages/Admin/Products/UpdateProductPage";
 import CouponPage from "./pages/Admin/Coupons/CouponPage";
 import CreateCouponPage from "./pages/Admin/Coupons/CreateCouponPage";
 import UpdateCouponPage from "./pages/Admin/Coupons/UpdateCouponPage";
-import Success from "./pages/Success";
 import OrderPage from "./pages/Admin/OrderPage";
+import MainLayout from "./layouts/MainLayout";
+import AdminLayout from "./layouts/AdminLayout";
+import ProtectedAdminRoute from "./routes/ProtectedAdminRoute"; 
+import "./App.css";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/shop" element={<ShopPage />} />
-      <Route path="/blog" element={<BlogPage />} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/cart" element={<CartPage />} />
-      <Route path="/auth" element={<AuthPage />} />
-      <Route path="/product/:id" element={<ProductDetailsPage />} />
-      <Route path="/blog/:id" element={<BlogDetailsPage />} />
-      <Route path="/success" element={<Success />} />
-      <Route path="/admin/*">
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/shop" element={<ShopPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/product/:id" element={<ProductDetailsPage />} />
+        <Route path="/blog/123" element={<BlogDetailsPage />} />
+        <Route path="/success" element={<Success />} />
+        <Route path="/account" element={<UserAccountPage />} />
+        <Route path="*" element={<Outlet />} />
+      </Route>
+
+      <Route
+        path="/admin/*"
+        element={
+          <ProtectedAdminRoute>
+            <AdminLayout />
+          </ProtectedAdminRoute>
+        }
+      >
         <Route index element={<DashboardPage />} />
         <Route path="users" element={<UserPage />} />
         <Route path="categories" element={<CategoryPage />} />
@@ -47,6 +66,7 @@ function App() {
         <Route path="coupons/create" element={<CreateCouponPage />} />
         <Route path="coupons/update/:id" element={<UpdateCouponPage />} />
         <Route path="orders" element={<OrderPage />} />
+        <Route path="*" element={<Outlet />} />
       </Route>
     </Routes>
   );

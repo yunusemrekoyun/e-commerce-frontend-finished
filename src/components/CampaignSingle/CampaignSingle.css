@@ -1,12 +1,13 @@
 .campaign-single {
-    background-image: url(../../img/single-campaign.png);
-    background-attachment: fixed;
-    padding: 140px 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 30px;
-  }
+  background-image: url(../../img/single-campaign.png);
+  background-attachment: fixed;
+  background-size: cover; /* Adjust this value as needed */
+  padding: 140px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+}
   
   .campaign-single .campaign-wrapper {
     color: white;

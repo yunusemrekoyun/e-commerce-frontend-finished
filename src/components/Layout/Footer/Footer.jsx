@@ -177,10 +177,7 @@ const Footer = () => {
           <div className="container">
             <div className="footer-copyright">
               <div className="site-copyright">
-                <p>
-                  Copyright 2022 © E-Commerce Theme. All right reserved. Powered
-                  by Emin Basbayan.
-                </p>
+                
               </div>
               <a href="#">
                 <img src="/img/footer/cards.png" alt="" />

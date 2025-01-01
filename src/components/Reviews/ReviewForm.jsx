@@ -1,14 +1,84 @@
-import { useState } from "react";
+/********************************************************
+ * /Applications/Works/e-commerce/frontend/src/components/Reviews/ReviewForm.jsx
+ ********************************************************/
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { message } from "antd";
 
 const ReviewForm = ({ singleProduct, setSingleProduct }) => {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
-  const user = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user"))
-    : null;
+
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
+  const [token, setToken] = useState("");
+  const [refreshToken, setRefreshToken] = useState("");
+  const [userInfo, setUserInfo] = useState(null);
+
+  // Token çek
+  useEffect(() => {
+    const localToken = localStorage.getItem("token");
+    const localRefresh = localStorage.getItem("refreshToken");
+    if (localToken) setToken(localToken);
+    if (localRefresh) setRefreshToken(localRefresh);
+  }, []);
+
+  // Bileşen açılınca /me
+  useEffect(() => {
+    if (!token) return;
+    fetchUserInfo();
+  }, [token]);
+
+  const fetchUserInfo = async () => {
+    try {
+      const res = await fetch(`${apiUrl}/api/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.status === 401) {
+        const newToken = await tryRefreshToken();
+        if (newToken) {
+          return fetchUserInfo();
+        } else {
+          message.error("Lütfen giriş yapın.");
+        }
+      } else if (res.ok) {
+        const data = await res.json();
+        setUserInfo(data);
+      } else {
+        message.error("Kullanıcı bilgisi alınamadı.");
+      }
+    } catch (error) {
+      console.log("fetchUserInfo error:", error);
+    }
+  };
+
+  // refresh token
+  const tryRefreshToken = async () => {
+    if (!refreshToken) return null;
+    try {
+      const resp = await fetch(`${apiUrl}/api/auth/refresh`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refreshToken }),
+      });
+      if (!resp.ok) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        return null;
+      }
+      const data = await resp.json();
+      localStorage.setItem("token", data.token);
+      setToken(data.token);
+      return data.token;
+    } catch (err) {
+      console.error("refresh error:", err);
+      return null;
+    }
+  };
 
   const handleRatingChange = (e, newRating) => {
     e.preventDefault();
@@ -17,16 +87,21 @@ const ReviewForm = ({ singleProduct, setSingleProduct }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!userInfo) {
+      return message.warning("Yorum yapabilmek için giriş yapmalısınız!");
+    }
     if (rating === 0) {
       return message.warning("Puan seçiniz!");
     }
+
     const formData = {
       reviews: [
         ...singleProduct.reviews,
         {
           text: review,
           rating: parseInt(rating),
-          user: user.id || user._id,
+          user: userInfo.id,
         },
       ],
     };
@@ -40,9 +115,18 @@ const ReviewForm = ({ singleProduct, setSingleProduct }) => {
         body: JSON.stringify(formData),
       });
 
+      if (res.status === 401) {
+        const newToken = await tryRefreshToken();
+        if (newToken) {
+          // tekrar dene
+          return handleSubmit(e);
+        } else {
+          return message.error("Oturum süresi dolmuş. Tekrar giriş yapın.");
+        }
+      }
+
       if (!res.ok) {
-        message.error("Bir şeyler yanlış gitti.");
-        return;
+        return message.error("Bir şeyler yanlış gitti.");
       }
 
       const data = await res.json();
@@ -68,51 +152,18 @@ const ReviewForm = ({ singleProduct, setSingleProduct }) => {
           <span className="required">*</span>
         </label>
         <div className="stars">
-          <a
-            href="#"
-            className={`star ${rating === 1 && "active"}`}
-            onClick={(e) => handleRatingChange(e, 1)}
-          >
-            <i className="bi bi-star-fill"></i>
-          </a>
-          <a
-            href="#"
-            className={`star ${rating === 2 && "active"}`}
-            onClick={(e) => handleRatingChange(e, 2)}
-          >
-            <i className="bi bi-star-fill"></i>
-            <i className="bi bi-star-fill"></i>
-          </a>
-          <a
-            href="#"
-            className={`star ${rating === 3 && "active"}`}
-            onClick={(e) => handleRatingChange(e, 3)}
-          >
-            <i className="bi bi-star-fill"></i>
-            <i className="bi bi-star-fill"></i>
-            <i className="bi bi-star-fill"></i>
-          </a>
-          <a
-            href="#"
-            className={`star ${rating === 4 && "active"}`}
-            onClick={(e) => handleRatingChange(e, 4)}
-          >
-            <i className="bi bi-star-fill"></i>
-            <i className="bi bi-star-fill"></i>
-            <i className="bi bi-star-fill"></i>
-            <i className="bi bi-star-fill"></i>
-          </a>
-          <a
-            href="#"
-            className={`star ${rating === 5 && "active"}`}
-            onClick={(e) => handleRatingChange(e, 5)}
-          >
-            <i className="bi bi-star-fill"></i>
-            <i className="bi bi-star-fill"></i>
-            <i className="bi bi-star-fill"></i>
-            <i className="bi bi-star-fill"></i>
-            <i className="bi bi-star-fill"></i>
-          </a>
+          {[1, 2, 3, 4, 5].map((star) => (
+            <a
+              href="#"
+              key={star}
+              className={`star ${rating === star && "active"}`}
+              onClick={(e) => handleRatingChange(e, star)}
+            >
+              {[...Array(star)].map((_, i) => (
+                <i className="bi bi-star-fill" key={i}></i>
+              ))}
+            </a>
+          ))}
         </div>
       </div>
       <div className="comment-form-comment form-comment">

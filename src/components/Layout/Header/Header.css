@@ -39,7 +39,7 @@ header {
     cursor: pointer;
     display: none;
   }
-  
+   
   .header-center .bi-x-circle {
     display: none;
   }
@@ -97,9 +97,14 @@ header {
   
   .header-right .bi-person {
     font-size: 23px;
+    /* display: none; */
   }
   
   .header-right .search-button {
+    border: none;
+    background-color: transparent;
+  }
+  .header-right .exit-button {
     border: none;
     background-color: transparent;
   }

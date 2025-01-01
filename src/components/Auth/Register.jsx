@@ -1,8 +1,12 @@
+/********************************************************
+ * /Applications/Works/e-commerce/frontend/src/components/Auth/Register.jsx
+ ********************************************************/
 import { useState } from "react";
-import { message } from "antd";
+import { message, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -18,27 +22,26 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await fetch(`${apiUrl}/api/auth/register`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        // const { password, ...rest } = data;
-
-        localStorage.setItem("user", JSON.stringify(data));
-        message.success("Kayıt başarılı.");
-        navigate("/");
-      } else {
-        message.error("Kayıt başarısız.");
+      if (!response.ok) {
+        setLoading(false);
+        return message.error("Kayıt başarısız. Email zaten kayıtlı olabilir.");
       }
+
+      message.success("Kayıt başarılı. Şimdi giriş yapabilirsiniz.");
+      navigate("/auth");
     } catch (error) {
-      console.log("Giriş hatası:", error);
+      console.log("Register error:", error);
+      message.error("Bir hata oluştu. Lütfen tekrar deneyin.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -55,6 +58,7 @@ const Register = () => {
               type="text"
               onChange={handleInputChange}
               name="username"
+              value={formData.username}
               required
             />
           </label>
@@ -68,6 +72,7 @@ const Register = () => {
               type="email"
               onChange={handleInputChange}
               name="email"
+              value={formData.email}
               required
             />
           </label>
@@ -81,6 +86,7 @@ const Register = () => {
               type="password"
               onChange={handleInputChange}
               name="password"
+              value={formData.password}
               required
             />
           </label>
@@ -91,7 +97,9 @@ const Register = () => {
             throughout this website, to manage access to your account, and for
             other purposes described in our <a href="#">privacy policy.</a>
           </p>
-          <button className="btn btn-sm">Register</button>
+          <Spin spinning={loading}>
+            <button className="btn btn-sm">Register</button>
+          </Spin>
         </div>
       </form>
     </div>

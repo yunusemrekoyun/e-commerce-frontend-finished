@@ -26,7 +26,7 @@ const Sliders = () => {
             <i className="bi bi-chevron-right"></i>
           </button>
         </div>
-        <div className="slider-dots">
+        {/* <div className="slider-dots">
           <button
             onClick ={()=> setCurrentSlide(0)}
             className={`slider-dot ${currentSlide === 0 ? "active" : ""}`}
@@ -45,7 +45,7 @@ const Sliders = () => {
           >
             <span></span>
           </button>
-        </div>
+        </div> */}
       </div>
     </section>
   );
