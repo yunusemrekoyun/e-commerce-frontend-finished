@@ -1,24 +1,40 @@
+/********************************************************
+ * /Applications/Works/e-commerce/frontend/src/components/Products/ProductList.jsx
+ ********************************************************/
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { message } from "antd";
-import ProductItem from "./ProductItem"; // Mevcut ProductItem bileşeniniz
-import "./ProductList.css"; // Tüm stiller burada
+import ProductItem from "./ProductItem";
+import "./ProductList.css";
 
-const ProductList = () => {
+/**
+ * @param {string} category => eğer null/undefined ise tüm ürünler çekilir,
+ * aksi halde sadece o kategoriye ait ürünler çekilir
+ */
+const ProductList = ({ category}) => {
   const [products, setProducts] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(20); // İlk etapta 20 ürün
-  const [allProductsLoaded, setAllProductsLoaded] = useState(false); // Tüm ürünler yüklendi mi?
+  const [visibleCount, setVisibleCount] = useState(20);
+  const [allProductsLoaded, setAllProductsLoaded] = useState(false);
 
-  // API URL
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-  // Sayfa ilk yüklendiğinde ürünleri çek
+  // 1) Kategoriye göre ürünleri fetch
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`${apiUrl}/api/products`);
+        // eğer category varsa URL'ye ?category=xxx ekle
+        let endpoint = `${apiUrl}/api/products`;
+        if (category) {
+          endpoint += `?category=${encodeURIComponent(category)}`;
+        }
+
+        const response = await fetch(endpoint);
         if (response.ok) {
           const data = await response.json();
           setProducts(data);
+          // slice reset
+          setVisibleCount(20);
+          setAllProductsLoaded(data.length <= 20);
         } else {
           message.error("Veri getirme başarısız.");
         }
@@ -28,17 +44,16 @@ const ProductList = () => {
       }
     };
     fetchProducts();
-  }, [apiUrl]);
+  }, [apiUrl, category]);
 
-  // Gösterilecek ürünler (slice)
+  // 2) Gösterilecek ürünler => slice
   const displayedProducts = products.slice(0, visibleCount);
 
-  // "Daha Fazla Ürün Göster" butonuna tıklanınca
+  // 3) Daha Fazla Ürün Göster
   const handleLoadMore = () => {
     const newCount = visibleCount + 20;
     setVisibleCount(newCount);
 
-    // Eğer yeni değer toplam ürün sayısını aştıysa "allProductsLoaded" true
     if (newCount >= products.length) {
       setAllProductsLoaded(true);
     }
@@ -47,18 +62,25 @@ const ProductList = () => {
   return (
     <section className="products">
       <div className="section-title">
-        <h2>Featured Products</h2>
-        <p>Summer Collection New Morden Design</p>
+        {category ? (
+          <>
+            <h2>{category} Kategorisindeki Ürünler</h2>
+            <p>Summer Collection New Modern Design</p>
+          </>
+        ) : (
+          <>
+            <h2>Tüm Ürünler</h2>
+            <p>Summer Collection New Modern Design</p>
+          </>
+        )}
       </div>
 
-      {/* 4 kolonluk grid yapısı */}
       <div className="product-list">
         {displayedProducts.map((product) => (
           <ProductItem key={product._id} productItem={product} />
         ))}
       </div>
 
-      {/* Buton ve bitiş mesajı */}
       <div style={{ marginTop: "20px", textAlign: "center" }}>
         {!allProductsLoaded && displayedProducts.length < products.length && (
           <button
@@ -77,6 +99,9 @@ const ProductList = () => {
       </div>
     </section>
   );
+};
+ProductList.propTypes = {
+  category: PropTypes.string,
 };
 
 export default ProductList;
