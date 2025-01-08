@@ -1,4 +1,4 @@
-import Reviews from "../Reviews/Reviews";
+// import Reviews from "../Reviews/Reviews";
 import "./BlogDetails.css";
 
 const BlogDetails = () => {
@@ -106,7 +106,7 @@ const BlogDetails = () => {
             </div>
           </div>
         </article>
-        <Reviews />
+        {/* <Reviews /> */}
       </div>
     </section>
   );
