@@ -1,9 +1,7 @@
-/********************************************************
- * /Applications/Works/e-commerce/frontend/src/components/Auth/Register.jsx
- ********************************************************/
 import { useState } from "react";
 import { message, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
+import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
@@ -11,7 +9,11 @@ const Register = () => {
     username: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -22,12 +24,21 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      return message.error("Şifreler eşleşmiyor.");
+    }
+
     setLoading(true);
     try {
       const response = await fetch(`${apiUrl}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+        }),
       });
 
       if (!response.ok) {
@@ -36,6 +47,12 @@ const Register = () => {
       }
 
       message.success("Kayıt başarılı. Şimdi giriş yapabilirsiniz.");
+      setFormData({
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
       navigate("/auth");
     } catch (error) {
       console.log("Register error:", error);
@@ -82,13 +99,47 @@ const Register = () => {
             <span>
               Password <span className="required">*</span>
             </span>
-            <input
-              type="password"
-              onChange={handleInputChange}
-              name="password"
-              value={formData.password}
-              required
-            />
+            <div className="password-container">
+              <input
+                type={showPassword ? "text" : "password"}
+                onChange={handleInputChange}
+                name="password"
+                value={formData.password}
+                required
+              />
+              <span
+                className="toggle-visibility"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+              </span>
+            </div>
+          </label>
+        </div>
+        <div>
+          <label>
+            <span>
+              Password Again <span className="required">*</span>
+            </span>
+            <div className="password-container">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                onChange={handleInputChange}
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                required
+              />
+              <span
+                className="toggle-visibility"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? (
+                  <EyeInvisibleOutlined />
+                ) : (
+                  <EyeOutlined />
+                )}
+              </span>
+            </div>
           </label>
         </div>
         <div className="privacy-policy-text remember">
