@@ -1,0 +1,133 @@
+/*! product-filter minimalist & responsive grid */
+
+.product-filter {
+  width: 240px;
+  padding: 24px 20px;
+  background: linear-gradient(180deg, #f9fafa 0%, #eef2f5 100%);
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.filter-section {
+  margin-bottom: 40px;
+}
+
+.filter-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #d7dde3;
+  padding-bottom: 8px;
+  letter-spacing: 0.5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.filter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  transition: max-height 0.3s ease;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+}
+
+.filter-item label {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  color: #444;
+  cursor: pointer;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 0;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  position: relative;
+}
+
+.filter-item input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+}
+
+.filter-item input[type="checkbox"]:checked {
+  border-color: #1367ef;
+  background-color: #1367ef;
+}
+
+.filter-item input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.filter-item input[type="checkbox"]:checked + span,
+.filter-item:hover span {
+  position: relative;
+  font-weight: 600;
+}
+
+.filter-item input[type="checkbox"]:checked + span::after,
+.filter-item:hover span::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background-color: #1367ef;
+  border-radius: 1px;
+  transition: width 0.2s ease;
+}
+
+.filter-item:hover span::after,
+.filter-item input[type="checkbox"]:checked + span::after {
+  width: 100%;
+}
+
+/* Responsive için grid layout */
+@media (max-width: 768px) {
+  .product-filter {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .filter-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px 20px;
+  }
+
+  .filter-item {
+    justify-content: start;
+  }
+
+  .filter-item label {
+    font-size: 14px;
+  }
+}

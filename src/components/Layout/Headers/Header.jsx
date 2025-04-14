@@ -1,6 +1,7 @@
 /********************************************************
  * /Applications/Works/e-commerce/frontend/src/components/Layout/Header/Header.jsx
  ********************************************************/
+
 import { useContext, useState } from "react";
 import Proptypes from "prop-types";
 import { Link, useLocation } from "react-router-dom";
@@ -12,6 +13,10 @@ const Header = ({ setIsSearchShow }) => {
   const { pathname } = useLocation();
 
   const [token] = useState(localStorage.getItem("token") || "");
+
+  // ✅ Menü açık mı?
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
   const handleLogout = () => {
     if (window.confirm("Çıkış yapmak istediğinize emin misiniz?")) {
@@ -27,64 +32,75 @@ const Header = ({ setIsSearchShow }) => {
       <div className="header-row">
         <div className="container">
           <div className="header-wrapper">
+            {/* Hamburger ikon */}
             <div className="header-mobile">
-              <i className="bi bi-list" id="btn-menu"></i>
+              <i className="bi bi-list" id="btn-menu" onClick={toggleMenu}></i>
             </div>
+
             <div className="header-left">
               <Link to={"/"} className="logo">
                 LOGO
               </Link>
             </div>
-            <div className="header-center" id="sidebar">
+
+            {/* Menü içerik - responsive */}
+            <div className={`header-center ${isMenuOpen ? "open" : ""}`} id="sidebar">
               <nav className="navigation">
                 <ul className="menu-list">
                   <li>
                     <Link
                       to={"/"}
                       className={`menu-link ${pathname === "/" && "active"}`}
+                      onClick={() => setIsMenuOpen(false)} // ✅ Menü kapansın
                     >
-                      Home
+                      ANA SAYFA
                     </Link>
                   </li>
                   <li>
                     <Link
                       to={"/shop"}
-                      className={`menu-link ${
-                        pathname === "/shop" && "active"
-                      }`}
+                      className={`menu-link ${pathname === "/shop" && "active"}`}
+                      onClick={() => setIsMenuOpen(false)}
                     >
-                      Shop
+                      MAĞAZA
                     </Link>
                   </li>
                   <li>
                     <Link
                       to={"/blog"}
-                      className={`menu-link ${
-                        pathname === "/blog" && "active"
-                      }`}
+                      className={`menu-link ${pathname === "/blog" && "active"}`}
+                      onClick={() => setIsMenuOpen(false)}
                     >
-                      Blog
+                      HAKKIMIZDA
                     </Link>
                   </li>
                   <li>
                     <Link
                       to={"/contact"}
-                      className={`menu-link ${
-                        pathname === "/contact" && "active"
-                      }`}
+                      className={`menu-link ${pathname === "/contact" && "active"}`}
+                      onClick={() => setIsMenuOpen(false)}
                     >
-                      Contact
+                      İLETİŞİM
                     </Link>
                   </li>
                 </ul>
               </nav>
-              <i className="bi-x-circle" id="close-sidebar"></i>
+
+              {/* Kapatma ikonu */}
+              <i
+                className="bi-x-circle"
+                id="close-sidebar"
+                onClick={() => setIsMenuOpen(false)}
+              ></i>
             </div>
+
+            {/* Sağ simgeler */}
             <div className="header-right">
               <div className="header-right-links">
                 <Link
                   to={token ? "/account" : "/auth"}
                   className="header-account"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   <i className="bi bi-person"></i>
                 </Link>
@@ -95,11 +111,13 @@ const Header = ({ setIsSearchShow }) => {
                   <i className="bi bi-search"></i>
                 </button>
                 <div className="header-cart">
-                  <Link to={"/cart"} className="header-cart-link">
+                  <Link
+                    to={"/cart"}
+                    className="header-cart-link"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
                     <i className="bi bi-bag"></i>
-                    <span className="header-cart-count">
-                      {cartItems.length}
-                    </span>
+                    <span className="header-cart-count">{cartItems.length}</span>
                   </Link>
                 </div>
                 {token && (

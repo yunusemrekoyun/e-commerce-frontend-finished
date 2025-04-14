@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Proptypes from "prop-types";
 
 import Footer from "../components/Layout/Footer/Footer";
-import Header from "../components/Layout/Header/Header";
+import Header from "../components/Layout/Headers/Header";
 import Search from "../components/Modals/Search/Search";
 import Dialog from "../components/Modals/Dialog/Dialog";
 import { Outlet } from "react-router-dom";

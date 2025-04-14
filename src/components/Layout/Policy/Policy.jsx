@@ -1,4 +1,4 @@
-import "./Policy.css"
+import "./Policy.css";
 const Policy = () => {
   return (
     <section className="policy">
@@ -7,29 +7,29 @@ const Policy = () => {
           <li className="policy-item">
             <i className="bi bi-truck"></i>
             <div className="policy-texts">
-              <strong>FREE DELIVERY</strong>
-              <span>From $59.89</span>
+              <strong>Ücretsiz Teslimat</strong>
+              <span>1000TL ve üzeri</span>
             </div>
           </li>
           <li className="policy-item">
             <i className="bi bi-headset"></i>
             <div className="policy-texts">
-              <strong>SUPPORT 24/7</strong>
-              <span>Online 24 hours</span>
+              <strong>7/24 Destek</strong>
+              <span></span>
             </div>
           </li>
           <li className="policy-item">
             <i className="bi bi-arrow-clockwise"></i>
             <div className="policy-texts">
-              <strong> 30 DAYS RETURN</strong>
-              <span>Simply return it within 30 days</span>
+              <strong>İade garantisi</strong>
+              <span></span>
             </div>
           </li>
           <li className="policy-item">
             <i className="bi bi-credit-card"></i>
             <div className="policy-texts">
-              <strong> PAYMENT METHOD</strong>
-              <span>Secure Payment</span>
+              <strong>Ödeme yöntemleri</strong>
+              <span>Güvenli Ödeme</span>
             </div>
           </li>
         </ul>

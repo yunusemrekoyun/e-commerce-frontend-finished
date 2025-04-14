@@ -1,0 +1,17 @@
+.shop-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 24px 0;
+}
+.shop-layout {
+  display: flex;
+  gap: 24px;
+}
+
+/* Mobil görünüm */
+@media (max-width: 768px) {
+  .shop-layout {
+    flex-direction: column;
+  }
+}
