@@ -39,8 +39,9 @@ const ProductItem = ({ productItem }) => {
         {/* Ürün görselleri */}
         <div className="product-image">
           <Link to={`/product/${productItem._id}`}>
-            <img src={productItem.img[0]} alt="" className="img1" />
-            <img src={productItem.img[1]} alt="" className="img2" />
+          <img src={productItem.img[0]} alt="" />
+            {/* <img src={productItem.img[0]} alt="" className="img1" />
+            <img src={productItem.img[1]} alt="" className="img2" /> */}
           </Link>
         </div>
 

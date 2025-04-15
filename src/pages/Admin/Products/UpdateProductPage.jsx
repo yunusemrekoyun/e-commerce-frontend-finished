@@ -1,8 +1,37 @@
-import { Button, Form, Input, InputNumber, Select, Spin, message } from "antd";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  Spin,
+  message,
+  Upload,
+} from "antd";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { UploadOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import imageCompression from "browser-image-compression";
+
+const MAX_IMAGES = 6;
+
+const compressImage = async (file) => {
+  const options = {
+    maxSizeMB: 0.2,
+    maxWidthOrHeight: 1024,
+    useWebWorker: true,
+  };
+  try {
+    const compressedFile = await imageCompression(file, options);
+    return compressedFile;
+  } catch (error) {
+    console.error("Sıkıştırma hatası:", error);
+    return file;
+  }
+};
+
 const UpdateProductPage = () => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -11,6 +40,9 @@ const UpdateProductPage = () => {
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
   const params = useParams();
   const productId = params.id;
+
+  const [fileList, setFileList] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -19,24 +51,36 @@ const UpdateProductPage = () => {
           fetch(`${apiUrl}/api/categories`),
           fetch(`${apiUrl}/api/products/${productId}`),
         ]);
+
         if (!categoriesResponse.ok || !singleProductResponse.ok) {
           message.error("Veri getirme başarısız.");
           return;
         }
+
         const [categoriesData, singleProductData] = await Promise.all([
           categoriesResponse.json(),
           singleProductResponse.json(),
         ]);
+
         setCategories(categoriesData);
+
         if (singleProductData) {
+          const mappedFileList = singleProductData.img.map((imageObj) => ({
+            uid: imageObj._id,
+            name: "image.png",
+            status: "done",
+            url: imageObj.base64,
+          }));
+
+          setFileList(mappedFileList);
+
           form.setFieldsValue({
             name: singleProductData.name,
             current: singleProductData.price.current,
             discount: singleProductData.price.discount,
             description: singleProductData.description,
-            img: singleProductData.img.join("\n"),
-            colors: singleProductData.colors.join("\n"),
-            sizes: singleProductData.sizes.join("\n"),
+            colors: singleProductData.colors.join(","),
+            sizes: singleProductData.sizes.join(","),
             category: singleProductData.category,
           });
         }
@@ -48,41 +92,76 @@ const UpdateProductPage = () => {
     };
     fetchData();
   }, [apiUrl, productId, form]);
+
+  const handleChange = (info) => {
+    let newList = [...info.fileList];
+
+    if (newList.length > MAX_IMAGES) {
+      message.error(`En fazla ${MAX_IMAGES} görsel yükleyebilirsiniz.`);
+      newList = newList.slice(0, MAX_IMAGES);
+    }
+
+    setFileList(newList);
+  };
+
   const onFinish = async (values) => {
-    console.log(values);
-    const imgLinks = values.img.split("\n").map((link) => link.trim());
-    const colors = values.colors.split("\n").map((link) => link.trim());
-    const sizes = values.sizes.split("\n").map((link) => link.trim());
     setLoading(true);
+
     try {
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("current", values.current);
+      formData.append("discount", values.discount);
+      formData.append("description", values.description);
+      formData.append("category", values.category);
+
+      if (values.colors) {
+        formData.append("colors", values.colors);
+      }
+      if (values.sizes) {
+        formData.append("sizes", values.sizes);
+      }
+
+      const keepImageIds = fileList
+        .filter((file) => !file.originFileObj && file.url)
+        .map((file) => file.uid);
+
+      formData.append("keepImages", JSON.stringify(keepImageIds));
+
+      const newFiles = fileList.filter((file) => file.originFileObj);
+      if (newFiles.length) {
+        if (newFiles.length + keepImageIds.length > MAX_IMAGES) {
+          message.error(`Toplamda en fazla ${MAX_IMAGES} görsel olabilir.`);
+          setLoading(false);
+          return;
+        }
+
+        for (const file of newFiles) {
+          const compressed = await compressImage(file.originFileObj);
+          formData.append("img", compressed);
+        }
+      }
+
       const response = await fetch(`${apiUrl}/api/products/${productId}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...values,
-          price: {
-            current: values.current,
-            discount: values.discount,
-          },
-          colors,
-          sizes,
-          img: imgLinks,
-        }),
+        body: formData,
       });
+
       if (response.ok) {
         message.success("Ürün başarıyla güncellendi.");
         navigate("/admin/products");
       } else {
-        message.error("Ürün güncellenirken bir hata oluştu.");
+        const errData = await response.json();
+        message.error(errData.error || "Ürün güncellenirken bir hata oluştu.");
       }
     } catch (error) {
       console.log("Ürün güncelleme hatası:", error);
+      message.error("Bir hata meydana geldi.");
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <Spin spinning={loading}>
       <Form name="basic" layout="vertical" onFinish={onFinish} form={form}>
@@ -109,9 +188,9 @@ const UpdateProductPage = () => {
           ]}
         >
           <Select>
-            {categories.map((category) => (
-              <Select.Option value={category._id} key={category._id}>
-                {category.name}
+            {categories.map((cat) => (
+              <Select.Option value={cat._id} key={cat._id}>
+                {cat.name}
               </Select.Option>
             ))}
           </Select>
@@ -126,7 +205,7 @@ const UpdateProductPage = () => {
             },
           ]}
         >
-          <InputNumber />
+          <InputNumber style={{ width: "100%" }} />
         </Form.Item>
         <Form.Item
           label="İndirim Oranı"
@@ -138,7 +217,7 @@ const UpdateProductPage = () => {
             },
           ]}
         >
-          <InputNumber />
+          <InputNumber style={{ width: "100%" }} />
         </Form.Item>
         <Form.Item
           label="Ürün Açıklaması"
@@ -150,30 +229,11 @@ const UpdateProductPage = () => {
             },
           ]}
         >
-          <ReactQuill
-            theme="snow"
-            style={{
-              backgroundColor: "white",
-            }}
-          />
+          <ReactQuill theme="snow" style={{ backgroundColor: "white" }} />
         </Form.Item>
+
         <Form.Item
-          label="Ürün Görselleri (Linkler)"
-          name="img"
-          rules={[
-            {
-              required: true,
-              message: "Lütfen en az 4 ürün görsel linki girin!",
-            },
-          ]}
-        >
-          <Input.TextArea
-            placeholder="Her bir görsel linkini yeni bir satıra yazın."
-            autoSize={{ minRows: 4 }}
-          />
-        </Form.Item>
-        <Form.Item
-          label="Ürün Renkleri (RGB Kodları)"
+          label="Ürün Renkleri (virgülle ayır)"
           name="colors"
           rules={[
             {
@@ -182,13 +242,11 @@ const UpdateProductPage = () => {
             },
           ]}
         >
-          <Input.TextArea
-            placeholder="Her bir RGB kodunu yeni bir satıra yazın."
-            autoSize={{ minRows: 4 }}
-          />
+          <Input placeholder="Örn: Red,Blue,Green" />
         </Form.Item>
+
         <Form.Item
-          label="Ürün Bedenleri"
+          label="Ürün Bedenleri (virgülle ayır)"
           name="sizes"
           rules={[
             {
@@ -197,16 +255,29 @@ const UpdateProductPage = () => {
             },
           ]}
         >
-          <Input.TextArea
-            placeholder="Her bir beden ölçüsünü yeni bir satıra yazın."
-            autoSize={{ minRows: 4 }}
-          />
+          <Input placeholder="Örn: S,M,L,XL" />
         </Form.Item>
+
+        <Form.Item label="Ürün Görselleri">
+          <Upload
+            listType="picture"
+            multiple
+            beforeUpload={() => false}
+            fileList={fileList}
+            onChange={handleChange}
+          >
+            {fileList.length < MAX_IMAGES && (
+              <Button icon={<UploadOutlined />}>Dosya Seç (Max 6)</Button>
+            )}
+          </Upload>
+        </Form.Item>
+
         <Button type="primary" htmlType="submit">
-          Update
+          Güncelle
         </Button>
       </Form>
     </Spin>
   );
 };
+
 export default UpdateProductPage;

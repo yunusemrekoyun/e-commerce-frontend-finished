@@ -8,43 +8,51 @@ import { message } from "antd";
 const Reviews = ({ active, singleProduct, setSingleProduct }) => {
   const [users, setUsers] = useState([]);
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
-  const thisReview = [];
 
+  // GET /api/users => kullanıcıları çek
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await fetch(`${apiUrl}/api/users`);
-
         if (response.ok) {
           const data = await response.json();
           setUsers(data);
         } else {
-          message.error("Veri getirme başarısız.");
+          message.error("Kullanıcı verileri alınamadı.");
         }
       } catch (error) {
-        console.log("Veri hatası:", error);
+        console.log("fetchUsers hata:", error);
       }
     };
     fetchUsers();
   }, [apiUrl]);
 
-  singleProduct &&
-    singleProduct.reviews.forEach((review) => {
-      const matchingUsers = users?.filter((user) => user._id === review.user);
+  // reviews dizisini güvenli şekilde al (null/undefined ise boş dizi)
+  const reviews = singleProduct?.reviews || [];
 
-      matchingUsers.forEach((matchingUser) => {
-        thisReview.push({
-          review: review,
-          user: matchingUser,
-        });
+  // "thisReview" => her review'a karşılık user eşleştirmesi
+  const thisReview = [];
+  reviews.forEach((review) => {
+    const matchingUsers = users.filter((user) => user._id === review.user);
+    matchingUsers.forEach((matchingUser) => {
+      thisReview.push({
+        review,
+        user: matchingUser,
       });
     });
+  });
 
   return (
     <div className={`tab-panel-reviews ${active}`}>
-      {singleProduct && singleProduct.reviews.length > 0 ? (
+      {reviews.length > 0 ? (
         <>
-          <h3>2 reviews for Basic Colored Sweatpants With Elastic Hems</h3>
+          {/* Burada 2 reviews for ... yerine dynamic bir örnek */}
+          <h3>
+            {reviews.length} review
+            {reviews.length > 1 ? "s" : ""} for{" "}
+            {singleProduct?.name || "Product"}
+          </h3>
+
           <div className="comments">
             <ol className="comment-list">
               {thisReview.map((item, index) => (

@@ -14,7 +14,7 @@
     transition: 0.3s ease-in-out all;
   }
   
-  .products .product-item .img1:hover {
+  /* .products .product-item .img1:hover {
     visibility: hidden;
     opacity: 0;
   }
@@ -30,7 +30,7 @@
     top: 0;
     opacity: 0;
     visibility: hidden;
-  }
+  } */
   
   .products .product-item .product-title {
     font-size: 14px;

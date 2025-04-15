@@ -3,10 +3,10 @@
 header {
   border-bottom: 1px solid #dee0ea;
   position: sticky;
-  width: 100%;
   top: 0;
+  width: 100%;
   background: #fff;
-  z-index: 10000;
+  z-index: 1000; /* Eskiden 10000 idi — normalize ettik */
 }
 
 .global-notification {
@@ -242,7 +242,7 @@ header .menu-dropdown-content a:hover {
     height: calc(100vh - 60px);
     background-color: #fff;
     border-right: 1px solid #dee0ea;
-    z-index: 9999;
+    z-index: 15;
     transition: 0.5s ease all;
   }
 

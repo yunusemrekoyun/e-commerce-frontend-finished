@@ -1,7 +1,33 @@
-import { Button, Form, Input, InputNumber, Select, Spin, message } from "antd";
-import { useEffect, useState } from "react";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  Spin,
+  message,
+  Upload,
+} from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import ReactQuill from "react-quill";
+import { useEffect, useState } from "react";
 import "react-quill/dist/quill.snow.css";
+import imageCompression from "browser-image-compression"; //  Sıkıştırma kütüphanesi
+
+const compressImage = async (file) => {
+  const options = {
+    maxSizeMB: 0.2,
+    maxWidthOrHeight: 1024,
+    useWebWorker: true,
+  };
+  try {
+    const compressedFile = await imageCompression(file, options);
+    return compressedFile;
+  } catch (error) {
+    console.error("Sıkıştırma hatası:", error);
+    return file;
+  }
+};
 
 const CreateProductPage = () => {
   const [loading, setLoading] = useState(false);
@@ -15,12 +41,11 @@ const CreateProductPage = () => {
 
       try {
         const response = await fetch(`${apiUrl}/api/categories`);
-
         if (response.ok) {
           const data = await response.json();
           setCategories(data);
         } else {
-          message.error("Veri getirme başarısız.");
+          message.error("Kategori verileri alınamadı.");
         }
       } catch (error) {
         console.log("Veri hatası:", error);
@@ -33,26 +58,38 @@ const CreateProductPage = () => {
   }, [apiUrl]);
 
   const onFinish = async (values) => {
-    const imgLinks = values.img.split("\n").map((link) => link.trim());
-    const colors = values.colors.split("\n").map((link) => link.trim());
-    const sizes = values.sizes.split("\n").map((link) => link.trim());
-    setLoading(true);
     try {
+      setLoading(true);
+      const formData = new FormData();
+
+      formData.append("name", values.name);
+      formData.append("category", values.category);
+      formData.append("description", values.description);
+      formData.append("current", values.current);
+      formData.append("discount", values.discount);
+
+      if (values.colors) {
+        formData.append("colors", values.colors);
+      }
+      if (values.sizes) {
+        formData.append("sizes", values.sizes);
+      }
+
+      if (!values.img || values.img.length === 0) {
+        message.error("En az bir ürün resmi eklenmeli!");
+        return;
+      }
+
+      for (let fileObj of values.img) {
+        if (fileObj.originFileObj) {
+          const compressed = await compressImage(fileObj.originFileObj); // Sıkıştır
+          formData.append("img", compressed);
+        }
+      }
+
       const response = await fetch(`${apiUrl}/api/products`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...values,
-          price: {
-            current: values.current,
-            discount: values.discount,
-          },
-          colors,
-          sizes,
-          img: imgLinks,
-        }),
+        body: formData,
       });
 
       if (response.ok) {
@@ -63,6 +100,7 @@ const CreateProductPage = () => {
       }
     } catch (error) {
       console.log("Ürün oluşturma hatası:", error);
+      message.error("Bir hata meydana geldi.");
     } finally {
       setLoading(false);
     }
@@ -83,6 +121,7 @@ const CreateProductPage = () => {
         >
           <Input />
         </Form.Item>
+
         <Form.Item
           label="Ürün Kategorisi"
           name="category"
@@ -101,6 +140,7 @@ const CreateProductPage = () => {
             ))}
           </Select>
         </Form.Item>
+
         <Form.Item
           label="Fiyat"
           name="current"
@@ -111,8 +151,9 @@ const CreateProductPage = () => {
             },
           ]}
         >
-          <InputNumber />
+          <InputNumber style={{ width: "100%" }} />
         </Form.Item>
+
         <Form.Item
           label="İndirim Oranı"
           name="discount"
@@ -123,8 +164,9 @@ const CreateProductPage = () => {
             },
           ]}
         >
-          <InputNumber />
+          <InputNumber style={{ width: "100%" }} />
         </Form.Item>
+
         <Form.Item
           label="Ürün Açıklaması"
           name="description"
@@ -135,30 +177,11 @@ const CreateProductPage = () => {
             },
           ]}
         >
-          <ReactQuill
-            theme="snow"
-            style={{
-              backgroundColor: "white",
-            }}
-          />
+          <ReactQuill theme="snow" style={{ backgroundColor: "white" }} />
         </Form.Item>
+
         <Form.Item
-          label="Ürün Görselleri (Linkler)"
-          name="img"
-          rules={[
-            {
-              required: true,
-              message: "Lütfen en az 4 ürün görsel linki girin!",
-            },
-          ]}
-        >
-          <Input.TextArea
-            placeholder="Her bir görsel linkini yeni bir satıra yazın."
-            autoSize={{ minRows: 4 }}
-          />
-        </Form.Item>
-        <Form.Item
-          label="Ürün Renkleri (RGB Kodları)"
+          label="Ürün Renkleri (virgülle ayır)"
           name="colors"
           rules={[
             {
@@ -167,13 +190,11 @@ const CreateProductPage = () => {
             },
           ]}
         >
-          <Input.TextArea
-            placeholder="Her bir RGB kodunu yeni bir satıra yazın."
-            autoSize={{ minRows: 4 }}
-          />
+          <Input placeholder="Örn: Red,Blue,Green" />
         </Form.Item>
+
         <Form.Item
-          label="Ürün Bedenleri"
+          label="Ürün Bedenleri (virgülle ayır)"
           name="sizes"
           rules={[
             {
@@ -182,10 +203,29 @@ const CreateProductPage = () => {
             },
           ]}
         >
-          <Input.TextArea
-            placeholder="Her bir beden ölçüsünü yeni bir satıra yazın."
-            autoSize={{ minRows: 4 }}
-          />
+          <Input placeholder="Örn: S,M,L,XL" />
+        </Form.Item>
+
+        <Form.Item
+          label="Ürün Görselleri"
+          name="img"
+          valuePropName="fileList"
+          getValueFromEvent={(e) => e && e.fileList}
+          rules={[
+            {
+              required: true,
+              message: "Lütfen ürün görsellerini ekleyin!",
+            },
+          ]}
+        >
+          <Upload
+            multiple
+            listType="picture"
+            maxCount={6}
+            beforeUpload={() => false}
+          >
+            <Button icon={<UploadOutlined />}>Dosya Seç (Max 6)</Button>
+          </Upload>
         </Form.Item>
 
         <Button type="primary" htmlType="submit">
