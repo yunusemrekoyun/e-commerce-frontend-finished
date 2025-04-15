@@ -174,6 +174,7 @@ const UserAccountPage = () => {
 
   const profileForm = (
     <Form
+      key={userInfo?.email} // her seferinde yeniden render olması için
       layout="vertical"
       onFinish={handleProfileUpdate}
       initialValues={{
@@ -196,13 +197,7 @@ const UserAccountPage = () => {
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">
-          Update Profile
-        </Button>
-        <Button
-          style={{ marginLeft: 8 }}
-          onClick={() => setIsEditingProfile(false)}
-        >
-          Cancel
+          Güncelle
         </Button>
       </Form.Item>
     </Form>
@@ -334,9 +329,9 @@ const UserAccountPage = () => {
   ];
 
   const menuItems = [
-    { key: "orders", label: "Orders" },
-    { key: "address", label: "Address" },
-    { key: "profile", label: "Profile" },
+    { key: "orders", label: "Siparişlerim" },
+    { key: "address", label: "Hesap bilgilerim" },
+    { key: "profile", label: "Adreslerim" },
   ];
 
   return (
@@ -360,16 +355,7 @@ const UserAccountPage = () => {
             />
           )}
 
-          {selectedMenu === "profile" && !isEditingProfile && userInfo && (
-            <div>
-              <Avatar src={userInfo.avatar} size={64} />
-              <p>Username: {userInfo.username}</p>
-              <p>Email: {userInfo.email}</p>
-              <Button type="primary" onClick={() => setIsEditingProfile(true)}>
-                Edit Profile
-              </Button>
-            </div>
-          )}
+          {selectedMenu === "profile" && userInfo && profileForm}
 
           {selectedMenu === "profile" && isEditingProfile && profileForm}
 
