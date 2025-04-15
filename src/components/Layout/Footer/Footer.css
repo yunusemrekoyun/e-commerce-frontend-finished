@@ -86,7 +86,7 @@
 
 .widgets-row .footer-widgets > .brand-info {
   flex: 3;
-  margin-left: 500px;
+  /* margin-left: 500px; */
 }
 
 .footer-widgets .brand-info .footer-desc {

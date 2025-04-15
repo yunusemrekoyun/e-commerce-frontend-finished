@@ -12,7 +12,22 @@ import { UploadOutlined } from "@ant-design/icons";
 import ReactQuill from "react-quill";
 import { useEffect, useState } from "react";
 import "react-quill/dist/quill.snow.css";
+import imageCompression from "browser-image-compression"; //  Sıkıştırma kütüphanesi
 
+const compressImage = async (file) => {
+  const options = {
+    maxSizeMB: 0.2,
+    maxWidthOrHeight: 1024,
+    useWebWorker: true,
+  };
+  try {
+    const compressedFile = await imageCompression(file, options);
+    return compressedFile;
+  } catch (error) {
+    console.error("Sıkıştırma hatası:", error);
+    return file;
+  }
+};
 
 const CreateProductPage = () => {
   const [loading, setLoading] = useState(false);
@@ -53,8 +68,6 @@ const CreateProductPage = () => {
       formData.append("current", values.current);
       formData.append("discount", values.discount);
 
-      // colors, sizes -> henüz basit şekilde virgülle ayırıyoruz
-      // (ya da satır satır okursun, sana kalmış)
       if (values.colors) {
         formData.append("colors", values.colors);
       }
@@ -62,14 +75,15 @@ const CreateProductPage = () => {
         formData.append("sizes", values.sizes);
       }
 
-      // Resimler (multiple)
       if (!values.img || values.img.length === 0) {
         message.error("En az bir ürün resmi eklenmeli!");
         return;
       }
+
       for (let fileObj of values.img) {
         if (fileObj.originFileObj) {
-          formData.append("img", fileObj.originFileObj);
+          const compressed = await compressImage(fileObj.originFileObj); // Sıkıştır
+          formData.append("img", compressed);
         }
       }
 

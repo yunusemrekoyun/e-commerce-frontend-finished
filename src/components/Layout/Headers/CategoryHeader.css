@@ -1,9 +1,11 @@
 .category-header {
   width: 100%;
   background: #fff;
-  z-index: 10;
+  z-index: 900; /* Header'dan düşük olmalı */
   border-bottom: 1px solid #dee0ea;
   overflow-x: hidden;
+  position: sticky; /* Burası önemli! */
+  top: 90px; /* Header yüksekliği kadar */
 }
 
 .category-header-row {

@@ -13,8 +13,24 @@ import "react-quill/dist/quill.snow.css";
 import { UploadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import imageCompression from "browser-image-compression";
 
 const MAX_IMAGES = 6;
+
+const compressImage = async (file) => {
+  const options = {
+    maxSizeMB: 0.2,
+    maxWidthOrHeight: 1024,
+    useWebWorker: true,
+  };
+  try {
+    const compressedFile = await imageCompression(file, options);
+    return compressedFile;
+  } catch (error) {
+    console.error("Sıkıştırma hatası:", error);
+    return file;
+  }
+};
 
 const UpdateProductPage = () => {
   const [loading, setLoading] = useState(false);
@@ -26,13 +42,11 @@ const UpdateProductPage = () => {
   const productId = params.id;
 
   const [fileList, setFileList] = useState([]);
-  // Bu state ile anlık eklenen-silinen görselleri yönetiriz.
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // kategorileri ve tek ürünü çek
         const [categoriesResponse, singleProductResponse] = await Promise.all([
           fetch(`${apiUrl}/api/categories`),
           fetch(`${apiUrl}/api/products/${productId}`),
@@ -51,13 +65,11 @@ const UpdateProductPage = () => {
         setCategories(categoriesData);
 
         if (singleProductData) {
-          // product’ın base64 resimlerini fileList’e ekleyelim
-          // singleProductData.img => Array of { _id, base64 }
           const mappedFileList = singleProductData.img.map((imageObj) => ({
-            uid: imageObj._id, // subdoc id
+            uid: imageObj._id,
             name: "image.png",
             status: "done",
-            url: imageObj.base64, // preview amaçlı base64
+            url: imageObj.base64,
           }));
 
           setFileList(mappedFileList);
@@ -81,11 +93,9 @@ const UpdateProductPage = () => {
     fetchData();
   }, [apiUrl, productId, form]);
 
-  // Upload listesi değiştiğinde
   const handleChange = (info) => {
     let newList = [...info.fileList];
 
-    // Örnek: Kısıtlamak istiyorsak => 6 dosyadan fazlasını at.
     if (newList.length > MAX_IMAGES) {
       message.error(`En fazla ${MAX_IMAGES} görsel yükleyebilirsiniz.`);
       newList = newList.slice(0, MAX_IMAGES);
@@ -94,7 +104,6 @@ const UpdateProductPage = () => {
     setFileList(newList);
   };
 
-  // Submit
   const onFinish = async (values) => {
     setLoading(true);
 
@@ -106,7 +115,6 @@ const UpdateProductPage = () => {
       formData.append("description", values.description);
       formData.append("category", values.category);
 
-      // colors ve sizes virgülle ayrılmış string ise
       if (values.colors) {
         formData.append("colors", values.colors);
       }
@@ -114,27 +122,24 @@ const UpdateProductPage = () => {
         formData.append("sizes", values.sizes);
       }
 
-      // "Eski" (DB'deki) görseller -> file.url var, file.originFileObj yok
-      // Bunların uid = subdoc._id
       const keepImageIds = fileList
         .filter((file) => !file.originFileObj && file.url)
         .map((file) => file.uid);
 
       formData.append("keepImages", JSON.stringify(keepImageIds));
 
-      // Yeni yüklenen dosyalar -> file.originFileObj var
       const newFiles = fileList.filter((file) => file.originFileObj);
       if (newFiles.length) {
-        // Yine 6 sınırına takılmamak için:
         if (newFiles.length + keepImageIds.length > MAX_IMAGES) {
           message.error(`Toplamda en fazla ${MAX_IMAGES} görsel olabilir.`);
           setLoading(false);
           return;
         }
 
-        newFiles.forEach((file) => {
-          formData.append("img", file.originFileObj);
-        });
+        for (const file of newFiles) {
+          const compressed = await compressImage(file.originFileObj);
+          formData.append("img", compressed);
+        }
       }
 
       const response = await fetch(`${apiUrl}/api/products/${productId}`, {

@@ -2,6 +2,22 @@ import { Button, Form, Input, Spin, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import imageCompression from "browser-image-compression";
+
+const compressImage = async (file) => {
+  const options = {
+    maxSizeMB: 0.2,
+    maxWidthOrHeight: 1024,
+    useWebWorker: true,
+  };
+  try {
+    const compressedFile = await imageCompression(file, options);
+    return compressedFile;
+  } catch (error) {
+    console.error("Sıkıştırma hatası:", error);
+    return file;
+  }
+};
 
 const UpdateCategoryPage = () => {
   const [loading, setLoading] = useState(false);
@@ -10,7 +26,6 @@ const UpdateCategoryPage = () => {
   const categoryId = params.id;
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-  // Tek kategoriyi çekip formu dolduruyoruz.
   useEffect(() => {
     const fetchSingleCategory = async () => {
       setLoading(true);
@@ -21,17 +36,14 @@ const UpdateCategoryPage = () => {
         }
         const data = await response.json();
         if (data) {
-          // data.img => "data:image/...base64"
           form.setFieldsValue({
             name: data.name,
-            // Kategori görselini anında input’a göstermek istersen,
-            // dummy bir fileList oluşturup preview verebilirsin:
             img: [
               {
                 uid: "-1",
                 name: "category.jpg",
                 status: "done",
-                url: data.img, // Base64 string
+                url: data.img,
               },
             ],
           });
@@ -49,16 +61,13 @@ const UpdateCategoryPage = () => {
     setLoading(true);
     try {
       const formData = new FormData();
-
       formData.append("name", values.name);
 
-      // Eğer resim seçildiyse (yeni resim yüklenecekse) ekleyelim
-      // (User belki resmi değiştirmek istemeyebilir, o zaman fileList url bazlı olabilir)
       if (values.img && values.img.length > 0) {
-        // eğer user yeni bir file seçtiyse => originFileObj olur
         const fileObj = values.img[0].originFileObj;
         if (fileObj) {
-          formData.append("img", fileObj);
+          const compressed = await compressImage(fileObj);
+          formData.append("img", compressed);
         }
       }
 
@@ -102,7 +111,6 @@ const UpdateCategoryPage = () => {
           <Input />
         </Form.Item>
 
-        {/* Resim alanı */}
         <Form.Item
           label="Kategori Görseli"
           name="img"

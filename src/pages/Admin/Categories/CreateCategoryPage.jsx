@@ -1,6 +1,22 @@
 import { Button, Form, Input, Spin, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import imageCompression from "browser-image-compression";
+
+const compressImage = async (file) => {
+  const options = {
+    maxSizeMB: 0.2,
+    maxWidthOrHeight: 1024,
+    useWebWorker: true,
+  };
+  try {
+    const compressedFile = await imageCompression(file, options);
+    return compressedFile;
+  } catch (error) {
+    console.error("Sıkıştırma hatası:", error);
+    return file;
+  }
+};
 
 const CreateCategoryPage = () => {
   const [loading, setLoading] = useState(false);
@@ -14,14 +30,14 @@ const CreateCategoryPage = () => {
       const formData = new FormData();
       formData.append("name", values.name);
 
-      // Doğru kontrol ve dosya alma
       if (!values.img || values.img.length === 0) {
         message.error("Lütfen kategori resmi seçin!");
         return;
       }
 
       const fileObj = values.img[0].originFileObj;
-      formData.append("img", fileObj);
+      const compressed = await compressImage(fileObj); // sıkıştırma
+      formData.append("img", compressed);
 
       const response = await fetch(`${apiUrl}/api/categories`, {
         method: "POST",
@@ -61,11 +77,8 @@ const CreateCategoryPage = () => {
         <Form.Item
           label="Kategori Görseli"
           name="img"
-          valuePropName="fileList" // ANTD upload ile uyum
-          getValueFromEvent={(e) => {
-            // Upload bileşeninin onChange eventindeki fileList’i form’a aktarma
-            return e?.fileList;
-          }}
+          valuePropName="fileList"
+          getValueFromEvent={(e) => e?.fileList}
           rules={[
             {
               required: true,
@@ -73,11 +86,7 @@ const CreateCategoryPage = () => {
             },
           ]}
         >
-          <Upload
-            maxCount={1} // Tek dosya
-            beforeUpload={() => false} // Otomatik upload kapalı, manuel yapacağız
-            listType="picture"
-          >
+          <Upload maxCount={1} beforeUpload={() => false} listType="picture">
             <Button icon={<UploadOutlined />}>Dosya Seç</Button>
           </Upload>
         </Form.Item>
