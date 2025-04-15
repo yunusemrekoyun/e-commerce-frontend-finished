@@ -1,6 +1,3 @@
-/********************************************************
- * /Applications/Works/e-commerce/frontend/src/components/Cart/CartTotals.jsx
- ********************************************************/
 import { useContext, useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { CartContext } from "../../context/CartProvider";
@@ -136,11 +133,22 @@ const CartTotals = () => {
       });
     }
 
+    // 🔧 Sadeleştirilmiş veri: img vs gönderilmiyor
     const body = {
-      products: cartItems,
-      user: userInfo,
+      products: cartItems.map((item) => ({
+        productId: item._id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+      user: {
+        _id: userInfo._id,
+        email: userInfo.email,
+      },
       cargoFee: fastCargoChecked ? cargoFee : 0,
     };
+
+    console.log("Gönderilen ödeme verisi:", body);
 
     try {
       setLoading(true);
