@@ -50,9 +50,8 @@ const UserAccountPage = () => {
 
   useEffect(() => {
     if (selectedMenu === "address" && userInfo) {
-      fetchAddress().then(() => {
-        setIsEditingAddress(true); // veriler geldikten sonra düzenleme moduna geç
-      });
+      fetchAddress(); // Sadece veriyi getir
+      setIsEditingAddress(true); // Düzenleme modunu kapalı başlat
     }
     if (selectedMenu === "profile") {
       setIsEditingProfile(false);
@@ -95,11 +94,8 @@ const UserAccountPage = () => {
 
   const profileForm = (
     <Form
-<<<<<<< HEAD
-      key={userInfo?.email} // her seferinde yeniden render olması için
-=======
+
       key={userInfo?.email}
->>>>>>> dev
       layout="vertical"
       onFinish={handleProfileUpdate}
       initialValues={{
@@ -225,17 +221,12 @@ const UserAccountPage = () => {
   ];
 
   const menuItems = [
-<<<<<<< HEAD
     { key: "profile", label: "Hesap Bilgilerim" },
     { key: "address", label: "Adreslerim" },
     { key: "orders", label: "Siparişlerim" },
 
 
-=======
-    { key: "orders", label: "Siparişlerim" },
-    { key: "address", label: "Hesap bilgilerim" },
-    { key: "profile", label: "Adreslerim" },
->>>>>>> dev
+
   ];
 
   return (
