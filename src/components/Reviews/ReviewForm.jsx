@@ -4,46 +4,23 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { message } from "antd";
+import { fetchWithAuth } from "../Auth/fetchWithAuth"; // ✅
 
 const ReviewForm = ({ singleProduct, setSingleProduct }) => {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
+  const [userInfo, setUserInfo] = useState(null);
 
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-  const [token, setToken] = useState("");
-  const [refreshToken, setRefreshToken] = useState("");
-  const [userInfo, setUserInfo] = useState(null);
-
-  // Token çek
   useEffect(() => {
-    const localToken = localStorage.getItem("token");
-    const localRefresh = localStorage.getItem("refreshToken");
-    if (localToken) setToken(localToken);
-    if (localRefresh) setRefreshToken(localRefresh);
-  }, []);
-
-  // Bileşen açılınca /me
-  useEffect(() => {
-    if (!token) return;
     fetchUserInfo();
-  }, [token]);
+  }, []);
 
   const fetchUserInfo = async () => {
     try {
-      const res = await fetch(`${apiUrl}/api/auth/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (res.status === 401) {
-        const newToken = await tryRefreshToken();
-        if (newToken) {
-          return fetchUserInfo();
-        } else {
-          message.error("Lütfen giriş yapın.");
-        }
-      } else if (res.ok) {
+      const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
+      if (res.ok) {
         const data = await res.json();
         setUserInfo(data);
       } else {
@@ -51,32 +28,6 @@ const ReviewForm = ({ singleProduct, setSingleProduct }) => {
       }
     } catch (error) {
       console.log("fetchUserInfo error:", error);
-    }
-  };
-
-  // refresh token
-  const tryRefreshToken = async () => {
-    if (!refreshToken) return null;
-    try {
-      const resp = await fetch(`${apiUrl}/api/auth/refresh`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ refreshToken }),
-      });
-      if (!resp.ok) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("refreshToken");
-        return null;
-      }
-      const data = await resp.json();
-      localStorage.setItem("token", data.token);
-      setToken(data.token);
-      return data.token;
-    } catch (err) {
-      console.error("refresh error:", err);
-      return null;
     }
   };
 
@@ -107,23 +58,13 @@ const ReviewForm = ({ singleProduct, setSingleProduct }) => {
     };
 
     try {
-      const res = await fetch(`${apiUrl}/api/products/${singleProduct._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (res.status === 401) {
-        const newToken = await tryRefreshToken();
-        if (newToken) {
-          // tekrar dene
-          return handleSubmit(e);
-        } else {
-          return message.error("Oturum süresi dolmuş. Tekrar giriş yapın.");
+      const res = await fetchWithAuth(
+        `${apiUrl}/api/products/${singleProduct._id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(formData),
         }
-      }
+      );
 
       if (!res.ok) {
         return message.error("Bir şeyler yanlış gitti.");

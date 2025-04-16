@@ -1,7 +1,11 @@
+/********************************************************
+ * /Applications/Works/e-commerce/frontend/src/components/CartTotals.jsx
+ ********************************************************/
 import { useContext, useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { CartContext } from "../../context/CartProvider";
 import { message, Modal, Spin } from "antd";
+import { fetchWithAuth } from "../Auth/fetchWithAuth"; // ✅
 
 const CartTotals = () => {
   const [addressData, setAddressData] = useState(null);
@@ -12,37 +16,16 @@ const CartTotals = () => {
   const stripePublicKey = import.meta.env.VITE_API_STRIPE_PUBLIC_KEY;
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-  const [token, setToken] = useState("");
-  const [refreshToken, setRefreshToken] = useState("");
   const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
-    const localToken = localStorage.getItem("token");
-    const localRefresh = localStorage.getItem("refreshToken");
-    if (localToken) setToken(localToken);
-    if (localRefresh) setRefreshToken(localRefresh);
-  }, []);
-
-  useEffect(() => {
-    if (!token) return;
     fetchUserInfo();
-  }, [token]);
+  }, []);
 
   const fetchUserInfo = async () => {
     try {
-      const res = await fetch(`${apiUrl}/api/auth/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (res.status === 401) {
-        const newToken = await tryRefreshToken();
-        if (newToken) {
-          return fetchUserInfo();
-        } else {
-          message.error("Lütfen yeniden giriş yapın.");
-        }
-      } else if (res.ok) {
+      const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
+      if (res.ok) {
         const data = await res.json();
         setUserInfo(data);
       } else {
@@ -54,52 +37,16 @@ const CartTotals = () => {
     }
   };
 
-  const tryRefreshToken = async () => {
-    if (!refreshToken) return null;
-    try {
-      const resp = await fetch(`${apiUrl}/api/auth/refresh`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken }),
-      });
-      if (resp.ok) {
-        const data = await resp.json();
-        localStorage.setItem("token", data.token);
-        setToken(data.token);
-        return data.token;
-      } else {
-        localStorage.removeItem("token");
-        localStorage.removeItem("refreshToken");
-        return null;
-      }
-    } catch (err) {
-      console.error("Refresh token error:", err);
-      return null;
-    }
-  };
-
   useEffect(() => {
-    if (!userInfo || !token) return;
+    if (!userInfo) return;
     fetchAddress();
-  }, [userInfo, token]);
+  }, [userInfo]);
 
   const fetchAddress = async () => {
     try {
-      const response = await fetch(`${apiUrl}/api/address`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.status === 401) {
-        const newToken = await tryRefreshToken();
-        if (newToken) {
-          return fetchAddress();
-        } else {
-          message.error("Adres bilgisi alınamadı. Yeniden giriş yapın.");
-        }
-      } else if (response.ok) {
-        const data = await response.json();
+      const res = await fetchWithAuth(`${apiUrl}/api/address`);
+      if (res.ok) {
+        const data = await res.json();
         setAddressData(data[0] || null);
       } else {
         message.error("Adres bilgisi alınamadı.");
@@ -133,7 +80,6 @@ const CartTotals = () => {
       });
     }
 
-    // 🔧 Sadeleştirilmiş veri: img vs gönderilmiyor
     const body = {
       products: cartItems.map((item) => ({
         productId: item._id,
@@ -154,37 +100,11 @@ const CartTotals = () => {
       setLoading(true);
 
       const stripe = await loadStripe(stripePublicKey);
-      const res = await fetch(`${apiUrl}/api/payment`, {
+
+      const res = await fetchWithAuth(`${apiUrl}/api/payment`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-
-      if (res.status === 401) {
-        const newToken = await tryRefreshToken();
-        if (!newToken) {
-          setLoading(false);
-          return message.error("Ödeme işlemi başarısız. Tekrar giriş yapın.");
-        }
-        const retryRes = await fetch(`${apiUrl}/api/payment`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-        if (!retryRes.ok) {
-          setLoading(false);
-          return message.error("Ödeme işlemi başarısız oldu.");
-        }
-        const session2 = await retryRes.json();
-        const result2 = await stripe.redirectToCheckout({
-          sessionId: session2.id,
-        });
-        if (result2.error) {
-          throw new Error(result2.error.message);
-        }
-        setLoading(false);
-        return;
-      }
 
       if (!res.ok) {
         setLoading(false);
