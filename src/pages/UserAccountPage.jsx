@@ -12,6 +12,7 @@ import {
 } from "antd";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchWithAuth } from "../components/Auth/fetchWithAuth"; // ✅
 
 const { Sider, Content } = Layout;
 
@@ -26,45 +27,16 @@ const UserAccountPage = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [addressData, setAddressData] = useState(null);
 
-  const [token, setToken] = useState("");
-  const [refreshToken, setRefreshToken] = useState("");
-
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-  // Token çek
   useEffect(() => {
-    const localToken = localStorage.getItem("token");
-    const localRefresh = localStorage.getItem("refreshToken");
-    if (localToken) {
-      setToken(localToken);
-    } else {
-      // Kullanıcı yoksa anasayfaya
-      navigate("/");
-    }
-    if (localRefresh) {
-      setRefreshToken(localRefresh);
-    }
-  }, [navigate]);
-
-  // 1) Bileşen açılınca /me
-  useEffect(() => {
-    if (!token) return;
     fetchUserInfo();
-  }, [token]);
+  }, []);
 
   const fetchUserInfo = async () => {
     try {
-      const res = await fetch(`${apiUrl}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.status === 401) {
-        const newToken = await tryRefreshToken();
-        if (newToken) {
-          return fetchUserInfo();
-        } else {
-          return navigate("/");
-        }
-      } else if (res.ok) {
+      const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
+      if (res.ok) {
         const data = await res.json();
         setUserInfo(data);
       } else {
@@ -76,31 +48,6 @@ const UserAccountPage = () => {
     }
   };
 
-  // 2) refresh token
-  const tryRefreshToken = async () => {
-    if (!refreshToken) return null;
-    try {
-      const resp = await fetch(`${apiUrl}/api/auth/refresh`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken }),
-      });
-      if (!resp.ok) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("refreshToken");
-        return null;
-      }
-      const data = await resp.json();
-      localStorage.setItem("token", data.token);
-      setToken(data.token);
-      return data.token;
-    } catch (err) {
-      console.error("refresh error:", err);
-      return null;
-    }
-  };
-
-  // 3) Menüler
   useEffect(() => {
     if (selectedMenu === "address" && userInfo) {
       fetchAddress().then(() => {
@@ -112,24 +59,10 @@ const UserAccountPage = () => {
     }
   }, [selectedMenu, userInfo]);
 
-  // 4) Adres çek
   const fetchAddress = async () => {
-    if (!token) return;
     try {
-      const response = await fetch(`${apiUrl}/api/address`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.status === 401) {
-        const newToken = await tryRefreshToken();
-        if (newToken) {
-          return fetchAddress();
-        } else {
-          message.error("Adres bilgisi alınamadı. Tekrar giriş yapın.");
-        }
-      } else if (response.ok) {
+      const response = await fetchWithAuth(`${apiUrl}/api/address`);
+      if (response.ok) {
         const data = await response.json();
         setAddressData(data[0] || null);
       } else {
@@ -141,27 +74,17 @@ const UserAccountPage = () => {
     }
   };
 
-  // 5) Profil Güncelle
   const handleProfileUpdate = async (values) => {
     try {
-      const res = await fetch(`${apiUrl}/api/users/${values.email}`, {
+      const res = await fetchWithAuth(`${apiUrl}/api/users/${values.email}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(values),
       });
-      if (res.status === 401) {
-        const newToken = await tryRefreshToken();
-        if (newToken) {
-          return handleProfileUpdate(values);
-        } else {
-          return message.error("Oturum süresi dolmuş. Lütfen giriş yapın.");
-        }
-      } else if (!res.ok) {
+
+      if (!res.ok) {
         return message.error("Profil güncellenemedi.");
       }
-      // const updatedUser = await res.json();
+
       message.success("Profile updated successfully.");
       setIsEditingProfile(false);
     } catch (error) {
@@ -172,7 +95,11 @@ const UserAccountPage = () => {
 
   const profileForm = (
     <Form
+<<<<<<< HEAD
       key={userInfo?.email} // her seferinde yeniden render olması için
+=======
+      key={userInfo?.email}
+>>>>>>> dev
       layout="vertical"
       onFinish={handleProfileUpdate}
       initialValues={{
@@ -207,26 +134,17 @@ const UserAccountPage = () => {
     </Form>
   );
 
-  // 6) Adres Güncelle/Ekle
   const handleAddressUpdate = async (values) => {
     if (!addressData) return;
     try {
-      const res = await fetch(`${apiUrl}/api/address/${addressData._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(values),
-      });
-      if (res.status === 401) {
-        const newToken = await tryRefreshToken();
-        if (newToken) {
-          return handleAddressUpdate(values);
-        } else {
-          return message.error("Oturum süresi dolmuş. Tekrar giriş yapın.");
+      const res = await fetchWithAuth(
+        `${apiUrl}/api/address/${addressData._id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(values),
         }
-      } else if (!res.ok) {
+      );
+      if (!res.ok) {
         return message.error("Adres güncellenemedi.");
       }
       const updated = await res.json();
@@ -241,22 +159,11 @@ const UserAccountPage = () => {
 
   const handleAddressAdd = async (values) => {
     try {
-      const res = await fetch(`${apiUrl}/api/address/add`, {
+      const res = await fetchWithAuth(`${apiUrl}/api/address/add`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify(values),
       });
-      if (res.status === 401) {
-        const newToken = await tryRefreshToken();
-        if (newToken) {
-          return handleAddressAdd(values);
-        } else {
-          return message.error("Oturum süresi dolmuş. Tekrar giriş yapın.");
-        }
-      } else if (!res.ok) {
+      if (!res.ok) {
         return message.error("Adres eklenemedi.");
       }
       const added = await res.json();
@@ -318,11 +225,17 @@ const UserAccountPage = () => {
   ];
 
   const menuItems = [
+<<<<<<< HEAD
     { key: "profile", label: "Hesap Bilgilerim" },
     { key: "address", label: "Adreslerim" },
     { key: "orders", label: "Siparişlerim" },
 
 
+=======
+    { key: "orders", label: "Siparişlerim" },
+    { key: "address", label: "Hesap bilgilerim" },
+    { key: "profile", label: "Adreslerim" },
+>>>>>>> dev
   ];
 
   return (
