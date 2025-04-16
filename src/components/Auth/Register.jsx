@@ -64,12 +64,12 @@ const Register = () => {
 
   return (
     <div className="account-column">
-      <h2>Register</h2>
+      <h2>Kayıt ol</h2>
       <form onSubmit={handleRegister}>
         <div>
           <label>
             <span>
-              Username <span className="required">*</span>
+              Kullanıcı Adı <span className="required">*</span>
             </span>
             <input
               type="text"
@@ -83,7 +83,7 @@ const Register = () => {
         <div>
           <label>
             <span>
-              Email address <span className="required">*</span>
+              E-mail <span className="required">*</span>
             </span>
             <input
               type="email"
@@ -97,7 +97,7 @@ const Register = () => {
         <div>
           <label>
             <span>
-              Password <span className="required">*</span>
+              Şifre <span className="required">*</span>
             </span>
             <div className="password-container">
               <input
@@ -119,7 +119,7 @@ const Register = () => {
         <div>
           <label>
             <span>
-              Password Again <span className="required">*</span>
+              Şifre Tekrar <span className="required">*</span>
             </span>
             <div className="password-container">
               <input
@@ -144,9 +144,7 @@ const Register = () => {
         </div>
         <div className="privacy-policy-text remember">
           <p>
-            Your personal data will be used to support your experience
-            throughout this website, to manage access to your account, and for
-            other purposes described in our <a href="#">privacy policy.</a>
+          Kişisel verileriniz, bu web sitesindeki deneyiminizi desteklemek, hesabınıza erişimi yönetmek ve <a href="#">gizlilik politikamızda</a> belirtilen diğer amaçlar için kullanılacaktır.
           </p>
           <Spin spinning={loading}>
             <button className="btn btn-sm">Register</button>

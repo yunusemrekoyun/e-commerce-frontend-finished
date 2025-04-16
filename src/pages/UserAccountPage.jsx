@@ -9,7 +9,6 @@ import {
   Input,
   Button,
   message,
-  Avatar,
 } from "antd";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +18,7 @@ const { Sider, Content } = Layout;
 const UserAccountPage = () => {
   const navigate = useNavigate();
 
-  const [selectedMenu, setSelectedMenu] = useState("orders");
+  const [selectedMenu, setSelectedMenu] = useState("profile");
 
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
@@ -103,11 +102,10 @@ const UserAccountPage = () => {
 
   // 3) Menüler
   useEffect(() => {
-    if (selectedMenu === "address") {
-      setIsEditingAddress(false);
-      if (userInfo) {
-        fetchAddress();
-      }
+    if (selectedMenu === "address" && userInfo) {
+      fetchAddress().then(() => {
+        setIsEditingAddress(true); // veriler geldikten sonra düzenleme moduna geç
+      });
     }
     if (selectedMenu === "profile") {
       setIsEditingProfile(false);
@@ -180,21 +178,27 @@ const UserAccountPage = () => {
       initialValues={{
         username: userInfo?.username || "",
         email: userInfo?.email || "",
-        avatar: userInfo?.avatar || "",
+        phone: userInfo?.phone || "", // telefon numarası
       }}
     >
-      <Form.Item label="Username" name="username">
+      <Form.Item label="Kullanıcı Adı" name="username">
         <Input />
       </Form.Item>
-      <Form.Item label="Email" name="email">
+  
+      <Form.Item label="E-posta" name="email">
         <Input disabled />
       </Form.Item>
-      <Form.Item label="Avatar URL" name="avatar">
-        <Input />
+  
+
+  
+      <Form.Item label="Eski Şifre" name="oldPassword">
+        <Input.Password placeholder="******" />
       </Form.Item>
-      <Form.Item>
-        <Avatar src={userInfo?.avatar} size={64} />
+  
+      <Form.Item label="Yeni Şifre" name="newPassword">
+        <Input.Password placeholder="Yeni şifrenizi girin" />
       </Form.Item>
+  
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Güncelle
@@ -268,37 +272,33 @@ const UserAccountPage = () => {
   const hasAddress = !!addressData;
   const addressForm = (
     <Form
-      layout="vertical"
-      onFinish={hasAddress ? handleAddressUpdate : handleAddressAdd}
-      initialValues={addressData || {}}
-    >
-      <Form.Item label="Name" name="name">
+  layout="vertical"
+  onFinish={hasAddress ? handleAddressUpdate : handleAddressAdd}
+  initialValues={addressData || {}}
+>
+  <Form.Item label="Ad Soyad" name="name">
+    <Input />
+  </Form.Item>
+ 
+  <Form.Item label="Adres" name="address">
+    <Input />
+  </Form.Item>
+
+  <Form.Item label="Adres(Opsiyonel)" name="district">
+    <Input />
+  </Form.Item>
+  <Form.Item label="Telefon Numarası" name="phone">
         <Input />
       </Form.Item>
-      <Form.Item label="Email" name="email">
-        <Input />
-      </Form.Item>
-      <Form.Item label="Address" name="address">
-        <Input />
-      </Form.Item>
-      <Form.Item label="City" name="city">
-        <Input />
-      </Form.Item>
-      <Form.Item label="District" name="district">
-        <Input />
-      </Form.Item>
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          {hasAddress ? "Update Address" : "Add Address"}
-        </Button>
-        <Button
-          style={{ marginLeft: 8 }}
-          onClick={() => setIsEditingAddress(false)}
-        >
-          Cancel
-        </Button>
-      </Form.Item>
-    </Form>
+  <Form.Item label="Şehir" name="city">
+    <Input />
+  </Form.Item>
+  <Form.Item>
+    <Button type="primary" htmlType="submit">
+      {hasAddress ? "Adres Güncelle" : "Adres Ekle"}
+    </Button>
+  </Form.Item>
+</Form>
   );
 
   const ordersData = [
@@ -309,29 +309,20 @@ const UserAccountPage = () => {
       date: "2023-02-01",
       status: "Processing",
     },
-    {
-      key: "3",
-      orderNumber: "67890",
-      date: "2023-02-01",
-      status: "Processing",
-    },
-    {
-      key: "4",
-      orderNumber: "67890",
-      date: "2023-02-01",
-      status: "Processing",
-    },
+
   ];
   const ordersColumns = [
-    { title: "Order Number", dataIndex: "orderNumber", key: "orderNumber" },
-    { title: "Date", dataIndex: "date", key: "date" },
-    { title: "Status", dataIndex: "status", key: "status" },
+    { title: "Sipariş Numarası", dataIndex: "orderNumber", key: "orderNumber" },
+    { title: "Tarih", dataIndex: "date", key: "date" },
+    { title: "Durum", dataIndex: "status", key: "status" },
   ];
 
   const menuItems = [
+    { key: "profile", label: "Hesap Bilgilerim" },
+    { key: "address", label: "Adreslerim" },
     { key: "orders", label: "Siparişlerim" },
-    { key: "address", label: "Hesap bilgilerim" },
-    { key: "profile", label: "Adreslerim" },
+
+
   ];
 
   return (

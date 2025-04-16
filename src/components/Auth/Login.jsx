@@ -61,12 +61,12 @@ const Login = () => {
 
   return (
     <div className="account-column">
-      <h2>Login</h2>
+      <h2>Giriş Yap</h2>
       <form onSubmit={handleLogin}>
         <div>
           <label>
             <span>
-              Email address <span className="required">*</span>
+              E-mail <span className="required">*</span>
             </span>
             <input
               type="text"
@@ -80,7 +80,7 @@ const Login = () => {
         <div>
           <label>
             <span>
-              Password <span className="required">*</span>
+              Şifre <span className="required">*</span>
             </span>
             <input
               type="password"
@@ -94,14 +94,14 @@ const Login = () => {
         <p className="remember">
           <label>
             <input type="checkbox" />
-            <span>Remember me</span>
+            <span>Beni hatırla</span>
           </label>
           <button className="btn btn-sm" disabled={loading}>
-            {loading ? "Loading..." : "Login"}
+            {loading ? "Loading..." : "Giriş Yap"}
           </button>
         </p>
         <a href="#" className="form-link">
-          Lost your password?
+          Şifrenizi mi unuttunuz ?
         </a>
       </form>
     </div>
