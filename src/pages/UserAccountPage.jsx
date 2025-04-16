@@ -1,15 +1,7 @@
 /********************************************************
  * /Applications/Works/e-commerce/frontend/src/pages/UserAccountPage.jsx
  ********************************************************/
-import {
-  Layout,
-  Menu,
-  Table,
-  Form,
-  Input,
-  Button,
-  message,
-} from "antd";
+import { Layout, Menu, Table, Form, Input, Button, message } from "antd";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchWithAuth } from "../components/Auth/fetchWithAuth"; // ✅
@@ -95,11 +87,7 @@ const UserAccountPage = () => {
 
   const profileForm = (
     <Form
-<<<<<<< HEAD
-      key={userInfo?.email} // her seferinde yeniden render olması için
-=======
       key={userInfo?.email}
->>>>>>> dev
       layout="vertical"
       onFinish={handleProfileUpdate}
       initialValues={{
@@ -111,21 +99,19 @@ const UserAccountPage = () => {
       <Form.Item label="Kullanıcı Adı" name="username">
         <Input />
       </Form.Item>
-  
+
       <Form.Item label="E-posta" name="email">
         <Input disabled />
       </Form.Item>
-  
 
-  
       <Form.Item label="Eski Şifre" name="oldPassword">
         <Input.Password placeholder="******" />
       </Form.Item>
-  
+
       <Form.Item label="Yeni Şifre" name="newPassword">
         <Input.Password placeholder="Yeni şifrenizi girin" />
       </Form.Item>
-  
+
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Güncelle
@@ -179,33 +165,33 @@ const UserAccountPage = () => {
   const hasAddress = !!addressData;
   const addressForm = (
     <Form
-  layout="vertical"
-  onFinish={hasAddress ? handleAddressUpdate : handleAddressAdd}
-  initialValues={addressData || {}}
->
-  <Form.Item label="Ad Soyad" name="name">
-    <Input />
-  </Form.Item>
- 
-  <Form.Item label="Adres" name="address">
-    <Input />
-  </Form.Item>
-
-  <Form.Item label="Adres(Opsiyonel)" name="district">
-    <Input />
-  </Form.Item>
-  <Form.Item label="Telefon Numarası" name="phone">
+      layout="vertical"
+      onFinish={hasAddress ? handleAddressUpdate : handleAddressAdd}
+      initialValues={addressData || {}}
+    >
+      <Form.Item label="Ad Soyad" name="name">
         <Input />
       </Form.Item>
-  <Form.Item label="Şehir" name="city">
-    <Input />
-  </Form.Item>
-  <Form.Item>
-    <Button type="primary" htmlType="submit">
-      {hasAddress ? "Adres Güncelle" : "Adres Ekle"}
-    </Button>
-  </Form.Item>
-</Form>
+
+      <Form.Item label="Adres" name="address">
+        <Input />
+      </Form.Item>
+
+      <Form.Item label="Adres(Opsiyonel)" name="district">
+        <Input />
+      </Form.Item>
+      <Form.Item label="Telefon Numarası" name="phone">
+        <Input />
+      </Form.Item>
+      <Form.Item label="Şehir" name="city">
+        <Input />
+      </Form.Item>
+      <Form.Item>
+        <Button type="primary" htmlType="submit">
+          {hasAddress ? "Adres Güncelle" : "Adres Ekle"}
+        </Button>
+      </Form.Item>
+    </Form>
   );
 
   const ordersData = [
@@ -216,7 +202,6 @@ const UserAccountPage = () => {
       date: "2023-02-01",
       status: "Processing",
     },
-
   ];
   const ordersColumns = [
     { title: "Sipariş Numarası", dataIndex: "orderNumber", key: "orderNumber" },
@@ -225,17 +210,9 @@ const UserAccountPage = () => {
   ];
 
   const menuItems = [
-<<<<<<< HEAD
     { key: "profile", label: "Hesap Bilgilerim" },
     { key: "address", label: "Adreslerim" },
     { key: "orders", label: "Siparişlerim" },
-
-
-=======
-    { key: "orders", label: "Siparişlerim" },
-    { key: "address", label: "Hesap bilgilerim" },
-    { key: "profile", label: "Adreslerim" },
->>>>>>> dev
   ];
 
   return (
