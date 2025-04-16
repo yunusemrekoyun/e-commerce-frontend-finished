@@ -42,6 +42,8 @@ const UserAccountPage = () => {
 
   useEffect(() => {
     if (selectedMenu === "address" && userInfo) {
+      fetchAddress(); // Sadece veriyi getir
+      setIsEditingAddress(true); // Düzenleme modunu kapalı başlat
     }
     if (selectedMenu === "profile") {
       setIsEditingProfile(false);
@@ -84,6 +86,7 @@ const UserAccountPage = () => {
 
   const profileForm = (
     <Form
+
       key={userInfo?.email}
       layout="vertical"
       onFinish={handleProfileUpdate}
@@ -210,6 +213,9 @@ const UserAccountPage = () => {
     { key: "profile", label: "Hesap Bilgilerim" },
     { key: "address", label: "Adreslerim" },
     { key: "orders", label: "Siparişlerim" },
+
+
+
   ];
 
   return (
