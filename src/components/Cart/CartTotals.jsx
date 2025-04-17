@@ -1,7 +1,7 @@
 /********************************************************
  * /Applications/Works/e-commerce/frontend/src/components/CartTotals.jsx
  ********************************************************/
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useCallback } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { CartContext } from "../../context/CartProvider";
 import { message, Modal, Spin } from "antd";
@@ -18,11 +18,7 @@ const CartTotals = () => {
 
   const [userInfo, setUserInfo] = useState(null);
 
-  useEffect(() => {
-    fetchUserInfo();
-  }, []);
-
-  const fetchUserInfo = async () => {
+  const fetchUserInfo = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
       if (res.ok) {
@@ -35,14 +31,9 @@ const CartTotals = () => {
       console.error("fetchUserInfo error:", error);
       message.error("Kullanıcı bilgisi alınamadı.");
     }
-  };
+  }, [apiUrl]);
 
-  useEffect(() => {
-    if (!userInfo) return;
-    fetchAddress();
-  }, [userInfo]);
-
-  const fetchAddress = async () => {
+  const fetchAddress = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/address`);
       if (res.ok) {
@@ -55,7 +46,16 @@ const CartTotals = () => {
       console.error("Adres bilgisi alınamadı:", error);
       message.error("Bir hata oluştu.");
     }
-  };
+  }, [apiUrl]);
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, [fetchUserInfo]);
+
+  useEffect(() => {
+    if (!userInfo) return;
+    fetchAddress();
+  }, [userInfo, fetchAddress]);
 
   const cartItemTotals = cartItems.map((item) => item.price * item.quantity);
   const subTotals = cartItemTotals.reduce((prev, curr) => prev + curr, 0);

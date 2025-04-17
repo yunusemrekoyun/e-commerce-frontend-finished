@@ -1,3 +1,6 @@
+/*
+ * /Applications/Works/e-commerce/frontend/src/pages/Admin/Categories/CategoryPage.jsx
+ */
 import { Button, Popconfirm, Space, Table, message } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,22 +11,52 @@ const CategoryPage = () => {
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
+  const fetchCategories = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${apiUrl}/api/categories`);
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setDataSource(data);
+    } catch {
+      message.error("Veri getirme başarısız.");
+    } finally {
+      setLoading(false);
+    }
+  }, [apiUrl]);
+
+  const deleteCategory = async (categoryId) => {
+    try {
+      const res = await fetch(`${apiUrl}/api/categories/${categoryId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error();
+      message.success("Kategori silindi.");
+      fetchCategories();
+    } catch {
+      message.error("Silme hatası.");
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
   const columns = [
     {
-      title: "Kategori Görseli",
-      dataIndex: "img",
-      key: "img",
-      render: (imgSrc) => <img src={imgSrc} alt="Image" width={100} />,
-    },
-    {
-      title: "Name",
+      title: "Kategori",
       dataIndex: "name",
       key: "name",
       render: (text) => <b>{text}</b>,
     },
     {
+      title: "Markalar",
+      dataIndex: "brands",
+      key: "brands",
+      render: (brands) => brands.join(", "),
+    },
+    {
       title: "Actions",
-      dataIndex: "actions",
       key: "actions",
       render: (_, record) => (
         <Space>
@@ -34,10 +67,10 @@ const CategoryPage = () => {
             Güncelle
           </Button>
           <Popconfirm
-            title="Kategoriyi Sil"
-            description="Kategoriyi silmek istediğinizden emin misiniz?"
-            okText="Yes"
-            cancelText="No"
+            title="Kategoriyi sil"
+            description="Silmek istediğinizden emin misiniz?"
+            okText="Evet"
+            cancelText="Hayır"
             onConfirm={() => deleteCategory(record._id)}
           >
             <Button type="primary" danger>
@@ -49,51 +82,11 @@ const CategoryPage = () => {
     },
   ];
 
-  const fetchCategories = useCallback(async () => {
-    setLoading(true);
-
-    try {
-      const response = await fetch(`${apiUrl}/api/categories`);
-
-      if (response.ok) {
-        const data = await response.json();
-        setDataSource(data);
-      } else {
-        message.error("Veri getirme başarısız.");
-      }
-    } catch (error) {
-      console.log("Veri hatası:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [apiUrl]);
-
-  const deleteCategory = async (categoryId) => {
-    try {
-      const response = await fetch(`${apiUrl}/api/categories/${categoryId}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        message.success("Kategori başarıyla silindi.");
-        fetchCategories();
-      } else {
-        message.error("Silme işlemi başarısız.");
-      }
-    } catch (error) {
-      console.log("Silme hatası:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
-
   return (
     <Table
+      rowKey="_id"
       dataSource={dataSource}
       columns={columns}
-      rowKey={(record) => record._id}
       loading={loading}
     />
   );
