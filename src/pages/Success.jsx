@@ -1,13 +1,15 @@
 // src/pages/Success.jsx
 import { Button, Result } from "antd";
 import { useContext, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartProvider";
 import { fetchWithAuth } from "../components/Auth/fetchWithAuth";
+import { isAdmin } from "../config/isAdmin";
 
 const Success = () => {
   const { cartItems, setCartItems } = useContext(CartContext);
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const navigate = useNavigate();
 
   const finalizeOrder = useCallback(async () => {
     try {
@@ -66,9 +68,18 @@ const Success = () => {
             <Link to="/" key="home">
               <Button type="primary">Ana Sayfa</Button>
             </Link>,
-            <Link to="/admin/orders" key="order">
-              <Button>Siparişlerim</Button>
-            </Link>,
+            <Button
+              key="order"
+              onClick={() => {
+                if (isAdmin()) {
+                  navigate("/admin/orders");
+                } else {
+                  navigate("/account");
+                }
+              }}
+            >
+              Siparişlerim
+            </Button>,
           ]}
         />
       </div>

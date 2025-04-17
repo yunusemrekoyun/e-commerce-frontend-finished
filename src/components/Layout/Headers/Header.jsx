@@ -3,28 +3,42 @@
  ********************************************************/
 
 import { useContext, useState } from "react";
-import Proptypes from "prop-types";
+import PropTypes from "prop-types";
 import { Link, useLocation } from "react-router-dom";
+import { Modal } from "antd";
 import { CartContext } from "../../../context/CartProvider";
 import "./Header.css";
+
+const { confirm } = Modal;
 
 const Header = ({ setIsSearchShow }) => {
   const { cartItems } = useContext(CartContext);
   const { pathname } = useLocation();
 
-  const [token] = useState(localStorage.getItem("token") || "");
+  // Her render'da güncel token'ı oku
+  const token = localStorage.getItem("token");
 
-  // ✅ Menü açık mı?
+  // Menü açık/kapalı state'i
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
-  const handleLogout = () => {
-    if (window.confirm("Çıkış yapmak istediğinize emin misiniz?")) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("isAdmin");
-      window.location.href = "/";
-    }
+  // Gerçek çıkış işlemi
+  const doLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("isAdmin");
+    window.location.href = "/";
+  };
+
+  // AntD confirm modal ile sorma
+  const showLogoutConfirm = () => {
+    confirm({
+      title: "Çıkış Yap",
+      content: "Çıkış yapmak istediğinize emin misiniz?",
+      okText: "Evet",
+      cancelText: "Hayır",
+      onOk: doLogout,
+    });
   };
 
   return (
@@ -37,29 +51,37 @@ const Header = ({ setIsSearchShow }) => {
               <i className="bi bi-list" id="btn-menu" onClick={toggleMenu}></i>
             </div>
 
+            {/* Logo */}
             <div className="header-left">
-              <Link to={"/"} className="logo">
+              <Link to="/" className="logo">
                 LOGO
               </Link>
             </div>
 
-            {/* Menü içerik - responsive */}
-            <div className={`header-center ${isMenuOpen ? "open" : ""}`} id="sidebar">
+            {/* Navigasyon */}
+            <div
+              className={`header-center ${isMenuOpen ? "open" : ""}`}
+              id="sidebar"
+            >
               <nav className="navigation">
                 <ul className="menu-list">
                   <li>
                     <Link
-                      to={"/"}
-                      className={`menu-link ${pathname === "/" && "active"}`}
-                      onClick={() => setIsMenuOpen(false)} // ✅ Menü kapansın
+                      to="/"
+                      className={`menu-link ${
+                        pathname === "/" ? "active" : ""
+                      }`}
+                      onClick={() => setIsMenuOpen(false)}
                     >
                       ANA SAYFA
                     </Link>
                   </li>
                   <li>
                     <Link
-                      to={"/shop"}
-                      className={`menu-link ${pathname === "/shop" && "active"}`}
+                      to="/shop"
+                      className={`menu-link ${
+                        pathname.startsWith("/shop") ? "active" : ""
+                      }`}
                       onClick={() => setIsMenuOpen(false)}
                     >
                       MAĞAZA
@@ -67,8 +89,10 @@ const Header = ({ setIsSearchShow }) => {
                   </li>
                   <li>
                     <Link
-                      to={"/blog"}
-                      className={`menu-link ${pathname === "/blog" && "active"}`}
+                      to="/blog"
+                      className={`menu-link ${
+                        pathname === "/blog" ? "active" : ""
+                      }`}
                       onClick={() => setIsMenuOpen(false)}
                     >
                       HAKKIMIZDA
@@ -76,8 +100,10 @@ const Header = ({ setIsSearchShow }) => {
                   </li>
                   <li>
                     <Link
-                      to={"/contact"}
-                      className={`menu-link ${pathname === "/contact" && "active"}`}
+                      to="/contact"
+                      className={`menu-link ${
+                        pathname === "/contact" ? "active" : ""
+                      }`}
                       onClick={() => setIsMenuOpen(false)}
                     >
                       İLETİŞİM
@@ -85,10 +111,9 @@ const Header = ({ setIsSearchShow }) => {
                   </li>
                 </ul>
               </nav>
-
               {/* Kapatma ikonu */}
               <i
-                className="bi-x-circle"
+                className="bi bi-x-circle"
                 id="close-sidebar"
                 onClick={() => setIsMenuOpen(false)}
               ></i>
@@ -97,6 +122,7 @@ const Header = ({ setIsSearchShow }) => {
             {/* Sağ simgeler */}
             <div className="header-right">
               <div className="header-right-links">
+                {/* Profil / Giriş */}
                 <Link
                   to={token ? "/account" : "/auth"}
                   className="header-account"
@@ -104,24 +130,32 @@ const Header = ({ setIsSearchShow }) => {
                 >
                   <i className="bi bi-person"></i>
                 </Link>
+
+                {/* Arama butonu */}
                 <button
                   className="search-button"
                   onClick={() => setIsSearchShow(true)}
                 >
                   <i className="bi bi-search"></i>
                 </button>
+
+                {/* Sepet */}
                 <div className="header-cart">
                   <Link
-                    to={"/cart"}
+                    to="/cart"
                     className="header-cart-link"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <i className="bi bi-bag"></i>
-                    <span className="header-cart-count">{cartItems.length}</span>
+                    <span className="header-cart-count">
+                      {cartItems.length}
+                    </span>
                   </Link>
                 </div>
+
+                {/* Çıkış butonu */}
                 {token && (
-                  <button className="exit-button" onClick={handleLogout}>
+                  <button className="exit-button" onClick={showLogoutConfirm}>
                     <i className="bi bi-box-arrow-right"></i>
                   </button>
                 )}
@@ -135,7 +169,7 @@ const Header = ({ setIsSearchShow }) => {
 };
 
 Header.propTypes = {
-  setIsSearchShow: Proptypes.func,
+  setIsSearchShow: PropTypes.func,
 };
 
 export default Header;
