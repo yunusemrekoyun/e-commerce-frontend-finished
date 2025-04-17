@@ -8,6 +8,7 @@ import { fetchWithAuth } from "../components/Auth/fetchWithAuth";
 
 // react-phone-input-2 için
 import PhoneInput from "react-phone-input-2";
+import PhoneInput from "react-phone-input-2"
 import "react-phone-input-2/lib/style.css";
 
 // Sipariş detay modalı
