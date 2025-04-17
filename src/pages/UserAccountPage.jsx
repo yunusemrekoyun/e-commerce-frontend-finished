@@ -42,9 +42,6 @@ const UserAccountPage = () => {
 
   useEffect(() => {
     if (selectedMenu === "address" && userInfo) {
-      fetchAddress().then(() => {
-        setIsEditingAddress(true); // veriler geldikten sonra düzenleme moduna geç
-      });
     }
     if (selectedMenu === "profile") {
       setIsEditingProfile(false);
