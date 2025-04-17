@@ -38,6 +38,8 @@ const ProductDetailsModal = ({
       <ProductDetails
         singleProduct={convertedProduct}
         setSingleProduct={setSingleProduct}
+        compact={true} // ✅ sadece görsel gelecek şekilde
+
       />
     </Modal>
   );

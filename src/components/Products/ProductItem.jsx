@@ -58,7 +58,7 @@ const ProductItem = ({ productItem }) => {
             <li><i className="bi bi-star-fill"></i></li>
             <li><i className="bi bi-star-fill"></i></li>
             <li><i className="bi bi-star-fill"></i></li>
-            <li><i className="bi bi-star-half"></i></li>
+            <li><i className="bi bi-star-full"></i></li>
           </ul>
           <div className="product-prices">
             <strong className="new-price">${discountedPrice.toFixed(2)}</strong>

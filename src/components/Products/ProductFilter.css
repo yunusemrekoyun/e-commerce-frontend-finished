@@ -102,8 +102,9 @@
 
 .filter-item:hover span {
   background: linear-gradient(90deg, #4f46e5, #8b5cf6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  background-clip: text;                 /* ✅ Standart olan bu */
+  -webkit-background-clip: text;         /* ✅ WebKit (Safari, eski Chrome) için */
+  -webkit-text-fill-color: transparent;  /* ✅ WebKit için şeffaf yazı */
   font-weight: 600;
   transform: translateX(2px);
 }
