@@ -5,12 +5,8 @@ import { Layout, Menu, Table, Form, Input, Button, message } from "antd";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchWithAuth } from "../components/Auth/fetchWithAuth";
-
-// react-phone-input-2 için
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-
-// Sipariş detay modalı
 import OrderDetailsModal from "../components/Orders/OrderDetailModal";
 
 const { Sider, Content } = Layout;
@@ -22,53 +18,13 @@ const UserAccountPage = () => {
   const [selectedMenu, setSelectedMenu] = useState("profile");
   const [userInfo, setUserInfo] = useState(null);
   const [addressData, setAddressData] = useState(null);
-
-  /*** ORDERS ***/
   const [orders, setOrders] = useState([]);
   const [modalOrder, setModalOrder] = useState(null);
 
-  const fetchOrders = async () => {
-    try {
-      const res = await fetchWithAuth(`${apiUrl}/api/orders`);
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      setOrders(data);
-    } catch {
-      message.error("Siparişler alınamadı.");
-    }
-  };
-
-  useEffect(() => {
-    if (selectedMenu === "orders") {
-      fetchOrders();
-    }
-  }, [selectedMenu]);
-
-  const ordersColumns = [
-    {
-      title: "Sipariş No",
-      dataIndex: "_id",
-      key: "_id",
-      render: (id, record) => (
-        <a onClick={() => setModalOrder(record)}>{id.slice(-6)}</a>
-      ),
-    },
-    {
-      title: "Tarih",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (d) => new Date(d).toLocaleDateString(),
-    },
-    {
-      title: "Durum",
-      dataIndex: "status",
-      key: "status",
-      render: (s) => s || "Processing",
-    },
-  ];
-
-  /*** USER INFO ***/
   const [profileForm] = Form.useForm();
+  const [addressForm] = Form.useForm();
+
+  /*** FETCH USER ***/
   const fetchUserInfo = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
@@ -84,8 +40,7 @@ const UserAccountPage = () => {
     }
   }, [apiUrl, navigate, profileForm]);
 
-  /*** ADDRESS INFO ***/
-  const [addressForm] = Form.useForm();
+  /*** FETCH ADDRESS ***/
   const fetchAddress = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/address`);
@@ -98,9 +53,22 @@ const UserAccountPage = () => {
     }
   }, [apiUrl]);
 
+  /*** FETCH ORDERS ***/
+  const fetchOrders = useCallback(async () => {
+    try {
+      const res = await fetchWithAuth(`${apiUrl}/api/orders`);
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setOrders(data);
+    } catch {
+      message.error("Siparişler alınamadı.");
+    }
+  }, [apiUrl]);
+
   useEffect(() => {
     fetchUserInfo();
   }, [fetchUserInfo]);
+
   useEffect(() => {
     if (selectedMenu === "address") {
       fetchAddress();
@@ -112,8 +80,17 @@ const UserAccountPage = () => {
         phone: addressData?.phone || "",
         city: addressData?.city || "",
       });
+    } else if (selectedMenu === "orders") {
+      fetchOrders();
     }
-  }, [selectedMenu, userInfo, addressData, fetchAddress, addressForm]);
+  }, [
+    selectedMenu,
+    userInfo,
+    addressData,
+    fetchAddress,
+    fetchOrders,
+    addressForm,
+  ]);
 
   /*** PROFİL & ŞİFRE GÜNCELLEME ***/
   const handleProfileSubmit = async (values) => {
@@ -127,6 +104,7 @@ const UserAccountPage = () => {
           body: JSON.stringify({ username }),
         }
       );
+
       if (!profileRes.ok) throw new Error("Profil güncelleme başarısız.");
 
       if (oldPassword) {
@@ -219,7 +197,6 @@ const UserAccountPage = () => {
     </Form>
   );
 
-  /*** ADRES FORMU ***/
   const handleAddressSubmit = async (vals) => {
     try {
       const url = addressData
@@ -301,7 +278,28 @@ const UserAccountPage = () => {
           {selectedMenu === "orders" && (
             <Table
               dataSource={orders}
-              columns={ordersColumns}
+              columns={[
+                {
+                  title: "Sipariş No",
+                  dataIndex: "_id",
+                  key: "_id",
+                  render: (id, record) => (
+                    <a onClick={() => setModalOrder(record)}>{id.slice(-6)}</a>
+                  ),
+                },
+                {
+                  title: "Tarih",
+                  dataIndex: "createdAt",
+                  key: "createdAt",
+                  render: (d) => new Date(d).toLocaleDateString(),
+                },
+                {
+                  title: "Durum",
+                  dataIndex: "status",
+                  key: "status",
+                  render: (s) => s || "Processing",
+                },
+              ]}
               rowKey={(rec) => rec._id}
               pagination={{ pageSize: 5 }}
             />
@@ -311,7 +309,6 @@ const UserAccountPage = () => {
         </Content>
       </Layout>
 
-      {/* Sipariş Detayları Modalı */}
       <OrderDetailsModal
         visible={!!modalOrder}
         onClose={() => setModalOrder(null)}
