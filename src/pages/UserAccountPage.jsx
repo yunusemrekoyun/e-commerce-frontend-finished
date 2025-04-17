@@ -14,57 +14,49 @@ const { Sider, Content } = Layout;
 
 const UserAccountPage = () => {
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
   const [selectedMenu, setSelectedMenu] = useState("profile");
   const [userInfo, setUserInfo] = useState(null);
   const [addressData, setAddressData] = useState(null);
 
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
-
-  // adres formu için form instance
-  const [addressForm] = Form.useForm();
-
+  /*** USER INFO ***/
+  const [profileForm] = Form.useForm();
   const fetchUserInfo = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
-      if (res.ok) {
-        const data = await res.json();
-        setUserInfo(data);
-      } else {
-        navigate("/");
-      }
+      if (!res.ok) return navigate("/");
+      const data = await res.json();
+      setUserInfo(data);
+      profileForm.setFieldsValue({
+        username: data.username,
+        email: data.email,
+      });
     } catch {
       navigate("/");
     }
-  }, [apiUrl, navigate]);
+  }, [apiUrl, navigate, profileForm]);
 
+  /*** ADDRESS INFO ***/
+  const [addressForm] = Form.useForm();
   const fetchAddress = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/address`);
       if (res.ok) {
-        const data = await res.json();
-        setAddressData(data[0] || null);
-      } else {
-        message.error("Adres bilgisi alınamadı.");
+        const arr = await res.json();
+        setAddressData(arr[0] || null);
       }
     } catch {
-      message.error("Bir hata oluştu.");
+      message.error("Adres bilgisi alınamadı.");
     }
   }, [apiUrl]);
 
   useEffect(() => {
     fetchUserInfo();
   }, [fetchUserInfo]);
-
-  useEffect(() => {
-    if (selectedMenu === "address" && userInfo) {
-      fetchAddress();
-    }
-  }, [selectedMenu, userInfo, fetchAddress]);
-
-  // addressData geldiğinde formu doldur
   useEffect(() => {
     if (selectedMenu === "address") {
+      fetchAddress();
       addressForm.setFieldsValue({
         email: userInfo?.email,
         name: addressData?.name || "",
@@ -74,74 +66,113 @@ const UserAccountPage = () => {
         city: addressData?.city || "",
       });
     }
-  }, [addressData, userInfo, selectedMenu, addressForm]);
+  }, [selectedMenu, userInfo, addressData, fetchAddress, addressForm]);
 
-  const handleAddressSubmit = async (values) => {
+  /*** PROFİL & ŞİFRE GÜNCELLEME ***/
+  const handleProfileSubmit = async (values) => {
     try {
-      const url = addressData
-        ? `${apiUrl}/api/address/${addressData._id}`
-        : `${apiUrl}/api/address/add`;
-      const method = addressData ? "PUT" : "POST";
+      // 1) Kullanıcı adı güncelle
+      const { username, oldPassword, newPassword, confirmPassword } = values;
+      const profileRes = await fetchWithAuth(
+        `${apiUrl}/api/users/${userInfo.email}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username }),
+        }
+      );
+      if (!profileRes.ok) throw new Error("Profil güncelleme başarısız.");
 
-      const res = await fetchWithAuth(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      if (!res.ok) {
-        return message.error("Adres işlemi başarısız.");
+      // 2) Eğer eski şifre girilmişse, şifre değiştir
+      if (oldPassword) {
+        const passRes = await fetchWithAuth(
+          `${apiUrl}/api/auth/change-password`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ oldPassword, newPassword, confirmPassword }),
+          }
+        );
+        if (!passRes.ok) {
+          const err = await passRes.json();
+          throw new Error(err.error || "Şifre güncelleme başarısız.");
+        }
+        message.success("Şifreniz başarıyla güncellendi.");
       }
-      const json = await res.json();
-      // POST: json.address, PUT: json.address
-      setAddressData(json.address);
-      message.success("Adres başarıyla kaydedildi.");
+
+      message.success("Profiliniz güncellendi.");
+      fetchUserInfo(); // en güncel veriyi çek
+      profileForm.resetFields([
+        "oldPassword",
+        "newPassword",
+        "confirmPassword",
+      ]);
     } catch (err) {
-      console.error(err);
-      message.error("Bir hata oluştu.");
+      message.error(err.message);
     }
   };
 
-  // Profil formu
-  const [profileForm] = Form.useForm();
-  const handleProfileUpdate = async (values) => {
-    try {
-      const res = await fetchWithAuth(`${apiUrl}/api/users/${values.email}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      if (!res.ok) {
-        return message.error("Profil güncellenemedi.");
-      }
-      message.success("Profil güncellendi.");
-    } catch {
-      message.error("Profil güncelleme hatası.");
-    }
-  };
-
-  const profileFormJsx = userInfo && (
+  const profileFormJsx = (
     <Form
       form={profileForm}
       layout="vertical"
-      onFinish={handleProfileUpdate}
-      initialValues={{
-        username: userInfo.username,
-        email: userInfo.email,
-        phone: userInfo.phone,
-      }}
+      onFinish={handleProfileSubmit}
+      initialValues={{}}
     >
-      <Form.Item label="Kullanıcı Adı" name="username">
+      <Form.Item
+        label="Kullanıcı Adı"
+        name="username"
+        rules={[{ required: true }]}
+      >
         <Input />
       </Form.Item>
       <Form.Item label="E-posta" name="email">
         <Input disabled />
       </Form.Item>
-      <Form.Item label="Eski Şifre" name="oldPassword">
-        <Input.Password placeholder="******" />
+
+      <Form.Item
+        label="Eski Şifre"
+        name="oldPassword"
+        tooltip="Şifrenizi değiştirmek için girin"
+      >
+        <Input.Password placeholder="Eski şifreniz" />
       </Form.Item>
-      <Form.Item label="Yeni Şifre" name="newPassword">
-        <Input.Password placeholder="Yeni şifrenizi girin" />
+      <Form.Item
+        label="Yeni Şifre"
+        name="newPassword"
+        dependencies={["oldPassword"]}
+        rules={[
+          ({ getFieldValue }) => ({
+            validator(_, value) {
+              if (!getFieldValue("oldPassword")) return Promise.resolve();
+              if (!value) return Promise.reject("Yeni şifre zorunlu.");
+              if (value.length < 6)
+                return Promise.reject("En az 6 karakter girin.");
+              return Promise.resolve();
+            },
+          }),
+        ]}
+      >
+        <Input.Password placeholder="Yeni şifreniz" />
       </Form.Item>
+      <Form.Item
+        label="Yeni Şifre (Tekrar)"
+        name="confirmPassword"
+        dependencies={["newPassword"]}
+        rules={[
+          ({ getFieldValue }) => ({
+            validator(_, value) {
+              if (!getFieldValue("newPassword")) return Promise.resolve();
+              if (value !== getFieldValue("newPassword"))
+                return Promise.reject("Şifreler eşleşmiyor.");
+              return Promise.resolve();
+            },
+          }),
+        ]}
+      >
+        <Input.Password placeholder="Yeni şifreniz (tekrar)" />
+      </Form.Item>
+
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Güncelle
@@ -150,7 +181,27 @@ const UserAccountPage = () => {
     </Form>
   );
 
-  // Adres formu JSX
+  /*** ADRES FORMU ***/
+  const handleAddressSubmit = async (vals) => {
+    try {
+      const url = addressData
+        ? `${apiUrl}/api/address/${addressData._id}`
+        : `${apiUrl}/api/address/add`;
+      const method = addressData ? "PUT" : "POST";
+      const res = await fetchWithAuth(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(vals),
+      });
+      if (!res.ok) throw new Error();
+      const { address } = await res.json();
+      setAddressData(address);
+      message.success("Adres kaydedildi.");
+    } catch {
+      message.error("Adres işleminde hata.");
+    }
+  };
+
   const addressFormJsx = (
     <Form form={addressForm} layout="vertical" onFinish={handleAddressSubmit}>
       <Form.Item label="E-posta" name="email">
@@ -176,9 +227,7 @@ const UserAccountPage = () => {
           masks={{ tr: "(...) ... .. .." }}
           countryCodeEditable={false}
           enableAreaCodes={false}
-          inputProps={{ name: "phone" }}
-          value={addressForm.getFieldValue("phone")}
-          onChange={(value) => addressForm.setFieldsValue({ phone: value })}
+          onChange={(v) => addressForm.setFieldsValue({ phone: v })}
         />
       </Form.Item>
       <Form.Item label="Şehir" name="city">
@@ -192,6 +241,7 @@ const UserAccountPage = () => {
     </Form>
   );
 
+  /*** ORDERS ***/
   const ordersData = [
     { key: "1", orderNumber: "12345", date: "2023-01-01", status: "Delivered" },
     {
@@ -202,7 +252,7 @@ const UserAccountPage = () => {
     },
   ];
   const ordersColumns = [
-    { title: "Sipariş Numarası", dataIndex: "orderNumber", key: "orderNumber" },
+    { title: "Sipariş No", dataIndex: "orderNumber", key: "orderNumber" },
     { title: "Tarih", dataIndex: "date", key: "date" },
     { title: "Durum", dataIndex: "status", key: "status" },
   ];
@@ -230,7 +280,7 @@ const UserAccountPage = () => {
             <Table
               dataSource={ordersData}
               columns={ordersColumns}
-              pagination={{ pageSize: 10 }}
+              pagination={{ pageSize: 5 }}
             />
           )}
           {selectedMenu === "profile" && profileFormJsx}
