@@ -1,10 +1,10 @@
 /********************************************************
  * /Applications/Works/e-commerce/frontend/src/components/Reviews/ReviewForm.jsx
  ********************************************************/
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { message } from "antd";
-import { fetchWithAuth } from "../Auth/fetchWithAuth"; // ✅
+import { fetchWithAuth } from "../Auth/fetchWithAuth";
 
 const ReviewForm = ({ singleProduct, setSingleProduct }) => {
   const [rating, setRating] = useState(0);
@@ -13,11 +13,7 @@ const ReviewForm = ({ singleProduct, setSingleProduct }) => {
 
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-  useEffect(() => {
-    fetchUserInfo();
-  }, []);
-
-  const fetchUserInfo = async () => {
+  const fetchUserInfo = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
       if (res.ok) {
@@ -29,7 +25,11 @@ const ReviewForm = ({ singleProduct, setSingleProduct }) => {
     } catch (error) {
       console.log("fetchUserInfo error:", error);
     }
-  };
+  }, [apiUrl]);
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, [fetchUserInfo]);
 
   const handleRatingChange = (e, newRating) => {
     e.preventDefault();

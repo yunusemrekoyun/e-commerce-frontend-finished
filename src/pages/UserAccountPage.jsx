@@ -2,9 +2,13 @@
  * /Applications/Works/e-commerce/frontend/src/pages/UserAccountPage.jsx
  ********************************************************/
 import { Layout, Menu, Table, Form, Input, Button, message } from "antd";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchWithAuth } from "../components/Auth/fetchWithAuth"; // ✅
+import { fetchWithAuth } from "../components/Auth/fetchWithAuth";
+
+// react-phone-input-2 için
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 const { Sider, Content } = Layout;
 
@@ -12,106 +16,132 @@ const UserAccountPage = () => {
   const navigate = useNavigate();
 
   const [selectedMenu, setSelectedMenu] = useState("profile");
-
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [isEditingAddress, setIsEditingAddress] = useState(false);
-
   const [userInfo, setUserInfo] = useState(null);
   const [addressData, setAddressData] = useState(null);
 
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-  useEffect(() => {
-    fetchUserInfo();
-  }, []);
+  // adres formu için form instance
+  const [addressForm] = Form.useForm();
 
-  const fetchUserInfo = async () => {
+  const fetchUserInfo = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
       if (res.ok) {
         const data = await res.json();
         setUserInfo(data);
       } else {
-        return navigate("/");
+        navigate("/");
       }
-    } catch (error) {
-      console.error("fetchUserInfo error:", error);
-      return navigate("/");
+    } catch {
+      navigate("/");
     }
-  };
+  }, [apiUrl, navigate]);
 
-  useEffect(() => {
-    if (selectedMenu === "address" && userInfo) {
-      fetchAddress(); // Sadece veriyi getir
-      setIsEditingAddress(true); // Düzenleme modunu kapalı başlat
-    }
-    if (selectedMenu === "profile") {
-      setIsEditingProfile(false);
-    }
-  }, [selectedMenu, userInfo]);
-
-  const fetchAddress = async () => {
+  const fetchAddress = useCallback(async () => {
     try {
-      const response = await fetchWithAuth(`${apiUrl}/api/address`);
-      if (response.ok) {
-        const data = await response.json();
+      const res = await fetchWithAuth(`${apiUrl}/api/address`);
+      if (res.ok) {
+        const data = await res.json();
         setAddressData(data[0] || null);
       } else {
         message.error("Adres bilgisi alınamadı.");
       }
-    } catch (error) {
-      console.error("Adres bilgisi alınamadı:", error);
+    } catch {
+      message.error("Bir hata oluştu.");
+    }
+  }, [apiUrl]);
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, [fetchUserInfo]);
+
+  useEffect(() => {
+    if (selectedMenu === "address" && userInfo) {
+      fetchAddress();
+    }
+  }, [selectedMenu, userInfo, fetchAddress]);
+
+  // addressData geldiğinde formu doldur
+  useEffect(() => {
+    if (selectedMenu === "address") {
+      addressForm.setFieldsValue({
+        email: userInfo?.email,
+        name: addressData?.name || "",
+        address: addressData?.address || "",
+        district: addressData?.district || "",
+        phone: addressData?.phone || "",
+        city: addressData?.city || "",
+      });
+    }
+  }, [addressData, userInfo, selectedMenu, addressForm]);
+
+  const handleAddressSubmit = async (values) => {
+    try {
+      const url = addressData
+        ? `${apiUrl}/api/address/${addressData._id}`
+        : `${apiUrl}/api/address/add`;
+      const method = addressData ? "PUT" : "POST";
+
+      const res = await fetchWithAuth(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+      if (!res.ok) {
+        return message.error("Adres işlemi başarısız.");
+      }
+      const json = await res.json();
+      // POST: json.address, PUT: json.address
+      setAddressData(json.address);
+      message.success("Adres başarıyla kaydedildi.");
+    } catch (err) {
+      console.error(err);
       message.error("Bir hata oluştu.");
     }
   };
 
+  // Profil formu
+  const [profileForm] = Form.useForm();
   const handleProfileUpdate = async (values) => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/users/${values.email}`, {
         method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-
       if (!res.ok) {
         return message.error("Profil güncellenemedi.");
       }
-
-      message.success("Profile updated successfully.");
-      setIsEditingProfile(false);
-    } catch (error) {
-      console.error("Profile update error:", error);
+      message.success("Profil güncellendi.");
+    } catch {
       message.error("Profil güncelleme hatası.");
     }
   };
 
-  const profileForm = (
+  const profileFormJsx = userInfo && (
     <Form
-
-      key={userInfo?.email}
+      form={profileForm}
       layout="vertical"
       onFinish={handleProfileUpdate}
       initialValues={{
-        username: userInfo?.username || "",
-        email: userInfo?.email || "",
-        phone: userInfo?.phone || "", // telefon numarası
+        username: userInfo.username,
+        email: userInfo.email,
+        phone: userInfo.phone,
       }}
     >
       <Form.Item label="Kullanıcı Adı" name="username">
         <Input />
       </Form.Item>
-
       <Form.Item label="E-posta" name="email">
         <Input disabled />
       </Form.Item>
-
       <Form.Item label="Eski Şifre" name="oldPassword">
         <Input.Password placeholder="******" />
       </Form.Item>
-
       <Form.Item label="Yeni Şifre" name="newPassword">
         <Input.Password placeholder="Yeni şifrenizi girin" />
       </Form.Item>
-
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Güncelle
@@ -120,75 +150,43 @@ const UserAccountPage = () => {
     </Form>
   );
 
-  const handleAddressUpdate = async (values) => {
-    if (!addressData) return;
-    try {
-      const res = await fetchWithAuth(
-        `${apiUrl}/api/address/${addressData._id}`,
-        {
-          method: "PUT",
-          body: JSON.stringify(values),
-        }
-      );
-      if (!res.ok) {
-        return message.error("Adres güncellenemedi.");
-      }
-      const updated = await res.json();
-      setAddressData(updated.address);
-      message.success("Adres başarıyla güncellendi.");
-      setIsEditingAddress(false);
-    } catch (error) {
-      console.error("Adres güncelleme hatası:", error);
-      message.error("Bir hata oluştu.");
-    }
-  };
-
-  const handleAddressAdd = async (values) => {
-    try {
-      const res = await fetchWithAuth(`${apiUrl}/api/address/add`, {
-        method: "POST",
-        body: JSON.stringify(values),
-      });
-      if (!res.ok) {
-        return message.error("Adres eklenemedi.");
-      }
-      const added = await res.json();
-      setAddressData(added.address);
-      message.success("Adres başarıyla eklendi.");
-      setIsEditingAddress(false);
-    } catch (error) {
-      console.error("Adres ekleme hatası:", error);
-      message.error("Bir hata oluştu.");
-    }
-  };
-
-  const hasAddress = !!addressData;
-  const addressForm = (
-    <Form
-      layout="vertical"
-      onFinish={hasAddress ? handleAddressUpdate : handleAddressAdd}
-      initialValues={addressData || {}}
-    >
+  // Adres formu JSX
+  const addressFormJsx = (
+    <Form form={addressForm} layout="vertical" onFinish={handleAddressSubmit}>
+      <Form.Item label="E-posta" name="email">
+        <Input disabled />
+      </Form.Item>
       <Form.Item label="Ad Soyad" name="name">
         <Input />
       </Form.Item>
-
       <Form.Item label="Adres" name="address">
         <Input />
       </Form.Item>
-
-      <Form.Item label="Adres(Opsiyonel)" name="district">
+      <Form.Item label="Adres (Opsiyonel)" name="district">
         <Input />
       </Form.Item>
-      <Form.Item label="Telefon Numarası" name="phone">
-        <Input />
+      <Form.Item
+        label="Telefon Numarası"
+        name="phone"
+        rules={[{ required: true, message: "Telefon numarası zorunludur!" }]}
+      >
+        <PhoneInput
+          country="tr"
+          onlyCountries={["tr"]}
+          masks={{ tr: "(...) ... .. .." }}
+          countryCodeEditable={false}
+          enableAreaCodes={false}
+          inputProps={{ name: "phone" }}
+          value={addressForm.getFieldValue("phone")}
+          onChange={(value) => addressForm.setFieldsValue({ phone: value })}
+        />
       </Form.Item>
       <Form.Item label="Şehir" name="city">
         <Input />
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">
-          {hasAddress ? "Adres Güncelle" : "Adres Ekle"}
+          {addressData ? "Güncelle" : "Ekle"}
         </Button>
       </Form.Item>
     </Form>
@@ -211,11 +209,8 @@ const UserAccountPage = () => {
 
   const menuItems = [
     { key: "profile", label: "Hesap Bilgilerim" },
-    { key: "address", label: "Adreslerim" },
+    { key: "address", label: "Adresim" },
     { key: "orders", label: "Siparişlerim" },
-
-
-
   ];
 
   return (
@@ -230,7 +225,7 @@ const UserAccountPage = () => {
         />
       </Sider>
       <Layout style={{ minHeight: "10vh" }}>
-        <Content style={{ padding: "24px", minHeight: 280 }}>
+        <Content style={{ padding: 24, minHeight: 280 }}>
           {selectedMenu === "orders" && (
             <Table
               dataSource={ordersData}
@@ -238,43 +233,8 @@ const UserAccountPage = () => {
               pagination={{ pageSize: 10 }}
             />
           )}
-
-          {selectedMenu === "profile" && userInfo && profileForm}
-
-          {selectedMenu === "profile" && isEditingProfile && profileForm}
-
-          {selectedMenu === "address" && !isEditingAddress && (
-            <>
-              {hasAddress ? (
-                <div>
-                  <h3>Mevcut Adres</h3>
-                  <p>Name: {addressData.name}</p>
-                  <p>Email: {addressData.email}</p>
-                  <p>Address: {addressData.address}</p>
-                  <p>City: {addressData.city}</p>
-                  <p>District: {addressData.district}</p>
-                  <Button
-                    type="primary"
-                    onClick={() => setIsEditingAddress(true)}
-                  >
-                    Düzenle
-                  </Button>
-                </div>
-              ) : (
-                <div>
-                  <p>Adres bilgisi bulunamadı.</p>
-                  <Button
-                    type="primary"
-                    onClick={() => setIsEditingAddress(true)}
-                  >
-                    Adres Ekle
-                  </Button>
-                </div>
-              )}
-            </>
-          )}
-
-          {selectedMenu === "address" && isEditingAddress && addressForm}
+          {selectedMenu === "profile" && profileFormJsx}
+          {selectedMenu === "address" && addressFormJsx}
         </Content>
       </Layout>
     </Layout>
