@@ -2,10 +2,8 @@
  * /Applications/Works/e-commerce/frontend/src/pages/UserAccountPage.jsx
  ********************************************************/
 import { Layout, Menu, Table, Form, Input, Button, message } from "antd";
-import { useState, useEffect } from "react";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchWithAuth } from "../components/Auth/fetchWithAuth"; // ✅
 import { fetchWithAuth } from "../components/Auth/fetchWithAuth";
 
 // react-phone-input-2 için
@@ -22,10 +20,6 @@ const UserAccountPage = () => {
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
   const [selectedMenu, setSelectedMenu] = useState("profile");
-
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [isEditingAddress, setIsEditingAddress] = useState(false);
-
   const [userInfo, setUserInfo] = useState(null);
   const [addressData, setAddressData] = useState(null);
 
