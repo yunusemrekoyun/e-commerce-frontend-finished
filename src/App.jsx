@@ -26,7 +26,7 @@ import UpdateCouponPage from "./pages/Admin/Coupons/UpdateCouponPage";
 import OrderPage from "./pages/Admin/OrderPage";
 import MainLayout from "./layouts/MainLayout";
 import AdminLayout from "./layouts/AdminLayout";
-import ProtectedAdminRoute from "./routes/ProtectedAdminRoute"; 
+import ProtectedAdminRoute from "./routes/ProtectedAdminRoute";
 import "./App.css";
 
 function App() {
@@ -43,6 +43,7 @@ function App() {
         <Route path="/blog/123" element={<BlogDetailsPage />} />
         <Route path="/success" element={<Success />} />
         <Route path="/account" element={<UserAccountPage />} />
+        <Route path="/shop/:category" element={<ShopPage />} />
         <Route path="*" element={<Outlet />} />
       </Route>
 

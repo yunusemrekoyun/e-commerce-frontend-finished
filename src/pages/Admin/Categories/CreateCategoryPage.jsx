@@ -1,57 +1,39 @@
-import { Button, Form, Input, Spin, message, Upload } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+/*
+ * /Applications/Works/e-commerce/frontend/src/pages/Admin/Categories/CreateCategoryPage.jsx
+ */
+import { Button, Form, Input, Select, message } from "antd";
 import { useState } from "react";
-import imageCompression from "browser-image-compression";
+import { useNavigate } from "react-router-dom";
 
-const compressImage = async (file) => {
-  const options = {
-    maxSizeMB: 0.2,
-    maxWidthOrHeight: 1024,
-    useWebWorker: true,
-  };
-  try {
-    const compressedFile = await imageCompression(file, options);
-    return compressedFile;
-  } catch (error) {
-    console.error("Sıkıştırma hatası:", error);
-    return file;
-  }
-};
+// const { Option } = Select; marka önerme eklentisi
 
 const CreateCategoryPage = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+  const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
   const onFinish = async (values) => {
     try {
       setLoading(true);
-
-      const formData = new FormData();
-      formData.append("name", values.name);
-
-      if (!values.img || values.img.length === 0) {
-        message.error("Lütfen kategori resmi seçin!");
-        return;
-      }
-
-      const fileObj = values.img[0].originFileObj;
-      const compressed = await compressImage(fileObj); // sıkıştırma
-      formData.append("img", compressed);
-
-      const response = await fetch(`${apiUrl}/api/categories`, {
+      const payload = {
+        name: values.name,
+        brands: values.brands || [],
+      };
+      const res = await fetch(`${apiUrl}/api/categories`, {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
-
-      if (response.ok) {
+      if (res.ok) {
         message.success("Kategori başarıyla oluşturuldu.");
         form.resetFields();
+        navigate("/admin/categories");
       } else {
-        message.error("Kategori oluşturulurken bir hata oluştu.");
+        message.error("Kategori oluşturulurken hata oluştu.");
       }
     } catch (error) {
-      console.log("Kategori oluşturma hatası:", error);
+      console.error(error);
       message.error("Bir hata oluştu.");
     } finally {
       setLoading(false);
@@ -59,43 +41,37 @@ const CreateCategoryPage = () => {
   };
 
   return (
-    <Spin spinning={loading}>
-      <Form name="basic" layout="vertical" onFinish={onFinish} form={form}>
-        <Form.Item
-          label="Kategori İsmi"
-          name="name"
-          rules={[
-            {
-              required: true,
-              message: "Lütfen kategori adını girin!",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
+    <Form
+      form={form}
+      layout="vertical"
+      onFinish={onFinish}
+      initialValues={{ brands: [] }}
+    >
+      <Form.Item
+        label="Kategori İsmi"
+        name="name"
+        rules={[{ required: true, message: "Lütfen kategori adını girin!" }]}
+      >
+        <Input placeholder="Örn: Telefon" />
+      </Form.Item>
 
-        <Form.Item
-          label="Kategori Görseli"
-          name="img"
-          valuePropName="fileList"
-          getValueFromEvent={(e) => e?.fileList}
-          rules={[
-            {
-              required: true,
-              message: "Lütfen kategori görseli ekleyin!",
-            },
-          ]}
-        >
-          <Upload maxCount={1} beforeUpload={() => false} listType="picture">
-            <Button icon={<UploadOutlined />}>Dosya Seç</Button>
-          </Upload>
-        </Form.Item>
+      <Form.Item
+        label="Markalar"
+        name="brands"
+        tooltip="Bu kategoriye ait markaları girin"
+        rules={[{ required: true, message: "En az bir marka girin!" }]}
+      >
+        <Select mode="tags" placeholder="Marka ekle">
+          {/* Kullanıcı yeni tag ekledikçe marka listesi oluşur */}
+        </Select>
+      </Form.Item>
 
-        <Button type="primary" htmlType="submit">
+      <Form.Item>
+        <Button type="primary" htmlType="submit" loading={loading}>
           Oluştur
         </Button>
-      </Form>
-    </Spin>
+      </Form.Item>
+    </Form>
   );
 };
 
