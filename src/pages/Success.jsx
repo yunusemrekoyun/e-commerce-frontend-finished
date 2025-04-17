@@ -1,6 +1,6 @@
 // src/pages/Success.jsx
 import { Button, Result } from "antd";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { CartContext } from "../context/CartProvider";
 import { fetchWithAuth } from "../components/Auth/fetchWithAuth";
@@ -9,51 +9,51 @@ const Success = () => {
   const { cartItems, setCartItems } = useContext(CartContext);
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-  useEffect(() => {
-    const finalizeOrder = async () => {
-      try {
-        // 1) Kullanıcının adresini al
-        const addrRes = await fetchWithAuth(`${apiUrl}/api/address`);
-        if (!addrRes.ok) throw new Error("Adres alınamadı");
-        const addrData = await addrRes.json();
-        const address = addrData[0];
-        if (!address) throw new Error("Adres bulunamadı");
+  const finalizeOrder = useCallback(async () => {
+    try {
+      // 1) Kullanıcının adresini al
+      const addrRes = await fetchWithAuth(`${apiUrl}/api/address`);
+      if (!addrRes.ok) throw new Error("Adres alınamadı");
+      const addrData = await addrRes.json();
+      const address = addrData[0];
+      if (!address) throw new Error("Adres bulunamadı");
 
-        // 2) Sepette ürün yoksa kaydetme, direkt temizle
-        if (!cartItems.length) {
-          return setCartItems([]);
-        }
-
-        // 3) Order payload hazırla
-        const orderPayload = {
-          addressId: address._id,
-          items: cartItems.map((it) => ({
-            productId: it._id,
-            quantity: it.quantity,
-            price: it.price,
-          })),
-        };
-
-        // 4) POST /api/orders
-        const orderRes = await fetchWithAuth(`${apiUrl}/api/orders`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(orderPayload),
-        });
-        if (!orderRes.ok) {
-          console.error("Order creation failed:", await orderRes.json());
-        }
-      } catch (err) {
-        console.error("Finalize order error:", err);
-      } finally {
-        // 5) Sepeti temizle (her durumda bir kez)
-        setCartItems([]);
+      // 2) Sepette ürün yoksa kaydetme, direkt temizle
+      if (!cartItems.length) {
+        return setCartItems([]);
       }
-    };
 
+      // 3) Order payload hazırla
+      const orderPayload = {
+        addressId: address._id,
+        items: cartItems.map((it) => ({
+          productId: it._id,
+          quantity: it.quantity,
+          price: it.price,
+        })),
+      };
+
+      // 4) POST /api/orders
+      const orderRes = await fetchWithAuth(`${apiUrl}/api/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderPayload),
+      });
+
+      if (!orderRes.ok) {
+        console.error("Order creation failed:", await orderRes.json());
+      }
+    } catch (err) {
+      console.error("Finalize order error:", err);
+    } finally {
+      // 5) Sepeti temizle
+      setCartItems([]);
+    }
+  }, [apiUrl, cartItems, setCartItems]);
+
+  useEffect(() => {
     finalizeOrder();
-    // []: sadece component mount olduğunda bir kez çalışır
-  }, []);
+  }, [finalizeOrder]);
 
   return (
     <div className="success-page">
