@@ -7,9 +7,9 @@ export const fetchWithAuth = async (url, options = {}) => {
   let res = await fetch(url, {
     ...options,
     headers: {
-      ...options.headers,
-      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      ...options.headers, // sonradan gelen headers, ön tanımlıları gerektiğinde geçersiz kılsın
     },
   });
 
@@ -36,9 +36,9 @@ export const fetchWithAuth = async (url, options = {}) => {
     res = await fetch(url, {
       ...options,
       headers: {
-        ...options.headers,
-        Authorization: `Bearer ${refreshData.token}`,
         "Content-Type": "application/json",
+        Authorization: `Bearer ${refreshData.token}`,
+        ...options.headers,
       },
     });
   }

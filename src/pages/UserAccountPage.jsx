@@ -10,6 +10,9 @@ import { fetchWithAuth } from "../components/Auth/fetchWithAuth";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
+// Sipariş detay modalı
+import OrderDetailsModal from "../components/Orders/OrderDetailModal";
+
 const { Sider, Content } = Layout;
 
 const UserAccountPage = () => {
@@ -19,6 +22,50 @@ const UserAccountPage = () => {
   const [selectedMenu, setSelectedMenu] = useState("profile");
   const [userInfo, setUserInfo] = useState(null);
   const [addressData, setAddressData] = useState(null);
+
+  /*** ORDERS ***/
+  const [orders, setOrders] = useState([]);
+  const [modalOrder, setModalOrder] = useState(null);
+
+  const fetchOrders = async () => {
+    try {
+      const res = await fetchWithAuth(`${apiUrl}/api/orders`);
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setOrders(data);
+    } catch {
+      message.error("Siparişler alınamadı.");
+    }
+  };
+
+  useEffect(() => {
+    if (selectedMenu === "orders") {
+      fetchOrders();
+    }
+  }, [selectedMenu]);
+
+  const ordersColumns = [
+    {
+      title: "Sipariş No",
+      dataIndex: "_id",
+      key: "_id",
+      render: (id, record) => (
+        <a onClick={() => setModalOrder(record)}>{id.slice(-6)}</a>
+      ),
+    },
+    {
+      title: "Tarih",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (d) => new Date(d).toLocaleDateString(),
+    },
+    {
+      title: "Durum",
+      dataIndex: "status",
+      key: "status",
+      render: (s) => s || "Processing",
+    },
+  ];
 
   /*** USER INFO ***/
   const [profileForm] = Form.useForm();
@@ -71,7 +118,6 @@ const UserAccountPage = () => {
   /*** PROFİL & ŞİFRE GÜNCELLEME ***/
   const handleProfileSubmit = async (values) => {
     try {
-      // 1) Kullanıcı adı güncelle
       const { username, oldPassword, newPassword, confirmPassword } = values;
       const profileRes = await fetchWithAuth(
         `${apiUrl}/api/users/${userInfo.email}`,
@@ -83,7 +129,6 @@ const UserAccountPage = () => {
       );
       if (!profileRes.ok) throw new Error("Profil güncelleme başarısız.");
 
-      // 2) Eğer eski şifre girilmişse, şifre değiştir
       if (oldPassword) {
         const passRes = await fetchWithAuth(
           `${apiUrl}/api/auth/change-password`,
@@ -101,7 +146,7 @@ const UserAccountPage = () => {
       }
 
       message.success("Profiliniz güncellendi.");
-      fetchUserInfo(); // en güncel veriyi çek
+      fetchUserInfo();
       profileForm.resetFields([
         "oldPassword",
         "newPassword",
@@ -113,12 +158,7 @@ const UserAccountPage = () => {
   };
 
   const profileFormJsx = (
-    <Form
-      form={profileForm}
-      layout="vertical"
-      onFinish={handleProfileSubmit}
-      initialValues={{}}
-    >
+    <Form form={profileForm} layout="vertical" onFinish={handleProfileSubmit}>
       <Form.Item
         label="Kullanıcı Adı"
         name="username"
@@ -129,7 +169,6 @@ const UserAccountPage = () => {
       <Form.Item label="E-posta" name="email">
         <Input disabled />
       </Form.Item>
-
       <Form.Item
         label="Eski Şifre"
         name="oldPassword"
@@ -172,7 +211,6 @@ const UserAccountPage = () => {
       >
         <Input.Password placeholder="Yeni şifreniz (tekrar)" />
       </Form.Item>
-
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Güncelle
@@ -241,22 +279,6 @@ const UserAccountPage = () => {
     </Form>
   );
 
-  /*** ORDERS ***/
-  const ordersData = [
-    { key: "1", orderNumber: "12345", date: "2023-01-01", status: "Delivered" },
-    {
-      key: "2",
-      orderNumber: "67890",
-      date: "2023-02-01",
-      status: "Processing",
-    },
-  ];
-  const ordersColumns = [
-    { title: "Sipariş No", dataIndex: "orderNumber", key: "orderNumber" },
-    { title: "Tarih", dataIndex: "date", key: "date" },
-    { title: "Durum", dataIndex: "status", key: "status" },
-  ];
-
   const menuItems = [
     { key: "profile", label: "Hesap Bilgilerim" },
     { key: "address", label: "Adresim" },
@@ -278,8 +300,9 @@ const UserAccountPage = () => {
         <Content style={{ padding: 24, minHeight: 280 }}>
           {selectedMenu === "orders" && (
             <Table
-              dataSource={ordersData}
+              dataSource={orders}
               columns={ordersColumns}
+              rowKey={(rec) => rec._id}
               pagination={{ pageSize: 5 }}
             />
           )}
@@ -287,6 +310,13 @@ const UserAccountPage = () => {
           {selectedMenu === "address" && addressFormJsx}
         </Content>
       </Layout>
+
+      {/* Sipariş Detayları Modalı */}
+      <OrderDetailsModal
+        visible={!!modalOrder}
+        onClose={() => setModalOrder(null)}
+        order={modalOrder}
+      />
     </Layout>
   );
 };
