@@ -24,7 +24,6 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
         <li>
           <a
             href="#"
-            className={`tab-button ${activeTab === "desc" ? "active" : ""}`}
             className={
               activeTab === "desc" ? "tab-button active" : "tab-button"
             }
@@ -36,19 +35,17 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
         <li>
           <a
             href="#"
-            className={`tab-button ${activeTab === "info" ? "active" : ""}`}
             className={
               activeTab === "info" ? "tab-button active" : "tab-button"
             }
             onClick={(e) => handleTabClick(e, "info")}
           >
-            Additional Information
+            Additional information
           </a>
         </li>
         <li>
           <a
             href="#"
-            className={`tab-button ${activeTab === "reviews" ? "active" : ""}`}
             className={
               activeTab === "reviews" ? "tab-button active" : "tab-button"
             }
@@ -60,63 +57,6 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
       </ul>
 
       <div className="tab-panel">
-<<<<<<< HEAD
-        {/* Description Tab */}
-        <div
-          className={`tab-panel-descriptions content ${
-            activeTab === "desc" ? "active" : ""
-          }`}
-        >
-          <div
-            className="product-description"
-            dangerouslySetInnerHTML={{
-              __html: singleProduct.description || "No description available.",
-            }}
-          ></div>
-        </div>
-
-        {/* Additional Info Tab */}
-        <div
-          className={`tab-panel-information content ${
-            activeTab === "info" ? "active" : ""
-          }`}
-        >
-          <h3>Additional Information</h3>
-          <table>
-            <tbody>
-              {singleProduct.brand && (
-                <tr>
-                  <th>Brand</th>
-                  <td>{singleProduct.brand}</td>
-                </tr>
-              )}
-              {singleProduct.colors?.length > 0 && (
-                <tr>
-                  <th>Colors</th>
-                  <td>
-                    {singleProduct.colors.map((color, index) => (
-                      <span key={index}>
-                        {color}
-                        {index < singleProduct.colors.length - 1 && ", "}
-                      </span>
-                    ))}
-                  </td>
-                </tr>
-              )}
-              {singleProduct.sizes?.length > 0 && (
-                <tr>
-                  <th>Sizes</th>
-                  <td>
-                    {singleProduct.sizes.map((size, index) => (
-                      <span key={index}>
-                        {size.toUpperCase()}
-                        {index < singleProduct.sizes.length - 1 && ", "}
-                      </span>
-                    ))}
-                  </td>
-                </tr>
-              )}
-=======
         <div className={activeTab === "desc" ? "content active" : "content"}>
           <div
             className="product-description"
@@ -143,15 +83,10 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
                   )) || "-"}
                 </td>
               </tr>
->>>>>>> dev
             </tbody>
           </table>
         </div>
 
-<<<<<<< HEAD
-        {/* Reviews Tab */}
-=======
->>>>>>> dev
         <Reviews
           active={activeTab === "reviews" ? "content active" : "content"}
           singleProduct={singleProduct}
@@ -167,9 +102,4 @@ Tabs.propTypes = {
   setSingleProduct: PropTypes.func,
 };
 
-export default Tabs;<<<<<<< HEAD
-<<<<<<< HEAD
 export default Tabs;
-=======
-export default Tabs;
->>>>>>> dev
