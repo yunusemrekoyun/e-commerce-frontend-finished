@@ -1,28 +1,15 @@
+/* frontend/src/pages/Admin/UserPage.jsx */
 import { Button, Popconfirm, Table, message } from "antd";
 import { useCallback, useEffect, useState } from "react";
 
+/* /src/pages/Admin/UserPage.jsx */
 const UserPage = () => {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
   const columns = [
-    {
-      title: "Avatar",
-      dataIndex: "avatar",
-      key: "avatar",
-      render: (imgSrc) => (
-        <img
-          src={imgSrc}
-          alt="Avatar"
-          style={{
-            width: "50px",
-            height: "50px",
-            borderRadius: "50%",
-          }}
-        />
-      ),
-    },
+    // Avatar kolonu tamamen kaldırıldı
     {
       title: "Username",
       dataIndex: "username",
@@ -40,7 +27,6 @@ const UserPage = () => {
     },
     {
       title: "Actions",
-      dataIndex: "actions",
       key: "actions",
       render: (_, record) => (
         <Popconfirm
@@ -60,37 +46,35 @@ const UserPage = () => {
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
-
     try {
-      const response = await fetch(`${apiUrl}/api/users`);
-
-      if (response.ok) {
-        const data = await response.json();
-        setDataSource(data);
+      const res = await fetch(`${apiUrl}/api/users`);
+      if (res.ok) {
+        setDataSource(await res.json());
       } else {
         message.error("Veri getirme başarısız.");
       }
-    } catch (error) {
-      console.log("Veri hatası:", error);
+    } catch (err) {
+      console.error(err);
+      message.error("Veri hatası.");
     } finally {
       setLoading(false);
     }
   }, [apiUrl]);
 
-  const deleteUser = async (userEmail) => {
+  const deleteUser = async (email) => {
     try {
-      const response = await fetch(`${apiUrl}/api/users/${userEmail}`, {
+      const res = await fetch(`${apiUrl}/api/users/${email}`, {
         method: "DELETE",
       });
-
-      if (response.ok) {
-        message.success("Kullanıcı başarıyla silindi.");
+      if (res.ok) {
+        message.success("Kullanıcı silindi.");
         fetchUsers();
       } else {
-        message.error("Silme işlemi başarısız.");
+        message.error("Silme başarısız.");
       }
-    } catch (error) {
-      console.log("Silme hatası:", error);
+    } catch (err) {
+      console.error(err);
+      message.error("Silme hatası.");
     }
   };
 
@@ -102,7 +86,7 @@ const UserPage = () => {
     <Table
       dataSource={dataSource}
       columns={columns}
-      rowKey={(record) => record._id}
+      rowKey={(rec) => rec._id}
       loading={loading}
     />
   );

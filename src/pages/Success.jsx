@@ -2,7 +2,7 @@
 import { Button, Result } from "antd";
 import { useContext, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { CartContext } from "../context/CartProvider";
+import CartContext from "../context/CartContext";
 import { fetchWithAuth } from "../components/Auth/fetchWithAuth";
 import { isAdmin } from "../config/isAdmin";
 

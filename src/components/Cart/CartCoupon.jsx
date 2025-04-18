@@ -1,6 +1,6 @@
 import { message } from "antd";
 import { useContext, useState } from "react";
-import { CartContext } from "../../context/CartProvider";
+import  CartContext  from "../../context/CartContext";
 
 const CartCoupon = () => {
   const [couponCode, setCouponCode] = useState("");

@@ -1,7 +1,6 @@
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-
-export const CartContext = createContext();
+import CartContext from "./CartContext"; // ✅ buradan alıyoruz artık
 
 const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(
@@ -14,41 +13,39 @@ const CartProvider = ({ children }) => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const addToCart = (cartItem) => {
-    // setCartItems([...cartItems, cartItem]); 1. yol
-    setCartItems((prevCart) => [
-      ...prevCart,
-      {
-        ...cartItem,
-        quantity: cartItem.quantity ? cartItem.quantity : 1,
-      },
-    ]);
+  const addToCart = (newItem) => {
+    setCartItems((prevCart) => {
+      const existingItem = prevCart.find((item) => item._id === newItem._id);
+
+      if (existingItem) {
+        return prevCart.map((item) =>
+          item._id === newItem._id
+            ? { ...item, quantity: item.quantity + newItem.quantity }
+            : item
+        );
+      } else {
+        return [...prevCart, { ...newItem, quantity: newItem.quantity || 1 }];
+      }
+    });
   };
 
   const removeFromCart = (itemId) => {
-    const filteredCartItems = cartItems.filter((cartItem) => {
-      return cartItem._id !== itemId;
-    });
-
-    setCartItems(filteredCartItems);
+    setCartItems((prevCart) =>
+      prevCart.filter((cartItem) => cartItem._id !== itemId)
+    );
   };
 
   return (
     <CartContext.Provider
-      value={{
-        cartItems,
-        setCartItems,
-        addToCart,
-        removeFromCart,
-      }}
+      value={{ cartItems, setCartItems, addToCart, removeFromCart }}
     >
       {children}
     </CartContext.Provider>
   );
 };
 
-export default CartProvider;
-
 CartProvider.propTypes = {
   children: PropTypes.node,
 };
+
+export default CartProvider;
