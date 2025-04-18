@@ -38,14 +38,15 @@ PrevBtn.propTypes = {
 };
 
 const Gallery = ({ singleProduct }) => {
-  // Burada activeImg'i string olarak tutuyoruz (base64).
   const [activeImg, setActiveImg] = useState({
     img: "",
     imgIndex: 0,
   });
 
+  const [zoomed, setZoomed] = useState(false); // Zoom durumunu takip et
+  const [transformOrigin, setTransformOrigin] = useState("center center");
+
   useEffect(() => {
-    // singleProduct.img => array of { _id, base64 } veya boş dizi
     if (singleProduct.img && singleProduct.img.length > 0) {
       setActiveImg({
         img: singleProduct.img[0].base64,
@@ -68,15 +69,42 @@ const Gallery = ({ singleProduct }) => {
     prevArrow: <PrevBtn />,
   };
 
+  const handleClick = (e) => {
+    // Toggle zoom state
+    setZoomed(!zoomed);
+  
+    if (!zoomed) {
+      const rect = e.target.getBoundingClientRect();
+      const offsetX = e.clientX - rect.left;
+      const offsetY = e.clientY - rect.top;
+      const newOriginX = (offsetX / rect.width) * 100;
+      const newOriginY = (offsetY / rect.height) * 100;
+      setTransformOrigin(`${newOriginX}% ${newOriginY}%`);
+    } else {
+      // Zoom-out işlemi: merkezi yeniden ayarla
+      setTransformOrigin("center center");
+    }
+  };
+
   if (!singleProduct.img) {
-    return null; // veya bir loading ya da boş durum göstergesi
+    return null;
   }
 
   return (
     <div className="product-gallery">
       <div className="single-image-wrapper">
-        {/* Aktif resmi göster */}
-        <img src={activeImg.img} id="single-image" alt="product" />
+        <img
+          src={activeImg.img}
+          id="single-image"
+          alt="product"
+          onClick={handleClick} // Fotoğrafı tıklayınca zoom yap
+          style={{
+            cursor: zoomed ? "zoom-out" : "zoom-in", // Zoom durumuna göre cursor değişir
+            transform: zoomed ? "scale(2)" : "scale(1)", // Zoom yapılmışsa büyük göster
+            transformOrigin: transformOrigin, // Zoom yapılırken hangi noktada odaklanacağını belirler
+            transition: "transform 0.3s ease", // Yumuşak geçiş
+          }}
+        />
       </div>
 
       <div className="product-thumb">
@@ -86,7 +114,7 @@ const Gallery = ({ singleProduct }) => {
               {singleProduct.img.map((imageObj, index) => (
                 <li
                   className="glide__slide glide__slide--active"
-                  key={imageObj._id || index} // subdoc._id varsa
+                  key={imageObj._id || index}
                   onClick={() =>
                     setActiveImg({
                       img: imageObj.base64,
@@ -106,7 +134,6 @@ const Gallery = ({ singleProduct }) => {
             </Slider>
           </ol>
         </div>
-        <div className="glide__arrows" data-glide-el="controls"></div>
       </div>
     </div>
   );

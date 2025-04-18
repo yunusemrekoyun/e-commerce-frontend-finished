@@ -44,10 +44,7 @@ const Info = ({ singleProduct }) => {
         <strong className="new-price">${discountedPrice.toFixed(2)}</strong>
       </div>
 
-      <div
-        className="product-description"
-        dangerouslySetInnerHTML={{ __html: singleProduct?.description }}
-      />
+    
 
       <form className="variations-form">
         <div className="variations">

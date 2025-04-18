@@ -11,7 +11,9 @@ const ProductDetails = ({ singleProduct, setSingleProduct, compact = false }) =>
       <div className="container">
         <div className="single-product-wrapper">
           {/* ❌ Breadcrumb sadece normal modda göster */}
-          {!compact && <Breadcrumb />}
+          {!compact && singleProduct && (
+            <Breadcrumb category={singleProduct.category} brand={singleProduct.brand} />
+          )}
 
           <div className="single-content">
             <main className="site-main">

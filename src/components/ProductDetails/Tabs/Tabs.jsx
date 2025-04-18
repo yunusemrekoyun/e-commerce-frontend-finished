@@ -29,20 +29,10 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
             }
             onClick={(e) => handleTabClick(e, "desc")}
           >
-            Description
+            Ürün Bilgisi
           </a>
         </li>
-        <li>
-          <a
-            href="#"
-            className={
-              activeTab === "info" ? "tab-button active" : "tab-button"
-            }
-            onClick={(e) => handleTabClick(e, "info")}
-          >
-            Additional information
-          </a>
-        </li>
+  
         <li>
           <a
             href="#"
@@ -51,7 +41,7 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
             }
             onClick={(e) => handleTabClick(e, "reviews")}
           >
-            Reviews
+            Ürün Yorumları
           </a>
         </li>
       </ul>
@@ -64,28 +54,7 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
           />
         </div>
 
-        <div className={activeTab === "info" ? "content active" : "content"}>
-          <h3>Additional information</h3>
-          <table>
-            <tbody>
-              <tr>
-                <th>Color</th>
-                <td>{colors.join(", ") || "-"}</td>
-              </tr>
-              <tr>
-                <th>Size</th>
-                <td>
-                  {sizes.map((s, i) => (
-                    <span key={i}>
-                      {s.toUpperCase()}
-                      {i < sizes.length - 1 && ", "}
-                    </span>
-                  )) || "-"}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+
 
         <Reviews
           active={activeTab === "reviews" ? "content active" : "content"}

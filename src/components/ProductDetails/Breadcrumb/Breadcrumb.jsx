@@ -1,16 +1,27 @@
-import "./Breadcrumb.css"
-const Breadcrumb = () => {
-  return (
-<div className="single-topbar">
-                    <nav className="breadcrumb">
-                        <ul>
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#">Man</a></li>
-                            <li><a href="#">Pants</a></li>
-                            <li>Basic Colored Sweatpants With Elastic Hems</li>
-                        </ul>
-                    </nav>
-                </div>  )
-}
+import React from 'react';
+import PropTypes from 'prop-types';
+import './Breadcrumb.css';
 
-export default Breadcrumb
+const Breadcrumb = ({ category, brand, productName }) => {
+  return (
+    <div className="single-topbar">
+      <nav className="breadcrumb">
+        <ul>
+          <li><a href="#">Home</a></li>
+          {category && <li><a href="#">{category}</a></li>} {/* Kategori Adı */}
+          {brand && <li><a href="#">{brand}</a></li>} {/* Marka Adı */}
+          <li>{productName}</li> {/* Ürün Adı */}
+        </ul>
+      </nav>
+      <h1>{productName}</h1> {/* Ürün Adını Başlık Olarak Kullanma */}
+    </div>
+  );
+};
+
+Breadcrumb.propTypes = {
+  category: PropTypes.string,
+  brand: PropTypes.string,
+  productName: PropTypes.string.isRequired,
+};
+
+export default Breadcrumb;
