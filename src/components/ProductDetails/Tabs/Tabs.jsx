@@ -29,7 +29,7 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
             className={`tab-button ${activeTab === "info" ? "active" : ""}`}
             onClick={(e) => handleTabClick(e, "info")}
           >
-            Additional information
+            Additional Information
           </a>
         </li>
         <li>
@@ -42,7 +42,9 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
           </a>
         </li>
       </ul>
+
       <div className="tab-panel">
+        {/* Description Tab */}
         <div
           className={`tab-panel-descriptions content ${
             activeTab === "desc" ? "active" : ""
@@ -50,43 +52,58 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
         >
           <div
             className="product-description"
-            dangerouslySetInnerHTML={{ __html: singleProduct.description }}
+            dangerouslySetInnerHTML={{
+              __html: singleProduct.description || "No description available.",
+            }}
           ></div>
         </div>
+
+        {/* Additional Info Tab */}
         <div
           className={`tab-panel-information content ${
             activeTab === "info" ? "active" : ""
           }`}
-          id="info"
         >
-          <h3>Additional information</h3>
+          <h3>Additional Information</h3>
           <table>
             <tbody>
-              <tr>
-                <th>Color</th>
-                <td>
-                  <p>
-                    Apple Red, Bio Blue, Sweet Orange, Blue, Green, Pink, Black,
-                    White
-                  </p>
-                </td>
-              </tr>
-              <tr>
-                <th>Size</th>
-                <td>
-                  <p>
-                    {singleProduct.sizes.map((item, index) => (
+              {singleProduct.brand && (
+                <tr>
+                  <th>Brand</th>
+                  <td>{singleProduct.brand}</td>
+                </tr>
+              )}
+              {singleProduct.colors?.length > 0 && (
+                <tr>
+                  <th>Colors</th>
+                  <td>
+                    {singleProduct.colors.map((color, index) => (
                       <span key={index}>
-                        {item.toUpperCase()}
+                        {color}
+                        {index < singleProduct.colors.length - 1 && ", "}
+                      </span>
+                    ))}
+                  </td>
+                </tr>
+              )}
+              {singleProduct.sizes?.length > 0 && (
+                <tr>
+                  <th>Sizes</th>
+                  <td>
+                    {singleProduct.sizes.map((size, index) => (
+                      <span key={index}>
+                        {size.toUpperCase()}
                         {index < singleProduct.sizes.length - 1 && ", "}
                       </span>
                     ))}
-                  </p>
-                </td>
-              </tr>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
+
+        {/* Reviews Tab */}
         <Reviews
           active={activeTab === "reviews" ? "content active" : "content"}
           singleProduct={singleProduct}
@@ -97,9 +114,9 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
   );
 };
 
-export default Tabs;
-
 Tabs.propTypes = {
   singleProduct: PropTypes.object,
   setSingleProduct: PropTypes.func,
 };
+
+export default Tabs;

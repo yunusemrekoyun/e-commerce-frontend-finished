@@ -1,5 +1,3 @@
-//burası product ile ilgili tüm detayların  olduğu sayfa
-
 import Breadcrumb from "./Breadcrumb/Breadcrumb";
 import Gallery from "./Gallery/Gallery";
 import PropTypes from "prop-types";
