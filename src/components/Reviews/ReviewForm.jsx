@@ -10,25 +10,26 @@ const ReviewForm = ({ singleProduct }) => {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
   const [userInfo, setUserInfo] = useState(null);
-
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
   const fetchUserInfo = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
-      if (res.ok) {
+      if (res && res.ok) {
         const data = await res.json();
         setUserInfo(data);
-      } else {
-        message.error("Kullanıcı bilgisi alınamadı.");
       }
-    } catch (error) {
-      console.log("fetchUserInfo error:", error);
+    } catch {
+      // silent: kullanıcı girişli değilse burada sessizce fail et
     }
   }, [apiUrl]);
 
+  // Sadece token varsa kullanıcı bilgisini getir
   useEffect(() => {
-    fetchUserInfo();
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetchUserInfo();
+    }
   }, [fetchUserInfo]);
 
   const handleRatingChange = (e, newRating) => {
@@ -47,7 +48,6 @@ const ReviewForm = ({ singleProduct }) => {
     }
 
     try {
-      // 1) Yeni yorumu API'ye POST et
       const res = await fetchWithAuth(
         `${apiUrl}/api/products/${singleProduct._id}/reviews`,
         {
@@ -64,7 +64,6 @@ const ReviewForm = ({ singleProduct }) => {
         return message.error(err.error || "Yorum eklenemedi.");
       }
 
-      // 2) Başarı mesajı ve formu temizle
       message.success(
         "Yorumunuz alındı, onaylandıktan sonra ürün sayfasında yayınlanacaktır."
       );
@@ -82,17 +81,17 @@ const ReviewForm = ({ singleProduct }) => {
         Your email address will not be published. Required fields are marked
         <span className="required">*</span>
       </p>
+
       <div className="comment-form-rating">
         <label>
-          Your rating
-          <span className="required">*</span>
+          Your rating<span className="required">*</span>
         </label>
         <div className="stars">
           {[1, 2, 3, 4, 5].map((star) => (
             <a
               href="#!"
               key={star}
-              className={`star ${rating === star && "active"}`}
+              className={`star ${rating === star ? "active" : ""}`}
               onClick={(e) => handleRatingChange(e, star)}
             >
               {[...Array(star)].map((_, i) => (
@@ -102,10 +101,10 @@ const ReviewForm = ({ singleProduct }) => {
           ))}
         </div>
       </div>
+
       <div className="comment-form-comment form-comment">
         <label htmlFor="comment">
-          Your review
-          <span className="required">*</span>
+          Your review<span className="required">*</span>
         </label>
         <textarea
           id="comment"
@@ -116,14 +115,15 @@ const ReviewForm = ({ singleProduct }) => {
           required
         ></textarea>
       </div>
+
       <div className="comment-form-cookies">
         <input id="cookies" type="checkbox" />
         <label htmlFor="cookies">
           Save my name, email, and website in this browser for the next time I
-          comment.
-          <span className="required">*</span>
+          comment.<span className="required">*</span>
         </label>
       </div>
+
       <div className="form-submit">
         <input type="submit" className="btn submit" />
       </div>

@@ -4,82 +4,95 @@
 import { useContext, useState, useEffect, useCallback } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import CartContext from "../../context/CartContext";
-import { message, Modal, Spin } from "antd";
-import { fetchWithAuth } from "../Auth/fetchWithAuth"; // ✅
+import { Modal, Spin } from "antd";
+import { fetchWithAuth } from "../Auth/fetchWithAuth";
+import { useNavigate } from "react-router-dom";
 
 const CartTotals = () => {
-  const [addressData, setAddressData] = useState(null);
+  const { cartItems } = useContext(CartContext);
   const [fastCargoChecked, setFastCargoChecked] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const { cartItems } = useContext(CartContext);
+  const navigate = useNavigate();
   const stripePublicKey = import.meta.env.VITE_API_STRIPE_PUBLIC_KEY;
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
   const [userInfo, setUserInfo] = useState(null);
+  const [addressData, setAddressData] = useState(null);
 
+  // 1) Kullanıcıyı çek (sessiz fail)
   const fetchUserInfo = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
-      if (res.ok) {
+      if (res && res.ok) {
         const data = await res.json();
         setUserInfo(data);
-      } else {
-        message.error("Kullanıcı bilgisi alınamadı.");
       }
-    } catch (error) {
-      console.error("fetchUserInfo error:", error);
-      message.error("Kullanıcı bilgisi alınamadı.");
+    } catch {
+      // login değilse sessizce geç
     }
   }, [apiUrl]);
 
+  // 2) Adresi çek (sessiz fail)
   const fetchAddress = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/address`);
-      if (res.ok) {
-        const data = await res.json();
-        setAddressData(data[0] || null);
-      } else {
-        message.error("Adres bilgisi alınamadı.");
+      if (res && res.ok) {
+        const arr = await res.json();
+        setAddressData(arr[0] || null);
       }
-    } catch (error) {
-      console.error("Adres bilgisi alınamadı:", error);
-      message.error("Bir hata oluştu.");
+    } catch {
+      // sessizce geç
     }
   }, [apiUrl]);
 
+  // İlk mount'ta, token varsa kullanıcıyı al
   useEffect(() => {
-    fetchUserInfo();
+    const token = localStorage.getItem("token");
+    if (token) fetchUserInfo();
   }, [fetchUserInfo]);
 
+  // userInfo geldiyse adresi al
   useEffect(() => {
-    if (!userInfo) return;
-    fetchAddress();
+    if (userInfo) fetchAddress();
   }, [userInfo, fetchAddress]);
 
-  const cartItemTotals = cartItems.map((item) => item.price * item.quantity);
-  const subTotals = cartItemTotals.reduce((prev, curr) => prev + curr, 0);
-
+  // Sepet tutarları
+  const subTotals = cartItems
+    .map((i) => i.price * i.quantity)
+    .reduce((a, b) => a + b, 0);
   const cargoFee = 15;
-  const cartTotals = fastCargoChecked
-    ? (subTotals + cargoFee).toFixed(2)
-    : subTotals.toFixed(2);
+  const cartTotals = fastCargoChecked ? subTotals + cargoFee : subTotals;
 
   const handlePayment = async () => {
+    // 1) Giriş kontrolü: modal ile
     if (!userInfo) {
-      return message.info("Ödeme yapabilmek için giriş yapmalısınız!");
+      Modal.confirm({
+        title: "Giriş Gerekli",
+        content: "Ödeme yapabilmek için lütfen giriş yapın.",
+        okText: "Giriş Yap",
+        cancelText: "Kapat",
+        onOk() {
+          navigate("/auth");
+        },
+      });
+      return;
     }
+
+    // 2) Adres kontrolü
     if (!addressData) {
-      return Modal.warning({
+      Modal.warning({
         title: "Adres Bilgisi Eksik",
         content:
           "Ödeme işlemi yapabilmek için adres bilgilerinizi girmelisiniz",
+        okText: "Tamam",
         onOk() {
-          window.location.href = "/account";
+          navigate("/account");
         },
       });
+      return;
     }
 
+    // 3) Sipariş payload’u
     const body = {
       products: cartItems.map((item) => ({
         productId: item._id,
@@ -94,32 +107,29 @@ const CartTotals = () => {
       cargoFee: fastCargoChecked ? cargoFee : 0,
     };
 
-    console.log("Gönderilen ödeme verisi:", body);
-
     try {
       setLoading(true);
-
       const stripe = await loadStripe(stripePublicKey);
-
       const res = await fetchWithAuth(`${apiUrl}/api/payment`, {
         method: "POST",
         body: JSON.stringify(body),
       });
-
       if (!res.ok) {
-        setLoading(false);
-        return message.error("Ödeme işlemi başarısız oldu.");
+        Modal.error({
+          title: "Hata",
+          content: "Ödeme işlemi başarısız oldu.",
+        });
+        return;
       }
-
-      const session = await res.json();
-      const result = await stripe.redirectToCheckout({
-        sessionId: session.id,
+      const { id: sessionId } = await res.json();
+      const result = await stripe.redirectToCheckout({ sessionId });
+      if (result.error) throw new Error(result.error.message);
+    } catch (err) {
+      console.error(err);
+      Modal.error({
+        title: "Hata",
+        content: "Ödeme sırasında bir hata oluştu.",
       });
-      if (result.error) {
-        throw new Error(result.error.message);
-      }
-    } catch (error) {
-      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -132,38 +142,30 @@ const CartTotals = () => {
         <tbody>
           <tr className="cart-subtotal">
             <th>Subtotal</th>
-            <td>
-              <span id="subtotal">${subTotals.toFixed(2)}</span>
-            </td>
+            <td>${subTotals.toFixed(2)}</td>
           </tr>
           <tr>
             <th>Shipping</th>
             <td>
-              <ul>
-                <li>
-                  <label>
-                    Fast Cargo: $15.00
-                    <input
-                      type="checkbox"
-                      checked={fastCargoChecked}
-                      onChange={() => setFastCargoChecked(!fastCargoChecked)}
-                    />
-                  </label>
-                </li>
-                <li>
-                  <a href="#">Change Address</a>
-                </li>
-              </ul>
+              <label>
+                Fast Cargo: $15.00
+                <input
+                  type="checkbox"
+                  checked={fastCargoChecked}
+                  onChange={() => setFastCargoChecked(!fastCargoChecked)}
+                />
+              </label>
             </td>
           </tr>
           <tr>
             <th>Total</th>
             <td>
-              <strong id="cart-total">${cartTotals}</strong>
+              <strong>${cartTotals.toFixed(2)}</strong>
             </td>
           </tr>
         </tbody>
       </table>
+
       <div className="checkout">
         <Spin spinning={loading}>
           <button className="btn btn-lg" onClick={handlePayment}>
