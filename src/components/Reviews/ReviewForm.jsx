@@ -1,12 +1,12 @@
 /********************************************************
- * /Applications/Works/e-commerce/frontend/src/components/Reviews/ReviewForm.jsx
+ * /Applications/Works/kozmetik/frontend/src/components/Reviews/ReviewForm.jsx
  ********************************************************/
 import { useEffect, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { message } from "antd";
 import { fetchWithAuth } from "../Auth/fetchWithAuth";
 
-const ReviewForm = ({ singleProduct, setSingleProduct }) => {
+const ReviewForm = ({ singleProduct }) => {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
   const [userInfo, setUserInfo] = useState(null);
@@ -46,38 +46,33 @@ const ReviewForm = ({ singleProduct, setSingleProduct }) => {
       return message.warning("Puan seçiniz!");
     }
 
-    const formData = {
-      reviews: [
-        ...singleProduct.reviews,
-        {
-          text: review,
-          rating: parseInt(rating),
-          user: userInfo.id,
-        },
-      ],
-    };
-
     try {
+      // 1) Yeni yorumu API'ye POST et
       const res = await fetchWithAuth(
-        `${apiUrl}/api/products/${singleProduct._id}`,
+        `${apiUrl}/api/products/${singleProduct._id}/reviews`,
         {
-          method: "PUT",
-          body: JSON.stringify(formData),
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: review,
+            rating: parseInt(rating, 10),
+          }),
         }
       );
-
       if (!res.ok) {
-        return message.error("Bir şeyler yanlış gitti.");
+        const err = await res.json();
+        return message.error(err.error || "Yorum eklenemedi.");
       }
 
-      const data = await res.json();
-      setSingleProduct(data);
+      // 2) Başarı mesajı ve formu temizle
+      message.success(
+        "Yorumunuz alındı, onaylandıktan sonra ürün sayfasında yayınlanacaktır."
+      );
       setReview("");
       setRating(0);
-      message.success("Yorum başarıyla eklendi.");
     } catch (error) {
-      console.log(error);
-      message.error("Bir şeyler yanlış gitti.");
+      console.error("handleSubmit error:", error);
+      message.error("Bir hata oluştu. Lütfen tekrar deneyin.");
     }
   };
 
@@ -95,7 +90,7 @@ const ReviewForm = ({ singleProduct, setSingleProduct }) => {
         <div className="stars">
           {[1, 2, 3, 4, 5].map((star) => (
             <a
-              href="#"
+              href="#!"
               key={star}
               className={`star ${rating === star && "active"}`}
               onClick={(e) => handleRatingChange(e, star)}
@@ -136,9 +131,8 @@ const ReviewForm = ({ singleProduct, setSingleProduct }) => {
   );
 };
 
-export default ReviewForm;
-
 ReviewForm.propTypes = {
-  singleProduct: PropTypes.object,
-  setSingleProduct: PropTypes.func,
+  singleProduct: PropTypes.object.isRequired,
 };
+
+export default ReviewForm;

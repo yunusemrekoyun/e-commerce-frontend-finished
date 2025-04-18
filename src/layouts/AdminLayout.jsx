@@ -1,5 +1,5 @@
 /********************************************************
- * /Applications/Works/e-commerce/frontend/src/layouts/AdminLayout.jsx
+ * frontend/src/layouts/AdminLayout.jsx
  ********************************************************/
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -13,20 +13,17 @@ import {
   DashboardOutlined,
   ShoppingCartOutlined,
   AppstoreOutlined,
+  CommentOutlined,
 } from "@ant-design/icons";
-
 import { isAdmin } from "../config/isAdmin";
-// Bu fonksiyon localStorage.getItem("isAdmin") === "true" döndürüyor
 
 const { Sider, Header, Content } = Layout;
 
 const AdminLayout = ({ children }) => {
   const navigate = useNavigate();
 
-  // Kullanıcı admin mi kontrolü (localStorage)
   useEffect(() => {
     if (!isAdmin()) {
-      // eğer admin değilse ana sayfaya
       navigate("/");
     }
   }, [navigate]);
@@ -101,8 +98,15 @@ const AdminLayout = ({ children }) => {
       label: "Siparişler",
       onClick: () => navigate("/admin/orders"),
     },
+    // **Yorumlar** sekmesi:
     {
       key: "13",
+      icon: <CommentOutlined />,
+      label: "Yorumlar",
+      onClick: () => navigate("/admin/comments"),
+    },
+    {
+      key: "14",
       icon: <RollbackOutlined />,
       label: "Ana Sayfa",
       onClick: () => navigate("/"),
@@ -116,7 +120,7 @@ const AdminLayout = ({ children }) => {
       </Sider>
       <Layout>
         <Header style={{ backgroundColor: "#001529", color: "white" }}>
-          <div style={{ color: "white" }}>Admin Layout Header</div>
+          <div>Admin Panel</div>
         </Header>
         <Content style={{ padding: 24 }}>
           {children}

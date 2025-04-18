@@ -2,17 +2,17 @@
  * /components/Products/ProductItem.jsx
  ********************************************************/
 import PropTypes from "prop-types";
-import { useContext, useState } from "react";
-import { CartContext } from "../../context/CartProvider";
+import { useState } from "react";
+// import  CartContext  from "../../context/CartProvider";
 import "./ProductItem.css";
 import ProductDetailsModal from "../ProductDetails/ProductDetailsModal";
 
 const ProductItem = ({ productItem }) => {
-  const { cartItems } = useContext(CartContext);
+  // const { cartItems } = useContext(CartContext);
 
-  const filteredCart = cartItems.find(
-    (cartItem) => cartItem._id === productItem._id
-  );
+  // const filteredCart = cartItems.find(
+  //   (cartItem) => cartItem._id === productItem._id
+  // );
 
   const originalPrice = productItem.price.current;
   const discountPercentage = productItem.price.discount;
@@ -54,19 +54,27 @@ const ProductItem = ({ productItem }) => {
             {productItem.name}
           </a>
           <ul className="product-star">
-            <li><i className="bi bi-star-fill"></i></li>
-            <li><i className="bi bi-star-fill"></i></li>
-            <li><i className="bi bi-star-fill"></i></li>
-            <li><i className="bi bi-star-fill"></i></li>
-            <li><i className="bi bi-star-full"></i></li>
+            <li>
+              <i className="bi bi-star-fill"></i>
+            </li>
+            <li>
+              <i className="bi bi-star-fill"></i>
+            </li>
+            <li>
+              <i className="bi bi-star-fill"></i>
+            </li>
+            <li>
+              <i className="bi bi-star-fill"></i>
+            </li>
+            <li>
+              <i className="bi bi-star-full"></i>
+            </li>
           </ul>
           <div className="product-prices">
             <strong className="new-price">${discountedPrice.toFixed(2)}</strong>
             <span className="old-price">${originalPrice.toFixed(2)}</span>
           </div>
-          <span className="product-discount">
-            -{discountPercentage}%
-          </span>
+          <span className="product-discount">-{discountPercentage}%</span>
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { useContext } from "react";
-import { CartContext } from "../../context/CartProvider";
+import CartContext from "../../context/CartContext";
 
 const CartItem = ({ cartItem }) => {
   const { removeFromCart } = useContext(CartContext);

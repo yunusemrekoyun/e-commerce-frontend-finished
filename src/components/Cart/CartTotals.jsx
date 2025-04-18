@@ -3,7 +3,7 @@
  ********************************************************/
 import { useContext, useState, useEffect, useCallback } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { CartContext } from "../../context/CartProvider";
+import CartContext from "../../context/CartContext";
 import { message, Modal, Spin } from "antd";
 import { fetchWithAuth } from "../Auth/fetchWithAuth"; // ✅
 

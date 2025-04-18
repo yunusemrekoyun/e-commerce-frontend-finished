@@ -1,3 +1,6 @@
+/********************************************************
+ * /src/components/ProductDetails/Tabs/Tabs.jsx
+ ********************************************************/
 import { useState } from "react";
 import PropTypes from "prop-types";
 import Reviews from "../../Reviews/Reviews";
@@ -5,6 +8,10 @@ import "./Tabs.css";
 
 const Tabs = ({ singleProduct, setSingleProduct }) => {
   const [activeTab, setActiveTab] = useState("desc");
+  const colors = Array.isArray(singleProduct?.colors)
+    ? singleProduct.colors
+    : [];
+  const sizes = Array.isArray(singleProduct?.sizes) ? singleProduct.sizes : [];
 
   const handleTabClick = (e, tab) => {
     e.preventDefault();
@@ -18,6 +25,9 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
           <a
             href="#"
             className={`tab-button ${activeTab === "desc" ? "active" : ""}`}
+            className={
+              activeTab === "desc" ? "tab-button active" : "tab-button"
+            }
             onClick={(e) => handleTabClick(e, "desc")}
           >
             Description
@@ -27,6 +37,9 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
           <a
             href="#"
             className={`tab-button ${activeTab === "info" ? "active" : ""}`}
+            className={
+              activeTab === "info" ? "tab-button active" : "tab-button"
+            }
             onClick={(e) => handleTabClick(e, "info")}
           >
             Additional Information
@@ -36,6 +49,9 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
           <a
             href="#"
             className={`tab-button ${activeTab === "reviews" ? "active" : ""}`}
+            className={
+              activeTab === "reviews" ? "tab-button active" : "tab-button"
+            }
             onClick={(e) => handleTabClick(e, "reviews")}
           >
             Reviews
@@ -44,6 +60,7 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
       </ul>
 
       <div className="tab-panel">
+<<<<<<< HEAD
         {/* Description Tab */}
         <div
           className={`tab-panel-descriptions content ${
@@ -99,11 +116,42 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
                   </td>
                 </tr>
               )}
+=======
+        <div className={activeTab === "desc" ? "content active" : "content"}>
+          <div
+            className="product-description"
+            dangerouslySetInnerHTML={{ __html: singleProduct?.description }}
+          />
+        </div>
+
+        <div className={activeTab === "info" ? "content active" : "content"}>
+          <h3>Additional information</h3>
+          <table>
+            <tbody>
+              <tr>
+                <th>Color</th>
+                <td>{colors.join(", ") || "-"}</td>
+              </tr>
+              <tr>
+                <th>Size</th>
+                <td>
+                  {sizes.map((s, i) => (
+                    <span key={i}>
+                      {s.toUpperCase()}
+                      {i < sizes.length - 1 && ", "}
+                    </span>
+                  )) || "-"}
+                </td>
+              </tr>
+>>>>>>> dev
             </tbody>
           </table>
         </div>
 
+<<<<<<< HEAD
         {/* Reviews Tab */}
+=======
+>>>>>>> dev
         <Reviews
           active={activeTab === "reviews" ? "content active" : "content"}
           singleProduct={singleProduct}
@@ -119,4 +167,8 @@ Tabs.propTypes = {
   setSingleProduct: PropTypes.func,
 };
 
+export default Tabs;<<<<<<< HEAD
 export default Tabs;
+=======
+export default Tabs;
+>>>>>>> dev

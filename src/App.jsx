@@ -12,6 +12,7 @@ import ProductDetailsPage from "./pages/ProductDetailsPage";
 import BlogDetailsPage from "./pages/BlogDetailsPage";
 import Success from "./pages/Success";
 import UserAccountPage from "./pages/UserAccountPage";
+
 import DashboardPage from "./pages/Admin/DashBoardPage";
 import UserPage from "./pages/Admin/UserPage";
 import CategoryPage from "./pages/Admin/Categories/CategoryPage";
@@ -24,6 +25,9 @@ import CouponPage from "./pages/Admin/Coupons/CouponPage";
 import CreateCouponPage from "./pages/Admin/Coupons/CreateCouponPage";
 import UpdateCouponPage from "./pages/Admin/Coupons/UpdateCouponPage";
 import OrderPage from "./pages/Admin/OrderPage";
+
+import CommentsPage from "./pages/Admin/CommentsPage";
+
 import MainLayout from "./layouts/MainLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import ProtectedAdminRoute from "./routes/ProtectedAdminRoute";
@@ -67,6 +71,9 @@ function App() {
         <Route path="coupons/create" element={<CreateCouponPage />} />
         <Route path="coupons/update/:id" element={<UpdateCouponPage />} />
         <Route path="orders" element={<OrderPage />} />
+        ***
+        <Route path="comments" element={<CommentsPage />} />
+        ***
         <Route path="*" element={<Outlet />} />
       </Route>
     </Routes>

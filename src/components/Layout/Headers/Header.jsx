@@ -6,7 +6,7 @@ import { useContext, useState } from "react";
 import PropTypes from "prop-types";
 import { Link, useLocation } from "react-router-dom";
 import { Modal } from "antd";
-import { CartContext } from "../../../context/CartProvider";
+import CartContext from "../../../context/CartContext";
 import "./Header.css";
 
 const { confirm } = Modal;
