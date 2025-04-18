@@ -168,6 +168,7 @@ Tabs.propTypes = {
 };
 
 export default Tabs;<<<<<<< HEAD
+<<<<<<< HEAD
 export default Tabs;
 =======
 export default Tabs;
