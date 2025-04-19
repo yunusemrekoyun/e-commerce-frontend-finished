@@ -1,19 +1,20 @@
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // React Router'dan useNavigate'i ekledik
+import { useNavigate } from "react-router-dom";
 import "./ProductItem.css";
 import ProductDetailsModal from "../ProductDetails/ProductDetailsModal";
 
 const ProductItem = ({ productItem }) => {
-  const originalPrice = productItem.price.current;
-  const discountPercentage = productItem.price.discount;
+  console.log("productItem:", productItem);  // Veriyi kontrol edelim
+  
+  const originalPrice = productItem?.price?.current ?? 0;
+  const discountPercentage = productItem?.price?.discount ?? 0;
   const discountedPrice =
     originalPrice - (originalPrice * discountPercentage) / 100;
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [averageRating, setAverageRating] = useState(0);
 
-  const navigate = useNavigate(); // useNavigate hook'u kullanarak sayfalar arası geçiş
+  const navigate = useNavigate();
 
   const handleOpenModal = () => {
     setIsModalVisible(true);
@@ -24,12 +25,11 @@ const ProductItem = ({ productItem }) => {
   };
 
   const handleCardClick = () => {
-    navigate(`/product/${productItem._id}`); // React Router ile yönlendirme
+    navigate(`/product/${productItem?._id}`);
   };
 
   const calculateAverageRating = (reviews) => {
     if (!reviews || reviews.length === 0) return 0;
-
     let totalRating = 0;
     let totalReviews = 0;
 
@@ -44,37 +44,35 @@ const ProductItem = ({ productItem }) => {
     return totalReviews === 0 ? 0 : (totalRating / totalReviews).toFixed(1);
   };
 
-  useEffect(() => {
-    if (productItem?.reviews) {
-      const avgRating = calculateAverageRating(productItem.reviews);
-      setAverageRating(avgRating);
-    }
-  }, [productItem]);
+  const averageRating = calculateAverageRating(productItem?.reviews);
 
-  const renderStars = () => {
-    const filledStars = Math.floor(averageRating);
-    const halfStar = averageRating % 1 >= 0.5;
-    const emptyStars = 5 - filledStars - (halfStar ? 1 : 0);
+  const renderStars = (rating) => {
+    const full = Math.floor(rating);
+    const half = rating % 1 >= 0.5;
+    const empty = 5 - full - (half ? 1 : 0);
 
     return (
-      <>
-        {[...Array(filledStars)].map((_, index) => (
-          <i key={`filled-${index}`} className="bi bi-star-fill"></i>
+      <ul className="product-star">
+        {[...Array(full)].map((_, i) => (
+          <li key={`f-${i}`}>
+            <i className="bi bi-star-fill"></i>
+          </li>
         ))}
-        {halfStar && <i key="half" className="bi bi-star-half"></i>}
-        {[...Array(emptyStars)].map((_, index) => (
-          <i key={`empty-${index}`} className="bi bi-star"></i>
+        {half && (
+          <li key="half">
+            <i className="bi bi-star-half"></i>
+          </li>
+        )}
+        {[...Array(empty)].map((_, i) => (
+          <li key={`e-${i}`}>
+            <i className="bi bi-star"></i>
+          </li>
         ))}
-      </>
+      </ul>
     );
   };
 
-  useEffect(() => {
-    if (window.Glide) {
-      const glide = new window.Glide('.glide');
-      glide.update();
-    }
-  }, []);
+  const reviewsCount = productItem?.reviews?.length ?? 0;
 
   return (
     <>
@@ -89,15 +87,15 @@ const ProductItem = ({ productItem }) => {
             handleOpenModal();
           }}
         >
-          <img src={productItem.img[0]} alt={productItem.name} />
+          <img src={productItem?.img[0]} alt={productItem?.name} />
         </div>
 
         <div className="product-info">
           <a href="#!" className="product-title">
-            {productItem.name}
+            {productItem?.name}
           </a>
           <div className="product-star">
-            {renderStars()}
+            {renderStars(averageRating)}
           </div>
           <div className="product-prices">
             <strong className="new-price">${discountedPrice.toFixed(2)}</strong>

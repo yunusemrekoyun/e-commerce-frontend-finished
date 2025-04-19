@@ -56,20 +56,19 @@ const Search = ({ isSearchShow, setIsSearchShow }) => {
   return (
     <div className={`modal-search ${isSearchShow ? "show" : ""}`}>
       <div className="modal-wrapper">
-        <h3 className="modal-title">Search for products</h3>
+        <h3 className="modal-title">Ürün Ara</h3>
         <p className="modal-text">
-          Start typing to see products you are looking for.
+          Aramak istediğiniz ürünün adını yazmaya başlayın.
         </p>
         <form
           className="search-form"
           onSubmit={(e) => {
             e.preventDefault();
-            // form submit kullanmıyoruz, live search var
           }}
         >
           <input
             type="text"
-            placeholder="Search a product"
+            placeholder="Bir ürün ara..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -80,7 +79,7 @@ const Search = ({ isSearchShow, setIsSearchShow }) => {
 
         <div className="search-results">
           <div className="search-heading">
-            <h3>RESULTS FROM PRODUCT</h3>
+            <h3>ÜRÜNLERDE SONUÇLAR</h3>
           </div>
           <Spin spinning={loading}>
             <div
@@ -105,7 +104,7 @@ const Search = ({ isSearchShow, setIsSearchShow }) => {
                   className="result-item"
                   style={{ justifyContent: "center", width: "100%" }}
                 >
-                  😔 Aradığınız Ürün Bulunamadı 😔
+                  😔 Aradığınız ürün bulunamadı 😔
                 </div>
               )}
               {searchResults &&
@@ -124,9 +123,8 @@ const Search = ({ isSearchShow, setIsSearchShow }) => {
                     <div className="search-info">
                       <h4>{item.name}</h4>
                       <span className="search-price">
-                        $
                         {item.price?.current != null
-                          ? item.price.current.toFixed(2)
+                          ? `₺${item.price.current.toFixed(2)}`
                           : "-"}
                       </span>
                     </div>

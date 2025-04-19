@@ -17,11 +17,11 @@ const CartTable = () => {
         <thead>
           <tr>
             <th className="product-thumbnail">&nbsp;</th>
-            <th className="product-name">Product</th>
-            <th className="product-price">Product Options</th>
-            <th className="product-quantity">Quantity</th>
-            <th className="product-subtotal">Subtotal</th>
-            <th className="product-options">Price</th></tr>
+            <th className="product-name">Ürün</th>
+            <th className="product-price">Ürün Özellikleri</th>
+            <th className="product-quantity">Fiyat</th>
+            <th className="product-subtotal">Adet</th>
+            <th className="product-options">Toplam Tutar</th></tr>
         </thead>
         <tbody className="cart-wrapper">
           {cartItems.map((item) => (
