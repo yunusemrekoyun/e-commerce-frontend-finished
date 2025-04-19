@@ -1,16 +1,21 @@
-// /Applications/Works/e-commerce/frontend/src/pages/Admin/OrderPage.jsx
-import { Spin, Table, Select, message } from "antd";
+import { Spin, Table, Select, message, Input } from "antd";
 import { useEffect, useState, useCallback } from "react";
-import { fetchWithAuth } from "../../components/Auth/fetchWithAuth";
+import { fetchWithAuth } from "../../../components/Auth/fetchWithAuth";
+import AdminOrderDetailsModal from "./AdminOrderDetailsModal";
 
 const { Option } = Select;
 
 const OrderPage = () => {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-  // Siparişleri çek (admin)
+  const filteredOrders = dataSource.filter((order) =>
+    order._id.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
@@ -33,7 +38,6 @@ const OrderPage = () => {
     fetchOrders();
   }, [fetchOrders]);
 
-  // Durum güncelle
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/orders/${orderId}`, {
@@ -58,7 +62,9 @@ const OrderPage = () => {
       title: "Sipariş No",
       dataIndex: "_id",
       key: "id",
-      render: (id) => id.slice(-6),
+      render: (id, record) => (
+        <a onClick={() => setSelectedOrder(record)}>{id.slice(-6)}</a>
+      ),
     },
     {
       title: "Müşteri Email",
@@ -92,20 +98,48 @@ const OrderPage = () => {
       title: "Tarih",
       dataIndex: "createdAt",
       key: "date",
-      render: (d) => new Date(d).toLocaleDateString(),
+      render: (d) => new Date(d).toLocaleDateString("tr-TR"),
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+    },
+    {
+      title: "Saat",
+      dataIndex: "createdAt",
+      key: "time",
+      render: (d) =>
+        new Date(d).toLocaleTimeString("tr-TR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
     },
   ];
 
   return (
-    <Spin spinning={loading}>
-      <Table
-        dataSource={dataSource}
-        columns={columns}
-        rowKey={(rec) => rec._id}
-        pagination={{ pageSize: 10 }}
+    <>
+      <div style={{ marginBottom: 16 }}>
+        <Input.Search
+          placeholder="Sipariş No ile ara"
+          allowClear
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ width: 300 }}
+        />
+      </div>
+
+      <Spin spinning={loading}>
+        <Table
+          dataSource={filteredOrders}
+          columns={columns}
+          rowKey={(rec) => rec._id}
+          pagination={{ pageSize: 10 }}
+        />
+      </Spin>
+
+      <AdminOrderDetailsModal
+        visible={!!selectedOrder}
+        onClose={() => setSelectedOrder(null)}
+        order={selectedOrder}
       />
-    </Spin>
+    </>
   );
 };
 
-export default OrderPage; 
+export default OrderPage;

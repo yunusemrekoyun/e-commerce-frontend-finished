@@ -69,28 +69,28 @@ const UserAccountPage = () => {
     fetchUserInfo();
   }, [fetchUserInfo]);
 
+  // Menü değiştiğinde veri çek
   useEffect(() => {
     if (selectedMenu === "address") {
       fetchAddress();
-      addressForm.setFieldsValue({
-        email: userInfo?.email,
-        name: addressData?.name || "",
-        address: addressData?.address || "",
-        district: addressData?.district || "",
-        phone: addressData?.phone || "",
-        city: addressData?.city || "",
-      });
     } else if (selectedMenu === "orders") {
       fetchOrders();
     }
-  }, [
-    selectedMenu,
-    userInfo,
-    addressData,
-    fetchAddress,
-    fetchOrders,
-    addressForm,
-  ]);
+  }, [selectedMenu, fetchAddress, fetchOrders]);
+
+  // Adres yüklendikten sonra forma set et
+  useEffect(() => {
+    if (addressData && selectedMenu === "address") {
+      addressForm.setFieldsValue({
+        email: userInfo?.email || "",
+        name: addressData.name || "",
+        address: addressData.address || "",
+        district: addressData.district || "",
+        phone: addressData.phone || "",
+        city: addressData.city || "",
+      });
+    }
+  }, [addressData, userInfo, selectedMenu, addressForm]);
 
   /*** PROFİL & ŞİFRE GÜNCELLEME ***/
   const handleProfileSubmit = async (values) => {
