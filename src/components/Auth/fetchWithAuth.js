@@ -8,14 +8,15 @@ export const fetchWithAuth = async (url, options = {}) => {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
-        ...options.headers,
+        ...(options.headers || {}),
       },
     });
   };
 
+  // İlk deneme → Access Token ile
   let res = await makeRequest(token);
 
-  // Hem 401 hem 403 geldiğinde refresh deneyelim
+  // Token süresi dolmuşsa → Refresh ile yenile
   if ((res.status === 401 || res.status === 403) && refreshToken) {
     try {
       const refreshRes = await fetch(
@@ -28,19 +29,23 @@ export const fetchWithAuth = async (url, options = {}) => {
       );
 
       if (!refreshRes.ok) {
-        throw new Error("Refresh token expired or invalid.");
+        throw new Error("Refresh token geçersiz");
       }
 
-      const refreshData = await refreshRes.json();
-      localStorage.setItem("token", refreshData.token);
+      const { token: newToken } = await refreshRes.json();
+      localStorage.setItem("token", newToken);
 
-      // ✅ Yeni token ile isteği tekrar deniyoruz
-      res = await makeRequest(refreshData.token);
+      // Yeni token ile tekrar dene
+      res = await makeRequest(newToken);
     } catch (err) {
+      console.warn("Token yenileme başarısız. Oturum sona erdi.");
+
+      // Temizle & login'e yönlendir
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToken");
       window.location.href = "/login";
-      return;
+
+      return new Response(null, { status: 401 });
     }
   }
 
