@@ -1,12 +1,12 @@
 import PropTypes from "prop-types";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./ProductItem.css";
 import ProductDetailsModal from "../ProductDetails/ProductDetailsModal";
 
 const ProductItem = ({ productItem }) => {
   const averageRating = productItem?.averageRating ?? 0;
-  console.log(averageRating);
+  // console.log(averageRating);
   const originalPrice = productItem?.price?.current ?? 0;
   const discountPercentage = productItem?.price?.discount ?? 0;
   const discountedPrice =
@@ -29,9 +29,9 @@ const ProductItem = ({ productItem }) => {
   };
 
 
-  useEffect(() => {
-    console.log("ProductItem değişti, ortalama puan:", productItem?.averageRating);
-  }, [productItem]);
+  // useEffect(() => {
+  //   console.log("ProductItem değişti, ortalama puan:", productItem?.averageRating);
+  // }, [productItem]);
   
 
 
