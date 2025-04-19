@@ -1,6 +1,3 @@
-/********************************************************
- * /Applications/Works/e-commerce/frontend/src/components/Products/ProductList.jsx
- ********************************************************/
 import { useEffect, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import ProductItem from "./ProductItem";
@@ -39,17 +36,31 @@ const ProductList = ({ categoryName, selectedBrands }) => {
     <section className="products">
       <div className="section-title">
         {categoryName && (
-          <>
-            <h2>{categoryName} Kategorisindeki Ürünler</h2>
-            <p>Summer Collection New Modern Design</p>
-          </>
+          <div
+            style={{
+              display: "inline-block",
+              padding: "6px 12px",
+              backgroundColor: "#f0f0f0",
+              borderRadius: "20px",
+              fontSize: "14px",
+              fontWeight: 500,
+              color: "#333",
+            }}
+          >
+            <strong>
+              {categoryName.charAt(0).toUpperCase() + categoryName.slice(1)}
+            </strong>{" "}
+            Kategorisindeki Ürünler
+          </div>
         )}
       </div>
+
       <div className="product-list">
         {displayed.map((p) => (
           <ProductItem key={p._id} productItem={p} />
         ))}
       </div>
+
       <div style={{ textAlign: "center", marginTop: 20 }}>
         {!allLoaded && displayed.length < products.length && (
           <button onClick={() => setVisibleCount((c) => c + 20)}>
