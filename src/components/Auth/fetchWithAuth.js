@@ -8,14 +8,15 @@ export const fetchWithAuth = async (url, options = {}) => {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
-        ...options.headers,
+        ...(options.headers || {}),
       },
     });
   };
 
+  // İlk deneme → Access Token ile
   let res = await makeRequest(token);
 
-  // ✅ 401 veya 403 olursa refresh dene
+  // Token süresi dolmuşsa → Refresh ile yenile
   if ((res.status === 401 || res.status === 403) && refreshToken) {
     try {
       const refreshRes = await fetch(
@@ -28,18 +29,22 @@ export const fetchWithAuth = async (url, options = {}) => {
       );
 
       if (!refreshRes.ok) {
-        throw new Error("Refresh failed");
+        throw new Error("Refresh token geçersiz");
       }
 
       const { token: newToken } = await refreshRes.json();
       localStorage.setItem("token", newToken);
 
-      // tekrar deneyelim
+      // Yeni token ile tekrar dene
       res = await makeRequest(newToken);
-    } catch (error) {
+    } catch (err) {
+      console.warn("Token yenileme başarısız. Oturum sona erdi.");
+
+      // Temizle & login'e yönlendir
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToken");
-      window.location.href = "/auth"; // ya da "/login"
+      window.location.href = "/login";
+
       return new Response(null, { status: 401 });
     }
   }
