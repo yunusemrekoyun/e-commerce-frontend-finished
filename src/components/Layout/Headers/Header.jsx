@@ -1,12 +1,11 @@
 /********************************************************
  * /Applications/Works/e-commerce/frontend/src/components/Layout/Header/Header.jsx
  ********************************************************/
-
 import { useContext, useState } from "react";
 import PropTypes from "prop-types";
 import { Link, useLocation } from "react-router-dom";
 import { Modal } from "antd";
-import CartContext from "../../../context/CartContext";
+import CartContext from "../../../context/CartContext"; // sadece bu import kalmalı
 import "./Header.css";
 
 const { confirm } = Modal;
@@ -40,6 +39,12 @@ const Header = ({ setIsSearchShow }) => {
       onOk: doLogout,
     });
   };
+
+  // 🔥 Toplam ürün adedi (çeşit değil, toplam)
+  const totalItems = cartItems.reduce(
+    (total, item) => total + (item.quantity || 1),
+    0
+  );
 
   return (
     <header>
@@ -147,9 +152,7 @@ const Header = ({ setIsSearchShow }) => {
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <i className="bi bi-bag"></i>
-                    <span className="header-cart-count">
-                      {cartItems.length}
-                    </span>
+                    <span className="header-cart-count">{totalItems}</span>
                   </Link>
                 </div>
 

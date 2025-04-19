@@ -21,8 +21,8 @@ const ProductDetails = ({ singleProduct, setSingleProduct, compact = false }) =>
               <Gallery singleProduct={singleProduct} />
 
               {/* ✅ Her modda Info (isim, fiyat, sepete ekle) */}
-              <Info singleProduct={singleProduct} />
-            </main>
+              <Info singleProduct={singleProduct} compact={compact} />
+                          </main>
           </div>
 
           {/* ❌ Tabs sadece normal modda göster */}

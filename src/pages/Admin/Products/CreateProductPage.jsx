@@ -1,4 +1,4 @@
-import { Button, Form, Input, Select, Upload, message } from "antd";
+import { Button, Form, Input, Select, Upload, message, Popover, ColorPicker } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,10 @@ const CreateProductPage = () => {
 
   const [categories, setCategories] = useState([]);
   const [brandOptions, setBrandOptions] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [sizes, setSizes] = useState([]);
+  const [colorPickerVisible, setColorPickerVisible] = useState(false);
+  const [selectedColor, setSelectedColor] = useState("");
 
   useEffect(() => {
     fetch(`${apiUrl}/api/categories`)
@@ -41,6 +45,20 @@ const CreateProductPage = () => {
     form.setFieldsValue({ brand: undefined });
   };
 
+  const handleAddColor = (color) => {
+    if (color && !colors.includes(color)) {
+      setColors([...colors, color]);
+    }
+    setColorPickerVisible(false); // Renk paletini kapat
+  };
+
+  const handleAddSize = (e) => {
+    if (e.key === "Enter" && e.target.value) {
+      setSizes([...sizes, e.target.value]);
+      e.target.value = ""; // Kutu içini temizle
+    }
+  };
+
   const onFinish = async (values) => {
     setLoading(true);
     try {
@@ -49,10 +67,10 @@ const CreateProductPage = () => {
       formData.append("category", values.category);
       formData.append("brand", values.brand);
       formData.append("current", values.current);
-      formData.append("discount", values.discount);
+      formData.append("discount", values.discount || "");
       formData.append("description", values.description);
-      formData.append("colors", values.colors);
-      formData.append("sizes", values.sizes);
+      if (colors.length > 0) formData.append("colors", colors.join(","));
+      if (sizes.length > 0) formData.append("sizes", sizes.join(","));
 
       if (!values.img || values.img.length === 0) {
         return message.error("Ürün görsellerini seçin!");
@@ -64,13 +82,16 @@ const CreateProductPage = () => {
 
       const res = await fetch(`${apiUrl}/api/products`, {
         method: "POST",
-        body: formData,
+        body: formData, // `Content-Type` header'ını manuel olarak eklemeyin
       });
       if (res.ok) {
         message.success("Ürün başarıyla oluşturuldu.");
         form.resetFields();
+        setColors([]);
+        setSizes([]);
         navigate("/admin/products");
-      } else {
+      } 
+      else {
         message.error("Oluştururken hata oluştu.");
       }
     } catch (err) {
@@ -83,7 +104,6 @@ const CreateProductPage = () => {
 
   return (
     <Form form={form} layout="vertical" onFinish={onFinish}>
-      {/* Ürün İsmi, Kategori ... */}
       <Form.Item
         label="Ürün İsmi"
         name="name"
@@ -120,7 +140,6 @@ const CreateProductPage = () => {
         </Select>
       </Form.Item>
 
-      {/* Fiyat, İndirim, Açıklama, Renkler, Bedenler aynı */}
       <Form.Item label="Fiyat" name="current" rules={[{ required: true }]}>
         <Input type="number" />
       </Form.Item>
@@ -137,20 +156,49 @@ const CreateProductPage = () => {
         <Input.TextArea rows={4} />
       </Form.Item>
 
-      <Form.Item
-        label="Renkler (virgülle ayır)"
-        name="colors"
-        rules={[{ required: true }]}
-      >
-        <Input placeholder="Örn: Red,Blue,Green" />
+      <Form.Item label="Renkler" name="colors">
+        <div>
+          <Popover
+            content={<ColorPicker onChange={handleAddColor} />}
+            title="Renk Seç"
+            trigger="click"
+            visible={colorPickerVisible}
+            onVisibleChange={(visible) => setColorPickerVisible(visible)}
+          >
+            <Button>Renk Seç</Button>
+          </Popover>
+        </div>
+        <div>
+          {colors.map((color, index) => (
+            <span
+              key={index}
+              style={{
+                marginRight: 10,
+                backgroundColor: color,
+                padding: "5px 10px",
+                borderRadius: "4px",
+                color: "#fff",
+              }}
+            >
+              {color}
+            </span>
+          ))}
+        </div>
       </Form.Item>
 
       <Form.Item
-        label="Bedenler (virgülle ayır)"
+        label="Bedenler"
         name="sizes"
-        rules={[{ required: true }]}
+        tooltip="Ürünün mevcut bedenlerini girin"
+        rules={[{ required: false }]}
       >
-        <Input placeholder="Örn: S,M,L,XL" />
+        <Select
+          mode="tags"
+          placeholder="Beden ekle"
+          onBlur={(e) =>
+            e.target.value.trim() && form.setFieldsValue({ sizes: e.target.value.split(",") })
+          }
+        />
       </Form.Item>
 
       <Form.Item
