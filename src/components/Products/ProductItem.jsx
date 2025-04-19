@@ -5,8 +5,8 @@ import "./ProductItem.css";
 import ProductDetailsModal from "../ProductDetails/ProductDetailsModal";
 
 const ProductItem = ({ productItem }) => {
-  console.log("productItem:", productItem);  // Veriyi kontrol edelim
-  
+  const averageRating = productItem?.averageRating ?? 0;
+  console.log(averageRating);
   const originalPrice = productItem?.price?.current ?? 0;
   const discountPercentage = productItem?.price?.discount ?? 0;
   const discountedPrice =
@@ -28,23 +28,12 @@ const ProductItem = ({ productItem }) => {
     navigate(`/product/${productItem?._id}`);
   };
 
-  const calculateAverageRating = (reviews) => {
-    if (!reviews || reviews.length === 0) return 0;
-    let totalRating = 0;
-    let totalReviews = 0;
 
-    for (let i = 0; i < reviews.length; i++) {
-      const review = reviews[i];
-      if (review.rating) {
-        totalRating += review.rating;
-        totalReviews += 1;
-      }
-    }
+  useEffect(() => {
+    console.log("ProductItem değişti, ortalama puan:", productItem?.averageRating);
+  }, [productItem]);
+  
 
-    return totalReviews === 0 ? 0 : (totalRating / totalReviews).toFixed(1);
-  };
-
-  const averageRating = calculateAverageRating(productItem?.reviews);
 
   const renderStars = (rating) => {
     const full = Math.floor(rating);
@@ -72,7 +61,6 @@ const ProductItem = ({ productItem }) => {
     );
   };
 
-  const reviewsCount = productItem?.reviews?.length ?? 0;
 
   return (
     <>
