@@ -32,7 +32,21 @@ const CartItem = ({ cartItem }) => {
           ></i>
         </div>
       </td>
-      <td>{cartItem.name}</td>
+      <td>
+        <div>{cartItem.name}</div>
+
+        {/* ✅ Renk ve beden bilgisi */}
+        {cartItem.color && (
+          <div className="cart-item-option">
+            <strong>Color:</strong> {cartItem.color}
+          </div>
+        )}
+        {cartItem.size && (
+          <div className="cart-item-option">
+            <strong>Size:</strong> {cartItem.size}
+          </div>
+        )}
+      </td>
       <td>${cartItem.price.toFixed(2)}</td>
       <td className="product-quantity">
         <button
@@ -43,10 +57,7 @@ const CartItem = ({ cartItem }) => {
           -
         </button>
         <span className="quantity-text">{cartItem.quantity}</span>
-        <button
-          className="quantity-btn"
-          onClick={handleIncrease}
-        >
+        <button className="quantity-btn" onClick={handleIncrease}>
           +
         </button>
       </td>

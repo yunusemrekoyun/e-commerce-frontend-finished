@@ -14,16 +14,18 @@ const CartTable = () => {
   return (
     <div>
       <table className="shop-table">
-        <thead>
-          <tr>
-            <th className="product-thumbnail">&nbsp;</th>
-            <th className="product-thumbnail">&nbsp;</th>
-            <th className="product-name">Product</th>
-            <th className="product-price">Price</th>
-            <th className="product-quantity">Quantity</th>
-            <th className="product-subtotal">Subtotal</th>
-          </tr>
-        </thead>
+            <thead>
+        <tr>
+          <th className="product-thumbnail">&nbsp;</th>
+          <th className="product-thumbnail">&nbsp;</th>
+          <th className="product-name">Product</th>
+          <th className="product-price">Price</th>
+          <th className="product-quantity">Quantity</th>
+          <th className="product-subtotal">Subtotal</th>
+          <th className="product-color">Ürün Seçenekleri</th> {/* Yeni */}
+          
+        </tr>
+      </thead>
         <tbody className="cart-wrapper">
           {cartItems.map((item) => (
             <CartItem cartItem={item} key={item._id} />
