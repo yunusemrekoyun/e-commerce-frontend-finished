@@ -10,10 +10,8 @@ import {
   Upload,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import ReactQuill from "react-quill";
 import { useNavigate, useParams } from "react-router-dom";
 import imageCompression from "browser-image-compression";
-import "react-quill/dist/quill.snow.css";
 import { fetchWithAuth } from "../../../components/Auth/fetchWithAuth";
 
 const MAX_IMAGES = 6;
@@ -103,7 +101,6 @@ const UpdateProductPage = () => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      // 🔸 1) Ürün bilgisi (JSON)
       const body = {
         name: values.name,
         price: {
@@ -130,7 +127,6 @@ const UpdateProductPage = () => {
         throw new Error(err.error || "Ürün bilgisi güncellenemedi.");
       }
 
-      // 🔸 2) Görseller (FormData)
       const newImages = fileList.filter((f) => f.originFileObj);
       if (newImages.length > 0) {
         const formData = new FormData();
@@ -214,7 +210,7 @@ const UpdateProductPage = () => {
           name="description"
           rules={[{ required: true, message: "Lütfen açıklama girin!" }]}
         >
-          <ReactQuill theme="snow" />
+          <Input.TextArea rows={4} />
         </Form.Item>
 
         <Form.Item label="Ürün Renkleri" name="colors">

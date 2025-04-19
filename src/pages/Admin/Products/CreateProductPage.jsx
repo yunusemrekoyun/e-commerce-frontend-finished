@@ -1,4 +1,4 @@
-import { Button, Form, Input, Select, Upload, message, Popover, ColorPicker } from "antd";
+import { Button, Form, Input, Select, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -16,13 +16,12 @@ const CreateProductPage = () => {
   const [brandOptions, setBrandOptions] = useState([]);
   const [colors, setColors] = useState([]);
   const [sizes, setSizes] = useState([]);
-  const [colorPickerVisible, setColorPickerVisible] = useState(false);
 
   useEffect(() => {
     fetch(`${apiUrl}/api/categories`)
       .then((res) => res.json())
       .then((data) => setCategories(data))
-      .catch((err) => console.error("Kategori alınamadı:", err));
+      .catch((err) => console.error("Ürün kategorileri alınamadı:", err));
   }, [apiUrl]);
 
   const compressImage = async (file) => {
@@ -42,24 +41,6 @@ const CreateProductPage = () => {
     const cat = categories.find((c) => c._id === value);
     setBrandOptions(cat?.brands || []);
     form.setFieldsValue({ brand: undefined });
-  };
-
-  const handleAddColor = (color) => {
-    if (color && !colors.includes(color)) {
-      setColors([...colors, color]);
-    }
-    setColorPickerVisible(false); // Renk paletini kapat
-  };
-
-  const handleRemoveColor = (colorToRemove) => {
-    setColors(colors.filter((color) => color !== colorToRemove));
-  };
-
-  const handleAddSize = (e) => {
-    if (e.key === "Enter" && e.target.value) {
-      setSizes([...sizes, e.target.value]);
-      e.target.value = ""; // Kutu içini temizle
-    }
   };
 
   const onFinish = async (values) => {
@@ -85,7 +66,7 @@ const CreateProductPage = () => {
 
       const res = await fetch(`${apiUrl}/api/products`, {
         method: "POST",
-        body: formData, // `Content-Type` header'ını manuel olarak eklemeyin
+        body: formData,
       });
       if (res.ok) {
         message.success("Ürün başarıyla oluşturuldu.");
@@ -94,11 +75,11 @@ const CreateProductPage = () => {
         setSizes([]);
         navigate("/admin/products");
       } else {
-        message.error("Oluştururken hata oluştu.");
+        message.error("Ürün oluşturulurken hata oluştu.");
       }
     } catch (err) {
       console.error(err);
-      message.error("Bir hata oluştu.");
+      message.error("Ürün oluşturma sırasında bir hata oluştu.");
     } finally {
       setLoading(false);
     }
@@ -117,7 +98,7 @@ const CreateProductPage = () => {
       <Form.Item
         label="Ürün Kategorisi"
         name="category"
-        rules={[{ required: true, message: "Kategori seçin!" }]}
+        rules={[{ required: true, message: "Ürün kategorisi seçin!" }]}
       >
         <Select placeholder="Kategori seçin" onChange={onCategoryChange}>
           {categories.map((c) => (
@@ -158,34 +139,23 @@ const CreateProductPage = () => {
         <Input.TextArea rows={4} />
       </Form.Item>
 
-      <Form.Item
-  label="Renkler"
-  name="colors"
-  tooltip="Ürünün mevcut renklerini girin"
-  rules={[{ required: false }]}
->
-  <Select
-    mode="tags"
-    placeholder="Renk ekle (örn: kırmızı, siyah)"
-    value={colors}
-    onChange={(newColors) => setColors(newColors)}
-    style={{ width: "100%" }}
-  />
-</Form.Item>
-<Form.Item
-  label="Bedenler"
-  name="sizes"
-  tooltip="Ürünün mevcut bedenlerini girin"
-  rules={[{ required: false }]}
->
-  <Select
-    mode="tags"
-    placeholder="Beden ekle (örn: S, M, L)"
-    value={sizes}
-    onChange={(newSizes) => setSizes(newSizes)}
-    style={{ width: "100%" }}
-  />
-</Form.Item>
+      <Form.Item label="Renkler" name="colors">
+        <Select
+          mode="tags"
+          placeholder="Renk ekle (örn: kırmızı, siyah)"
+          value={colors}
+          onChange={(newColors) => setColors(newColors)}
+        />
+      </Form.Item>
+
+      <Form.Item label="Bedenler" name="sizes">
+        <Select
+          mode="tags"
+          placeholder="Beden ekle (örn: S, M, L)"
+          value={sizes}
+          onChange={(newSizes) => setSizes(newSizes)}
+        />
+      </Form.Item>
 
       <Form.Item
         label="Ürün Görselleri"
@@ -206,7 +176,7 @@ const CreateProductPage = () => {
 
       <Form.Item>
         <Button type="primary" htmlType="submit" loading={loading}>
-          Oluştur
+          Ürünü Oluştur
         </Button>
       </Form.Item>
     </Form>
