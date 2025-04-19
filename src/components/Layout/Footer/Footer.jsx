@@ -14,36 +14,34 @@ const Footer = () => {
               <div className="widget-nav-menu">
                 <h4>Hızlı Erişim</h4>
                 <ul className="menu-list">
-                  <li>
-                    <a href="#">Anasyfa</a>
-                  </li>
-                  <li>
-                    <a href="#">Ürünlerimiz</a>
-                  </li>
-                  <li>
-                    <a href="#">Hakkımızda</a>
-                  </li>
-                  <li>
-                    <a href="#">İletişim</a>
-                  </li>
+                <li>
+                  <a href="/">Anasayfa</a>
+                </li>
+                <li>
+                  <a href="shop">Ürünlerimiz</a>
+                </li>
+                <li>
+                  <a href="blog">Hakkımızda</a>
+                </li>
+                <li>
+                  <a href="contact">İletişim</a>
+                </li>
                 </ul>
               </div>
               <div className="brand-info">
                 <div className="footer-logo">
                   <Link to={"/"} className="logo">
-                    LOGO
+                    ÜnKo Kozmetik
                   </Link>
                 </div>
                 <div className="footer-desc">
                   <p>
                     {" "}
-                    Quis ipsum suspendisse ultrices gravida. Risus commodo
-                    viverra maecenas accumsan lacus vel facilisis in termapol.
-                  </p>
+                    ÜnKo Kozmetik, güzelliğin doğallıkla buluştuğu yerdir. Kaliteyi cildinize, güveni ruhunuza sunar.                  </p>
                 </div>
                 <div className="footer-contact">
                   <p>
-                    <a href="tel:555 555 55 55">(+800) 1234 5678 90</a> –{" "}
+                    <a href="tel:555 555 55 55">(+90)000 000 00 00</a> –{" "}
                     <a href="mailto:info@example.com">info@example.com</a>
                   </p>
                 </div>
@@ -62,15 +60,15 @@ const Footer = () => {
               </a>
               <div className="footer-menu">
                 <ul className="footer-menu-list">
-                  <li className="list-item">
-                    <a href="#">Privacy Policy</a>
-                  </li>
-                  <li className="list-item">
-                    <a href="#">Terms and Conditions</a>
-                  </li>
-                  <li className="list-item">
-                    <a href="#">Returns Policy</a>
-                  </li>
+                <li className="list-item">
+                  <a href="#">Gizlilik Politikası</a>
+                </li>
+                <li className="list-item">
+                  <a href="#">Şartlar ve Koşullar</a>
+                </li>
+                <li className="list-item">
+                  <a href="#">İade Politikası</a>
+                </li>
                 </ul>
               </div>
             </div>

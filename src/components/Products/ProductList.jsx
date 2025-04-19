@@ -67,7 +67,7 @@ const ProductList = ({ categoryName, selectedBrands }) => {
             Daha Fazla Ürün
           </button>
         )}
-        {allLoaded && <p>Başka ürün yok</p>}
+        {allLoaded && <p></p>}
       </div>
     </section>
   );

@@ -74,7 +74,7 @@ const ProductPage = () => {
       });
 
       if (response.ok) {
-        message.success("Kategori başarıyla silindi.");
+        message.success("Ürün başarıyla silindi.");
         setDataSource((prevProducts) => {
           return prevProducts.filter((product) => product._id !== productId);
         });

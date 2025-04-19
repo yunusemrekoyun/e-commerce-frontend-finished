@@ -59,7 +59,7 @@ const Header = ({ setIsSearchShow }) => {
             {/* Logo */}
             <div className="header-left">
               <Link to="/" className="logo">
-                LOGO
+                ÜNKO Kozmetik
               </Link>
             </div>
 
