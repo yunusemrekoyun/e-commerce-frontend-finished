@@ -24,7 +24,7 @@ import UpdateProductPage from "./pages/Admin/Products/UpdateProductPage";
 import CouponPage from "./pages/Admin/Coupons/CouponPage";
 import CreateCouponPage from "./pages/Admin/Coupons/CreateCouponPage";
 import UpdateCouponPage from "./pages/Admin/Coupons/UpdateCouponPage";
-import OrderPage from "./pages/Admin/OrderPage";
+import OrderPage from "./pages/Admin/Orders/OrderPage";
 
 import CommentsPage from "./pages/Admin/CommentsPage";
 
