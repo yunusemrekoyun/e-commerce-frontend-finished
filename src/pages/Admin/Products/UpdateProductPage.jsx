@@ -1,11 +1,20 @@
-import { useState } from "react";
-import { Button, Form, Input, InputNumber, Select, Spin, message, Upload } from "antd";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { useState, useEffect } from "react";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  Spin,
+  message,
+  Upload,
+} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { useEffect } from "react";
+import ReactQuill from "react-quill";
 import { useNavigate, useParams } from "react-router-dom";
 import imageCompression from "browser-image-compression";
+import "react-quill/dist/quill.snow.css";
+import { fetchWithAuth } from "../../../components/Auth/fetchWithAuth";
 
 const MAX_IMAGES = 6;
 
@@ -16,8 +25,7 @@ const compressImage = async (file) => {
     useWebWorker: true,
   };
   try {
-    const compressedFile = await imageCompression(file, options);
-    return compressedFile;
+    return await imageCompression(file, options);
   } catch (error) {
     console.error("Sıkıştırma hatası:", error);
     return file;
@@ -27,141 +35,129 @@ const compressImage = async (file) => {
 const UpdateProductPage = () => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-  const navigate = useNavigate();
-  const [form] = Form.useForm();
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
-  const params = useParams();
-  const productId = params.id;
-
   const [fileList, setFileList] = useState([]);
-  const [colors, setColors] = useState([]);
-  const [sizes, setSizes] = useState([]);
+  const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const { id: productId } = useParams();
+  const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [categoriesResponse, singleProductResponse] = await Promise.all([
-          fetch(`${apiUrl}/api/categories`),
-          fetch(`${apiUrl}/api/products/${productId}`),
+        const [categoriesRes, productRes] = await Promise.all([
+          fetchWithAuth(`${apiUrl}/api/categories`),
+          fetchWithAuth(`${apiUrl}/api/products/${productId}`),
         ]);
 
-        if (!categoriesResponse.ok || !singleProductResponse.ok) {
+        if (!categoriesRes.ok || !productRes.ok) {
           message.error("Veri getirme başarısız.");
           return;
         }
 
-        const [categoriesData, singleProductData] = await Promise.all([
-          categoriesResponse.json(),
-          singleProductResponse.json(),
+        const [categoriesData, productData] = await Promise.all([
+          categoriesRes.json(),
+          productRes.json(),
         ]);
 
         setCategories(categoriesData);
 
-        if (singleProductData) {
-          const mappedFileList = singleProductData.img.map((imageObj) => ({
-            uid: imageObj._id,
-            name: "image.png",
-            status: "done",
-            url: imageObj.base64,
-          }));
-
-          setFileList(mappedFileList);
-
+        if (productData) {
           form.setFieldsValue({
-            name: singleProductData.name,
-            current: singleProductData.price.current,
-            discount: singleProductData.price.discount,
-            description: singleProductData.description,
-            category: singleProductData.category,
+            name: productData.name,
+            current: productData.price.current,
+            discount: productData.price.discount,
+            description: productData.description,
+            category: productData.category,
+            colors: productData.colors || [],
+            sizes: productData.sizes || [],
           });
 
-          setColors(singleProductData.colors);
-          setSizes(singleProductData.sizes);
+          const images = productData.img.map((img) => ({
+            uid: img._id,
+            name: "image.png",
+            status: "done",
+            url: img.base64,
+          }));
+          setFileList(images);
         }
       } catch (error) {
-        console.log("Veri hatası:", error);
+        console.error("Veri çekme hatası:", error);
+        message.error("Veri yüklenirken hata oluştu.");
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
   }, [apiUrl, productId, form]);
 
-  const handleChange = (info) => {
-    let newList = [...info.fileList];
-
+  const handleChange = ({ fileList: newList }) => {
     if (newList.length > MAX_IMAGES) {
       message.error(`En fazla ${MAX_IMAGES} görsel yükleyebilirsiniz.`);
       newList = newList.slice(0, MAX_IMAGES);
     }
-
     setFileList(newList);
-  };
-
-  const handleAddColor = (e) => {
-    if (e.key === "Enter" && e.target.value) {
-      setColors([...colors, e.target.value]);
-      e.target.value = ""; // Kutu içini temizle
-    }
-  };
-
-  const handleAddSize = (e) => {
-    if (e.key === "Enter" && e.target.value) {
-      setSizes([...sizes, e.target.value]);
-      e.target.value = ""; // Kutu içini temizle
-    }
   };
 
   const onFinish = async (values) => {
     setLoading(true);
-
     try {
-      const formData = new FormData();
-      formData.append("name", values.name);
-      formData.append("current", values.current);
-      formData.append("discount", values.discount);
-      formData.append("description", values.description);
-      formData.append("category", values.category);
+      // 🔸 1) Ürün bilgisi (JSON)
+      const body = {
+        name: values.name,
+        price: {
+          current: values.current,
+          discount: values.discount,
+        },
+        description: values.description,
+        category: values.category,
+        colors: values.colors || [],
+        sizes: values.sizes || [],
+      };
 
-      formData.append("colors", colors.join(","));
-      formData.append("sizes", sizes.join(","));
-
-      const keepImageIds = fileList
-        .filter((file) => !file.originFileObj && file.url)
-        .map((file) => file.uid);
-
-      formData.append("keepImages", JSON.stringify(keepImageIds));
-
-      const newFiles = fileList.filter((file) => file.originFileObj);
-      if (newFiles.length) {
-        if (newFiles.length + keepImageIds.length > MAX_IMAGES) {
-          message.error(`Toplamda en fazla ${MAX_IMAGES} görsel olabilir.`);
-          setLoading(false);
-          return;
+      const infoRes = await fetchWithAuth(
+        `${apiUrl}/api/products/${productId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
         }
+      );
 
-        for (const file of newFiles) {
+      if (!infoRes.ok) {
+        const err = await infoRes.json();
+        throw new Error(err.error || "Ürün bilgisi güncellenemedi.");
+      }
+
+      // 🔸 2) Görseller (FormData)
+      const newImages = fileList.filter((f) => f.originFileObj);
+      if (newImages.length > 0) {
+        const formData = new FormData();
+        for (const file of newImages) {
           const compressed = await compressImage(file.originFileObj);
           formData.append("img", compressed);
         }
+
+        const imageRes = await fetchWithAuth(
+          `${apiUrl}/api/products/${productId}/upload-images`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (!imageRes.ok) {
+          const err = await imageRes.json();
+          throw new Error(err.error || "Görsel yüklenirken hata oluştu.");
+        }
       }
 
-      const response = await fetch(`${apiUrl}/api/products/${productId}`, {
-        method: "PUT",
-        body: formData,
-      });
-
-      if (response.ok) {
-        message.success("Ürün başarıyla güncellendi.");
-        navigate("/admin/products");
-      } else {
-        const errData = await response.json();
-        message.error(errData.error || "Ürün güncellenirken bir hata oluştu.");
-      }
+      message.success("Ürün başarıyla güncellendi.");
+      navigate("/admin/products");
     } catch (error) {
-      console.log("Ürün güncelleme hatası:", error);
-      message.error("Bir hata meydana geldi.");
+      console.error("Güncelleme hatası:", error);
+      message.error(error.message || "Güncelleme sırasında hata oluştu.");
     } finally {
       setLoading(false);
     }
@@ -169,106 +165,64 @@ const UpdateProductPage = () => {
 
   return (
     <Spin spinning={loading}>
-      <Form name="basic" layout="vertical" onFinish={onFinish} form={form}>
+      <Form
+        layout="vertical"
+        form={form}
+        onFinish={onFinish}
+        style={{ maxWidth: "800px", margin: "0 auto" }}
+      >
         <Form.Item
           label="Ürün İsmi"
           name="name"
-          rules={[
-            {
-              required: true,
-              message: "Lütfen Ürün adını girin!",
-            },
-          ]}
+          rules={[{ required: true, message: "Lütfen ürün adını girin!" }]}
         >
           <Input />
         </Form.Item>
+
         <Form.Item
           label="Ürün Kategorisi"
           name="category"
-          rules={[
-            {
-              required: true,
-              message: "Lütfen 1 kategori seçin!",
-            },
-          ]}
+          rules={[{ required: true, message: "Lütfen kategori seçin!" }]}
         >
           <Select>
             {categories.map((cat) => (
-              <Select.Option value={cat._id} key={cat._id}>
+              <Select.Option key={cat._id} value={cat._id}>
                 {cat.name}
               </Select.Option>
             ))}
           </Select>
         </Form.Item>
+
         <Form.Item
           label="Fiyat"
           name="current"
-          rules={[
-            {
-              required: true,
-              message: "Lütfen ürün fiyatını girin!",
-            },
-          ]}
+          rules={[{ required: true, message: "Lütfen fiyat girin!" }]}
         >
           <InputNumber style={{ width: "100%" }} />
         </Form.Item>
+
         <Form.Item
           label="İndirim Oranı"
           name="discount"
-          rules={[
-            {
-              required: true,
-              message: "Lütfen bir ürün indirim oranı girin!",
-            },
-          ]}
+          rules={[{ required: true, message: "İndirim oranı zorunludur!" }]}
         >
           <InputNumber style={{ width: "100%" }} />
         </Form.Item>
+
         <Form.Item
           label="Ürün Açıklaması"
           name="description"
-          rules={[
-            {
-              required: true,
-              message: "Lütfen bir ürün açıklaması girin!",
-            },
-          ]}
+          rules={[{ required: true, message: "Lütfen açıklama girin!" }]}
         >
-          <ReactQuill theme="snow" style={{ backgroundColor: "white" }} />
+          <ReactQuill theme="snow" />
         </Form.Item>
 
-        <Form.Item
-          label="Ürün Renkleri"
-          name="colors"
-        >
-          <Input
-            placeholder="Örn: Red,Blue,Green"
-            onKeyDown={handleAddColor}
-          />
-          <div>
-            {colors.map((color, index) => (
-              <span key={index} style={{ marginRight: 10 }}>
-                {color}
-              </span>
-            ))}
-          </div>
+        <Form.Item label="Ürün Renkleri" name="colors">
+          <Select mode="tags" placeholder="Renk ekle (örn: kırmızı, siyah)" />
         </Form.Item>
 
-        <Form.Item
-          label="Ürün Bedenleri"
-          name="sizes"
-        >
-          <Input
-            placeholder="Örn: S,M,L,XL"
-            onKeyDown={handleAddSize}
-          />
-          <div>
-            {sizes.map((size, index) => (
-              <span key={index} style={{ marginRight: 10 }}>
-                {size}
-              </span>
-            ))}
-          </div>
+        <Form.Item label="Ürün Bedenleri" name="sizes">
+          <Select mode="tags" placeholder="Beden ekle (örn: S, M, L)" />
         </Form.Item>
 
         <Form.Item label="Ürün Görselleri">
