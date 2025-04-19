@@ -15,7 +15,7 @@ export const fetchWithAuth = async (url, options = {}) => {
 
   let res = await makeRequest(token);
 
-  // Hem 401 hem 403 geldiğinde refresh deneyelim
+  // ✅ 401 veya 403 olursa refresh dene
   if ((res.status === 401 || res.status === 403) && refreshToken) {
     try {
       const refreshRes = await fetch(
@@ -28,19 +28,19 @@ export const fetchWithAuth = async (url, options = {}) => {
       );
 
       if (!refreshRes.ok) {
-        throw new Error("Refresh token expired or invalid.");
+        throw new Error("Refresh failed");
       }
 
-      const refreshData = await refreshRes.json();
-      localStorage.setItem("token", refreshData.token);
+      const { token: newToken } = await refreshRes.json();
+      localStorage.setItem("token", newToken);
 
-      // ✅ Yeni token ile isteği tekrar deniyoruz
-      res = await makeRequest(refreshData.token);
-    } catch (err) {
+      // tekrar deneyelim
+      res = await makeRequest(newToken);
+    } catch (error) {
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToken");
-      window.location.href = "/login";
-      return;
+      window.location.href = "/auth"; // ya da "/login"
+      return new Response(null, { status: 401 });
     }
   }
 
