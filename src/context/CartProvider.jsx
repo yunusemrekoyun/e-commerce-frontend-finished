@@ -15,15 +15,25 @@ const CartProvider = ({ children }) => {
 
   const addToCart = (newItem) => {
     setCartItems((prevCart) => {
-      const existingItem = prevCart.find((item) => item._id === newItem._id);
-
+      // Aynı ürün, aynı renk ve boyda mı?
+      const existingItem = prevCart.find(
+        (item) =>
+          item._id === newItem._id &&
+          item.selectedColor === newItem.selectedColor &&
+          item.selectedSize === newItem.selectedSize
+      );
+  
       if (existingItem) {
+        // Aynı ürün var, sadece miktarını artır
         return prevCart.map((item) =>
-          item._id === newItem._id
+          item._id === newItem._id &&
+          item.selectedColor === newItem.selectedColor &&
+          item.selectedSize === newItem.selectedSize
             ? { ...item, quantity: item.quantity + newItem.quantity }
             : item
         );
       } else {
+        // Farklı renk veya boyutta yeni ürün ekle
         return [...prevCart, { ...newItem, quantity: newItem.quantity || 1 }];
       }
     });

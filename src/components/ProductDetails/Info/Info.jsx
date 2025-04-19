@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import "./Info.css";
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import CartContext from "../../../context/CartContext";
 
 const Info = ({ singleProduct, compact = false }) => {
@@ -19,6 +19,14 @@ const Info = ({ singleProduct, compact = false }) => {
   const [selectedSize, setSelectedSize] = useState("");
   const [sizeError, setSizeError] = useState(false);
   const [colorError, setColorError] = useState(false);
+
+  useEffect(() => {
+    const savedColor = localStorage.getItem(`selectedColor-${singleProduct?.id}`);
+    const savedSize = localStorage.getItem(`selectedSize-${singleProduct?.id}`);
+
+    if (savedColor) setSelectedColor(savedColor);
+    if (savedSize) setSelectedSize(savedSize);
+  }, [singleProduct?.id]);
 
   const calculateAverageRating = (reviews) => {
     if (!reviews || reviews.length === 0) return 0;
@@ -68,32 +76,31 @@ const Info = ({ singleProduct, compact = false }) => {
 
   const handleSizeChange = (size) => {
     setSelectedSize(size);
+    localStorage.setItem(`selectedSize-${singleProduct?.id}`, size);
     setSizeError(false);
   };
 
   const handleColorChange = (color) => {
     setSelectedColor(color);
+    localStorage.setItem(`selectedColor-${singleProduct?.id}`, color);
     setColorError(false);
   };
 
   const handleAddToCart = () => {
     let valid = true;
-  
-    // Eğer ürün renk içeriyorsa ve kullanıcı renk seçmemişse hata göster
+
     if (colors.length > 0 && colors.some(color => color !== "0" && color !== "") && !selectedColor) {
       setColorError(true);
       valid = false;
     }
-  
-    // Eğer ürün beden içeriyorsa ve kullanıcı beden seçmemişse hata göster
+
     if (sizes.length > 0 && !selectedSize) {
       setSizeError(true);
       valid = false;
     }
-  
+
     if (!valid) return;
-  
-    // Sepete ürün ekle
+
     addToCart({
       ...singleProduct,
       price: discountedPrice,
@@ -101,7 +108,12 @@ const Info = ({ singleProduct, compact = false }) => {
       ...(selectedColor && { selectedColor }),
       ...(selectedSize && { selectedSize }),
     });
+
+    // Opsiyonel: seçimleri sıfırlamak istersen yorum satırlarını aç
+    // localStorage.removeItem(`selectedColor-${singleProduct?.id}`);
+    // localStorage.removeItem(`selectedSize-${singleProduct?.id}`);
   };
+
   return (
     <div className="product-info">
       <h1 className="product-title">{singleProduct?.name}</h1>

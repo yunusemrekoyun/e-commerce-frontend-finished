@@ -18,7 +18,6 @@ const CartItem = ({ cartItem }) => {
 
   return (
     <tr className="cart-item">
-      <td></td>
       <td className="cart-image">
         <div className="single-image-wrapper">
           <img
@@ -34,16 +33,17 @@ const CartItem = ({ cartItem }) => {
       </td>
       <td>
         <div>{cartItem.name}</div>
-
-        {/* ✅ Renk ve beden bilgisi */}
-        {cartItem.color && (
+      </td>
+      {/* Ürün Seçeneklerini burada yerleştiriyoruz */}
+      <td className="product-options">
+        {cartItem.selectedColor && (
           <div className="cart-item-option">
-            <strong>Color:</strong> {cartItem.color}
+            <strong>Color:</strong> {cartItem.selectedColor}
           </div>
         )}
-        {cartItem.size && (
+        {cartItem.selectedSize && (
           <div className="cart-item-option">
-            <strong>Size:</strong> {cartItem.size}
+            <strong>Size:</strong> {cartItem.selectedSize}
           </div>
         )}
       </td>

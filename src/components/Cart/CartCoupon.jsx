@@ -1,6 +1,6 @@
 import { message } from "antd";
 import { useContext, useState } from "react";
-import  CartContext  from "../../context/CartContext";
+import CartContext from "../../context/CartContext";
 
 const CartCoupon = () => {
   const [couponCode, setCouponCode] = useState("");
@@ -54,6 +54,13 @@ const CartCoupon = () => {
     message.info("Kupon kaldırıldı.");
   };
 
+  const clearCart = () => {
+    setCartItems([]); // Sepeti temizler
+    setAppliedCoupon(null);
+    setCouponCode("");
+    message.info("Sepetiniz temizlendi.");
+  };
+
   return (
     <div className="actions-wrapper">
       {appliedCoupon ? (
@@ -80,8 +87,10 @@ const CartCoupon = () => {
         </div>
       )}
 
-      <div className="update-cart">
-        <button className="btn">Sepeti Güncelle</button>
+      <div className="clear-cart">
+        <button className="btn" onClick={clearCart}>
+          Sepeti Temizle
+        </button>
       </div>
     </div>
   );
