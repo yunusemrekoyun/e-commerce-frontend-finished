@@ -1,6 +1,3 @@
-/********************************************************
- * frontend/src/components/ProductDetails/ProductDetails.jsx
- ********************************************************/
 import Breadcrumb from "./Breadcrumb/Breadcrumb";
 import Gallery from "./Gallery/Gallery";
 import PropTypes from "prop-types";
@@ -17,22 +14,25 @@ const ProductDetails = ({
     <section className="single-product">
       <div className="container">
         <div className="single-product-wrapper">
-          {/* Breadcrumb sadece normal modda ve ürün yüklendiğinde */}
+          {/* ❌ Breadcrumb sadece normal modda göster */}
           {!compact && singleProduct && (
             <Breadcrumb
               category={singleProduct.category}
               brand={singleProduct.brand}
-              productName={singleProduct.name} // ← burayı ekledik
             />
           )}
 
           <div className="single-content">
             <main className="site-main">
+              {/* ✅ Her modda Gallery */}
               <Gallery singleProduct={singleProduct} />
-              <Info singleProduct={singleProduct} />
+
+              {/* ✅ Her modda Info (isim, fiyat, sepete ekle) */}
+              <Info singleProduct={singleProduct} compact={compact} />
             </main>
           </div>
 
+          {/* ❌ Tabs sadece normal modda göster */}
           {!compact && (
             <Tabs
               singleProduct={singleProduct}

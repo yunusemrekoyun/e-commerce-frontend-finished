@@ -1,17 +1,9 @@
-import {
-  Button,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Spin,
-  message,
-  Upload,
-} from "antd";
+import { useState } from "react";
+import { Button, Form, Input, InputNumber, Select, Spin, message, Upload } from "antd";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { UploadOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import imageCompression from "browser-image-compression";
 
@@ -42,6 +34,8 @@ const UpdateProductPage = () => {
   const productId = params.id;
 
   const [fileList, setFileList] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [sizes, setSizes] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,10 +73,11 @@ const UpdateProductPage = () => {
             current: singleProductData.price.current,
             discount: singleProductData.price.discount,
             description: singleProductData.description,
-            colors: singleProductData.colors.join(","),
-            sizes: singleProductData.sizes.join(","),
             category: singleProductData.category,
           });
+
+          setColors(singleProductData.colors);
+          setSizes(singleProductData.sizes);
         }
       } catch (error) {
         console.log("Veri hatası:", error);
@@ -104,6 +99,20 @@ const UpdateProductPage = () => {
     setFileList(newList);
   };
 
+  const handleAddColor = (e) => {
+    if (e.key === "Enter" && e.target.value) {
+      setColors([...colors, e.target.value]);
+      e.target.value = ""; // Kutu içini temizle
+    }
+  };
+
+  const handleAddSize = (e) => {
+    if (e.key === "Enter" && e.target.value) {
+      setSizes([...sizes, e.target.value]);
+      e.target.value = ""; // Kutu içini temizle
+    }
+  };
+
   const onFinish = async (values) => {
     setLoading(true);
 
@@ -115,12 +124,8 @@ const UpdateProductPage = () => {
       formData.append("description", values.description);
       formData.append("category", values.category);
 
-      if (values.colors) {
-        formData.append("colors", values.colors);
-      }
-      if (values.sizes) {
-        formData.append("sizes", values.sizes);
-      }
+      formData.append("colors", colors.join(","));
+      formData.append("sizes", sizes.join(","));
 
       const keepImageIds = fileList
         .filter((file) => !file.originFileObj && file.url)
@@ -233,29 +238,37 @@ const UpdateProductPage = () => {
         </Form.Item>
 
         <Form.Item
-          label="Ürün Renkleri (virgülle ayır)"
+          label="Ürün Renkleri"
           name="colors"
-          rules={[
-            {
-              required: true,
-              message: "Lütfen en az 1 ürün rengi girin!",
-            },
-          ]}
         >
-          <Input placeholder="Örn: Red,Blue,Green" />
+          <Input
+            placeholder="Örn: Red,Blue,Green"
+            onKeyDown={handleAddColor}
+          />
+          <div>
+            {colors.map((color, index) => (
+              <span key={index} style={{ marginRight: 10 }}>
+                {color}
+              </span>
+            ))}
+          </div>
         </Form.Item>
 
         <Form.Item
-          label="Ürün Bedenleri (virgülle ayır)"
+          label="Ürün Bedenleri"
           name="sizes"
-          rules={[
-            {
-              required: true,
-              message: "Lütfen en az 1 ürün beden ölçüsü girin!",
-            },
-          ]}
         >
-          <Input placeholder="Örn: S,M,L,XL" />
+          <Input
+            placeholder="Örn: S,M,L,XL"
+            onKeyDown={handleAddSize}
+          />
+          <div>
+            {sizes.map((size, index) => (
+              <span key={index} style={{ marginRight: 10 }}>
+                {size}
+              </span>
+            ))}
+          </div>
         </Form.Item>
 
         <Form.Item label="Ürün Görselleri">

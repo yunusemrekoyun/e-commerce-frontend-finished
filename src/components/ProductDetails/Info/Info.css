@@ -1,5 +1,6 @@
 /* Info.css */
 
+/* Ürün Bilgileri Alanı */
 .site-main .product-info {
   width: 50%;
   padding-left: 15px;
@@ -53,79 +54,62 @@
   margin: 15px 0;
 }
 
+/* Renk Seçimi ve Kutucuklar */
 .site-main .colors .colors-wrapper {
   display: flex;
-  column-gap: 10px; /* Fotoğraflar arasındaki boşluğu artırdım */
-  margin-left: -1px;
-  flex-wrap: wrap; /* Yetersiz alanda fotoğrafları alt alta kaydırır */
-}
-
-.site-main .colors .colors-label {
-  font-weight: 500;
-  font-size: 14px;
-  margin-bottom: 10px;
+  column-gap: 10px; /* Kutucuklar arasındaki boşluk */
+  flex-wrap: wrap; /* Alan daraldıkça kutucukları alt alta kaydırır */
 }
 
 .site-main .colors .color-wrapper {
+  width: 50px; /* Dikdörtgen kutu genişliği */
+  height: 30px; /* Dikdörtgen kutu yüksekliği */
   border: 1px solid transparent;
-  width: 40px; /* Fotoğraf boyutunu küçülttüm */
-  height: 40px; /* Fotoğraf boyutunu küçülttüm */
-  border-radius: 50%;
-  padding: 2px;
   cursor: pointer;
   transition: 0.2s ease all;
+  border-radius: 5px; /* Köşeleri yuvarlatılmış dikdörtgen */
+  display: inline-block;
 }
 
 .site-main .colors .color-wrapper.active {
-  border-color: #e51414;
-}
-
-.site-main .colors .color-wrapper input[type="radio"] {
-  appearance: none;
+  border-color: #e51414; /* Seçili rengin kenarlığı */
 }
 
 .site-main .colors .color-wrapper:hover {
-  border-color: #e51414;
+  border-color: #e51414; /* Hover efekti */
 }
 
-.site-main .colors .color-wrapper label {
-  display: inline-block;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  margin-right: 8px;
-  cursor: pointer;
-}
-
-.site-main .colors .color-wrapper .blue-color {
+/* Renk Kutularının Arka Plan Renkleri */
+.site-main .colors .color-wrapper.blue-color {
   background-color: blue;
 }
 
-.site-main .colors .color-wrapper .red-color {
+.site-main .colors .color-wrapper.red-color {
   background-color: red;
 }
 
-.site-main .colors .color-wrapper .green-color {
+.site-main .colors .color-wrapper.green-color {
   background-color: green;
 }
 
-.site-main .colors .color-wrapper .purple-color {
+.site-main .colors .color-wrapper.purple-color {
   background-color: purple;
 }
 
-.site-main .values {
-  display: flex;
-  flex-direction: column;
-  margin: 10px 0;
+/* Radio butonlarını gizle */
+.site-main .colors .color-wrapper input[type="radio"] {
+  display: none;
 }
 
-.site-main .values .values-label span {
-  display: inline-block;
+/* Renk Seçimi Hata Mesajı */
+.site-main .colors .error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
   font-weight: 500;
-  font-size: 14px;
-  margin-bottom: 10px;
 }
 
+/* Beden Seçimi */
 .site-main .values .values-list {
   display: flex;
   gap: 10px;
@@ -152,6 +136,7 @@
   color: #fff;
 }
 
+/* Sepete Ekle Butonu */
 .site-main .cart-button {
   display: flex;
   column-gap: 10px;
@@ -171,6 +156,7 @@
   border-color: #1367ef;
 }
 
+/* Ekstra Butonlar */
 .site-main .product-extra-buttons {
   display: flex;
   align-items: center;
@@ -183,11 +169,13 @@
   color: gray;
 }
 
+/* Bölme Çizgisi */
 .site-main .divider {
   padding-bottom: 20px;
   border-bottom: 1px solid #dee0ea;
 }
 
+/* Ürün Meta Bilgileri */
 .site-main .product-meta {
   display: flex;
   flex-direction: column;

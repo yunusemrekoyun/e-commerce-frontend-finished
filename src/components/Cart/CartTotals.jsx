@@ -1,6 +1,3 @@
-/********************************************************
- * /Applications/Works/e-commerce/frontend/src/components/CartTotals.jsx
- ********************************************************/
 import { useContext, useState, useEffect, useCallback } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import CartContext from "../../context/CartContext";
@@ -9,15 +6,15 @@ import { fetchWithAuth } from "../Auth/fetchWithAuth";
 import { useNavigate } from "react-router-dom";
 
 const CartTotals = () => {
-  const { cartItems } = useContext(CartContext);
-  const [fastCargoChecked, setFastCargoChecked] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const { cartItems } = useContext(CartContext); // Sepet öğeleri
+  const [fastCargoChecked, setFastCargoChecked] = useState(false); // Hızlı kargo seçeneği
+  const [loading, setLoading] = useState(false); // Ödeme işlemi yükleniyor durumu
   const navigate = useNavigate();
   const stripePublicKey = import.meta.env.VITE_API_STRIPE_PUBLIC_KEY;
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-  const [userInfo, setUserInfo] = useState(null);
-  const [addressData, setAddressData] = useState(null);
+  const [userInfo, setUserInfo] = useState(null); // Kullanıcı bilgileri
+  const [addressData, setAddressData] = useState(null); // Adres bilgileri
 
   // 1) Kullanıcıyı çek (sessiz fail)
   const fetchUserInfo = useCallback(async () => {
@@ -56,13 +53,14 @@ const CartTotals = () => {
     if (userInfo) fetchAddress();
   }, [userInfo, fetchAddress]);
 
-  // Sepet tutarları
+  // Sepet tutarları ve toplam hesaplama
   const subTotals = cartItems
-    .map((i) => i.price * i.quantity)
-    .reduce((a, b) => a + b, 0);
-  const cargoFee = 15;
-  const cartTotals = fastCargoChecked ? subTotals + cargoFee : subTotals;
+    .map((i) => i.price * i.quantity) // Her ürünün toplam fiyatı
+    .reduce((a, b) => a + b, 0); // Hepsinin toplamı
+  const cargoFee = 15; // Kargo ücreti
+  const cartTotals = fastCargoChecked ? subTotals + cargoFee : subTotals; // Kargo ücreti eklenmiş toplam
 
+  // Ödeme işlemi
   const handlePayment = async () => {
     // 1) Giriş kontrolü: modal ile
     if (!userInfo) {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import CartContext from "./CartContext"; // ✅ buradan alıyoruz artık
+import CartContext from "./CartContext";
 
 const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(
@@ -35,9 +35,23 @@ const CartProvider = ({ children }) => {
     );
   };
 
+  const updateCartItemQuantity = (itemId, newQuantity) => {
+    setCartItems((prevCart) =>
+      prevCart.map((item) =>
+        item._id === itemId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  };
+
   return (
     <CartContext.Provider
-      value={{ cartItems, setCartItems, addToCart, removeFromCart }}
+      value={{
+        cartItems,
+        setCartItems,
+        addToCart,
+        removeFromCart,
+        updateCartItemQuantity, // ✅ BURAYA EKLENDİ
+      }}
     >
       {children}
     </CartContext.Provider>
