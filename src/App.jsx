@@ -4,7 +4,7 @@
 import { Route, Routes, Outlet } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import ShopPage from "./pages/ShopPage";
-import BlogPage from "./pages/BlogPage";
+// import BlogPage from "./pages/BlogPage";
 import ContactPage from "./pages/ContactPage";
 import CartPage from "./pages/CartPage";
 import AuthPage from "./pages/AuthPage";
@@ -39,12 +39,11 @@ function App() {
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/shop" element={<ShopPage />} />
-        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog" element={<BlogDetailsPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/product/:id" element={<ProductDetailsPage />} />
-        <Route path="/blog/123" element={<BlogDetailsPage />} />
         <Route path="/success" element={<Success />} />
         <Route path="/account" element={<UserAccountPage />} />
         <Route path="/shop/:category" element={<ShopPage />} />

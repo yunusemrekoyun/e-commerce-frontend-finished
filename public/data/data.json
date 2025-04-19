@@ -1,0 +1,107 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Analogue Resin Strap",
+      "price": {
+        "oldPrice": 165.0,
+        "newPrice": 108.0
+      },
+      "discount": 22,
+      "img": {
+        "singleImage": "img/products/product1/1.png",
+        "thumbs": [
+          "img/products/product1/1.png",
+          "img/products/product1/2.png",
+          "img/products/product1/3.png",
+          "img/products/product1/2.png"
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "name": "Ridley High Waist",
+      "price": {
+        "oldPrice": 208.0,
+        "newPrice": 100
+      },
+      "discount": 33,
+      "img": {
+        "singleImage": "img/products/product2/1.png",
+        "thumbs": [
+          "img/products/product2/1.png",
+          "img/products/product2/2.png",
+          "img/products/product2/3.png"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "name": "Blush Beanie",
+      "price": {
+        "oldPrice": 165.0,
+        "newPrice": 38.0
+      },
+      "discount": 90,
+      "img": {
+        "singleImage": "img/products/product3/1.png",
+        "thumbs": [
+          "img/products/product3/1.png",
+          "img/products/product3/2.png",
+          "img/products/product3/3.png"
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "name": "Mercury Tee",
+      "price": {
+        "oldPrice": 165.0,
+        "newPrice": 48.0
+      },
+      "discount": 40,
+      "img": {
+        "singleImage": "img/products/product4/1.png",
+        "thumbs": [
+          "img/products/product4/1.png",
+          "img/products/product4/2.png",
+          "img/products/product4/3.png"
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "name": "La Bohème Rose Gold",
+      "price": {
+        "oldPrice": 165.0,
+        "newPrice": 48.0
+      },
+      "discount": 40,
+      "img": {
+        "singleImage": "img/products/product5/1.png",
+        "thumbs": [
+          "img/products/product5/1.png",
+          "img/products/product5/2.png",
+          "img/products/product5/3.png"
+        ]
+      }
+    }
+  ],
+  "brands": [
+    { "id": 1, "name": "Brand 1", "img": "img/brands/1x1.png" },
+    { "id": 2, "name": "Brand 2", "img": "img/brands/1x2.png" },
+    { "id": 3, "name": "Brand 3", "img": "img/brands/1x3.png" },
+    { "id": 4, "name": "Brand 4", "img": "img/brands/2x1.png" },
+    { "id": 5, "name": "Brand 5", "img": "img/brands/2x2.png" },
+    { "id": 6, "name": "Brand 6", "img": "img/brands/2x3.png" },
+    { "id": 7, "name": "Brand 7", "img": "img/brands/3x1.png" },
+    { "id": 8, "name": "Brand 8", "img": "img/brands/3x2.png" },
+    { "id": 9, "name": "Brand 9", "img": "img/brands/3x3.png" },
+    { "id": 10, "name": "Brand 10", "img": "img/brands/4x1.png" },
+    { "id": 11, "name": "Brand 11", "img": "img/brands/4x2.png" },
+    { "id": 12, "name": "Brand 12", "img": "img/brands/4x3.png" },
+    { "id": 13, "name": "Brand 13", "img": "img/brands/5x1.png" },
+    { "id": 14, "name": "Brand 14", "img": "img/brands/5x2.png" },
+    { "id": 15, "name": "Brand 15", "img": "img/brands/5x3.png" }
+  ]
+}
