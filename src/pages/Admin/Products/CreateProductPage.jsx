@@ -17,7 +17,6 @@ const CreateProductPage = () => {
   const [colors, setColors] = useState([]);
   const [sizes, setSizes] = useState([]);
   const [colorPickerVisible, setColorPickerVisible] = useState(false);
-  const [selectedColor, setSelectedColor] = useState("");
 
   useEffect(() => {
     fetch(`${apiUrl}/api/categories`)
@@ -50,6 +49,10 @@ const CreateProductPage = () => {
       setColors([...colors, color]);
     }
     setColorPickerVisible(false); // Renk paletini kapat
+  };
+
+  const handleRemoveColor = (colorToRemove) => {
+    setColors(colors.filter((color) => color !== colorToRemove));
   };
 
   const handleAddSize = (e) => {
@@ -90,8 +93,7 @@ const CreateProductPage = () => {
         setColors([]);
         setSizes([]);
         navigate("/admin/products");
-      } 
-      else {
+      } else {
         message.error("Oluştururken hata oluştu.");
       }
     } catch (err) {
@@ -156,50 +158,34 @@ const CreateProductPage = () => {
         <Input.TextArea rows={4} />
       </Form.Item>
 
-      <Form.Item label="Renkler" name="colors">
-        <div>
-          <Popover
-            content={<ColorPicker onChange={handleAddColor} />}
-            title="Renk Seç"
-            trigger="click"
-            visible={colorPickerVisible}
-            onVisibleChange={(visible) => setColorPickerVisible(visible)}
-          >
-            <Button>Renk Seç</Button>
-          </Popover>
-        </div>
-        <div>
-          {colors.map((color, index) => (
-            <span
-              key={index}
-              style={{
-                marginRight: 10,
-                backgroundColor: color,
-                padding: "5px 10px",
-                borderRadius: "4px",
-                color: "#fff",
-              }}
-            >
-              {color}
-            </span>
-          ))}
-        </div>
-      </Form.Item>
-
       <Form.Item
-        label="Bedenler"
-        name="sizes"
-        tooltip="Ürünün mevcut bedenlerini girin"
-        rules={[{ required: false }]}
-      >
-        <Select
-          mode="tags"
-          placeholder="Beden ekle"
-          onBlur={(e) =>
-            e.target.value.trim() && form.setFieldsValue({ sizes: e.target.value.split(",") })
-          }
-        />
-      </Form.Item>
+  label="Renkler"
+  name="colors"
+  tooltip="Ürünün mevcut renklerini girin"
+  rules={[{ required: false }]}
+>
+  <Select
+    mode="tags"
+    placeholder="Renk ekle (örn: kırmızı, siyah)"
+    value={colors}
+    onChange={(newColors) => setColors(newColors)}
+    style={{ width: "100%" }}
+  />
+</Form.Item>
+<Form.Item
+  label="Bedenler"
+  name="sizes"
+  tooltip="Ürünün mevcut bedenlerini girin"
+  rules={[{ required: false }]}
+>
+  <Select
+    mode="tags"
+    placeholder="Beden ekle (örn: S, M, L)"
+    value={sizes}
+    onChange={(newSizes) => setSizes(newSizes)}
+    style={{ width: "100%" }}
+  />
+</Form.Item>
 
       <Form.Item
         label="Ürün Görselleri"
