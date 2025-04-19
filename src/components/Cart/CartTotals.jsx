@@ -31,15 +31,9 @@ const CartTotals = () => {
 
   const shippingMessage =
     totalAmount >= freeShippingThreshold
-<<<<<<< HEAD
-      ? "Congratulations! You get free shipping!"
-      : `Add $${(freeShippingThreshold - totalAmount).toFixed(
-          2
-        )} to cart and get free shipping!`;
-=======
+
       ? "Tebrikler! Kargonuz Ücretsiz."
       : `Ücretsiz kargo için sepetinize $${(freeShippingThreshold - totalAmount).toFixed(2)} ürün ekleyin. `;
->>>>>>> yigit
 
   const fetchUserInfo = useCallback(async () => {
     try {
@@ -168,15 +162,9 @@ const CartTotals = () => {
             </td>
           </tr>
           <tr className="cart-total">
-<<<<<<< HEAD
-            <th>Total</th>
-            <td>
-              <strong>${cartTotals.toFixed(2)}</strong>
-            </td>
-=======
+
             <th>Sepet Tutarı</th>
             <td><strong>${cartTotals.toFixed(2)}</strong></td>
->>>>>>> yigit
           </tr>
         </tbody>
       </table>
