@@ -6,8 +6,6 @@ import { Tabs, Table, Button, message, Popconfirm, Spin } from "antd";
 import { fetchWithAuth } from "../../components/Auth/fetchWithAuth";
 import dayjs from "dayjs";
 
-const { TabPane } = Tabs;
-
 const CommentsPage = () => {
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
   const [loading, setLoading] = useState(false);
@@ -81,7 +79,6 @@ const CommentsPage = () => {
       key: "action",
       render: (_, record) => (
         <span style={{ whiteSpace: "nowrap" }}>
-          {/** Bekleyen tabında “Onayla”**, Onaylanan’da “Sil” */}
           {record.approved === false ? (
             <Button type="primary" onClick={() => handleApprove(record)}>
               Onayla
@@ -101,26 +98,36 @@ const CommentsPage = () => {
     },
   ];
 
+  const tabsItems = [
+    {
+      key: "pending",
+      label: "Onay Bekleyen",
+      children: (
+        <Table
+          dataSource={pending}
+          columns={columns}
+          rowKey="reviewId"
+          pagination={{ pageSize: 10 }}
+        />
+      ),
+    },
+    {
+      key: "approved",
+      label: "Onaylanan",
+      children: (
+        <Table
+          dataSource={approved}
+          columns={columns}
+          rowKey="reviewId"
+          pagination={{ pageSize: 10 }}
+        />
+      ),
+    },
+  ];
+
   return (
     <Spin spinning={loading}>
-      <Tabs defaultActiveKey="pending">
-        <TabPane tab="Onay Bekleyen" key="pending">
-          <Table
-            dataSource={pending}
-            columns={columns}
-            rowKey="reviewId"
-            pagination={{ pageSize: 10 }}
-          />
-        </TabPane>
-        <TabPane tab="Onaylanan" key="approved">
-          <Table
-            dataSource={approved}
-            columns={columns}
-            rowKey="reviewId"
-            pagination={{ pageSize: 10 }}
-          />
-        </TabPane>
-      </Tabs>
+      <Tabs defaultActiveKey="pending" items={tabsItems} />
     </Spin>
   );
 };

@@ -25,14 +25,38 @@ const DashboardPage = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetchWithAuth(`${apiUrl}/api/dashboard`);
-        if (!res.ok) throw new Error();
+        let res = await fetchWithAuth(`${apiUrl}/api/dashboard`);
+
+        // 🔁 Eğer token süresi dolmuş ve refresh edilmişse tekrar dene
+        if (res.status === 401 || res.status === 403) {
+          const refreshToken = localStorage.getItem("refreshToken");
+          const oldAccessToken = localStorage.getItem("token");
+
+          const refreshRes = await fetch(`${apiUrl}/api/auth/refresh`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refreshToken, oldAccessToken }),
+          });
+
+          if (refreshRes.ok) {
+            const { token: newToken } = await refreshRes.json();
+            localStorage.setItem("token", newToken);
+
+            // 🔁 Yeni token ile yeniden dene
+            res = await fetchWithAuth(`${apiUrl}/api/dashboard`);
+          } else {
+            throw new Error("Token yenilenemedi.");
+          }
+        }
+
+        if (!res.ok) throw new Error("Veri alınamadı");
         const data = await res.json();
         setStats(data);
       } catch (err) {
         console.error("Dashboard yükleme hatası:", err);
       }
     };
+
     load();
   }, [apiUrl]);
 
