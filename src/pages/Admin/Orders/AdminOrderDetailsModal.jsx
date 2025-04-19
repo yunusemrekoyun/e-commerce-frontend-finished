@@ -8,6 +8,8 @@ const AdminOrderDetailsModal = ({ visible, onClose, order }) => {
     { title: "Ürün Adı", dataIndex: "name", key: "name" },
     { title: "Marka", dataIndex: "brand", key: "brand" },
     { title: "Kategori", dataIndex: "category", key: "category" },
+    { title: "Renk", dataIndex: "color", key: "color" }, 
+    { title: "Beden", dataIndex: "size", key: "size" },
     { title: "Adet", dataIndex: "quantity", key: "quantity" },
     {
       title: "Birim Fiyat",

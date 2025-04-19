@@ -32,6 +32,8 @@ const Success = () => {
           productId: it._id,
           quantity: it.quantity,
           price: it.price,
+          selectedColor: it.selectedColor || null, 
+          selectedSize: it.selectedSize || null,
         })),
       };
 

@@ -18,9 +18,13 @@ const CartTotals = () => {
   const freeShippingThreshold = 161.0;
   const cargoFee = 15;
 
-  const subTotals = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subTotals = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
   const totalAmount = subTotals;
-  const cartTotals = totalAmount >= freeShippingThreshold ? totalAmount : totalAmount + cargoFee;
+  const cartTotals =
+    totalAmount >= freeShippingThreshold ? totalAmount : totalAmount + cargoFee;
 
   const progress = (totalAmount / freeShippingThreshold) * 100;
   const progressBarWidth = progress > 100 ? 100 : progress;
@@ -28,7 +32,9 @@ const CartTotals = () => {
   const shippingMessage =
     totalAmount >= freeShippingThreshold
       ? "Congratulations! You get free shipping!"
-      : `Add $${(freeShippingThreshold - totalAmount).toFixed(2)} to cart and get free shipping!`;
+      : `Add $${(freeShippingThreshold - totalAmount).toFixed(
+          2
+        )} to cart and get free shipping!`;
 
   const fetchUserInfo = useCallback(async () => {
     try {
@@ -80,7 +86,8 @@ const CartTotals = () => {
     if (!addressData) {
       Modal.warning({
         title: "Adres Bilgisi Eksik",
-        content: "Ödeme işlemi yapabilmek için adres bilgilerinizi girmelisiniz.",
+        content:
+          "Ödeme işlemi yapabilmek için adres bilgilerinizi girmelisiniz.",
         okText: "Tamam",
         onOk() {
           navigate("/account");
@@ -95,6 +102,8 @@ const CartTotals = () => {
         name: item.name,
         quantity: item.quantity,
         price: item.price,
+        color: item.color, 
+        size: item.size,
       })),
       user: {
         _id: userInfo._id,
@@ -146,12 +155,18 @@ const CartTotals = () => {
           <tr className="cart-shipping">
             <th>Shipping</th>
             <td>
-              {totalAmount >= freeShippingThreshold ? <label>Free</label> : <label>$15.00</label>}
+              {totalAmount >= freeShippingThreshold ? (
+                <label>Free</label>
+              ) : (
+                <label>$15.00</label>
+              )}
             </td>
           </tr>
           <tr className="cart-total">
             <th>Total</th>
-            <td><strong>${cartTotals.toFixed(2)}</strong></td>
+            <td>
+              <strong>${cartTotals.toFixed(2)}</strong>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -160,7 +175,10 @@ const CartTotals = () => {
       <div className="free-progress-bar">
         <p className="progress-bar-title">{shippingMessage}</p>
         <div className="progress-bar">
-          <span className="progress" style={{ width: `${progressBarWidth}%` }}></span>
+          <span
+            className="progress"
+            style={{ width: `${progressBarWidth}%` }}
+          ></span>
         </div>
       </div>
 

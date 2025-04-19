@@ -3,12 +3,14 @@ export const fetchWithAuth = async (url, options = {}) => {
   const refreshToken = localStorage.getItem("refreshToken");
 
   const makeRequest = async (accessToken) => {
+    const isFormData = options.body instanceof FormData;
+
     return fetch(url, {
       ...options,
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
         ...(options.headers || {}),
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
+        Authorization: `Bearer ${accessToken}`,
       },
     });
   };
@@ -39,12 +41,9 @@ export const fetchWithAuth = async (url, options = {}) => {
       res = await makeRequest(newToken);
     } catch (err) {
       console.warn("Token yenileme başarısız. Oturum sona erdi.");
-
-      // Temizle & login'e yönlendir
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToken");
       window.location.href = "/login";
-
       return new Response(null, { status: 401 });
     }
   }

@@ -66,7 +66,10 @@ const UpdateProductPage = () => {
             current: productData.price.current,
             discount: productData.price.discount,
             description: productData.description,
-            category: productData.category,
+            category:
+              typeof productData.category === "string"
+                ? productData.category
+                : productData.category?._id,
             colors: productData.colors || [],
             sizes: productData.sizes || [],
           });
@@ -91,69 +94,65 @@ const UpdateProductPage = () => {
   }, [apiUrl, productId, form]);
 
   const handleChange = ({ fileList: newList }) => {
-    if (newList.length > MAX_IMAGES) {
+    const onlyNew = newList.filter((f) => f.originFileObj);
+    const existing = fileList.filter((f) => !f.originFileObj);
+
+    const combined = [...existing, ...onlyNew];
+
+    if (combined.length > MAX_IMAGES) {
       message.error(`En fazla ${MAX_IMAGES} görsel yükleyebilirsiniz.`);
-      newList = newList.slice(0, MAX_IMAGES);
+      return;
     }
-    setFileList(newList);
+
+    setFileList(combined);
   };
 
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const body = {
-        name: values.name,
-        price: {
-          current: values.current,
-          discount: values.discount,
-        },
-        description: values.description,
-        category: values.category,
-        colors: values.colors || [],
-        sizes: values.sizes || [],
-      };
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("category", values.category);
+      formData.append("brand", values.brand || "");
+      formData.append("description", values.description);
+      formData.append("current", values.current);
+      formData.append("discount", values.discount);
 
-      const infoRes = await fetchWithAuth(
+      if (values.colors?.length)
+        formData.append("colors", values.colors.join(","));
+      if (values.sizes?.length)
+        formData.append("sizes", values.sizes.join(","));
+
+      const newImages = fileList.filter((f) => f.originFileObj);
+      for (const file of newImages) {
+        const compressed = await compressImage(file.originFileObj);
+        formData.append("img", compressed);
+      }
+
+      const keepIds = fileList
+        .filter((f) => !f.originFileObj)
+        .map((f) => f.uid);
+      formData.append("keepImages", JSON.stringify(keepIds));
+
+      const res = await fetchWithAuth(
         `${apiUrl}/api/products/${productId}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        }
+          body: formData,
+        },
+        false
       );
 
-      if (!infoRes.ok) {
-        const err = await infoRes.json();
-        throw new Error(err.error || "Ürün bilgisi güncellenemedi.");
-      }
-
-      const newImages = fileList.filter((f) => f.originFileObj);
-      if (newImages.length > 0) {
-        const formData = new FormData();
-        for (const file of newImages) {
-          const compressed = await compressImage(file.originFileObj);
-          formData.append("img", compressed);
-        }
-
-        const imageRes = await fetchWithAuth(
-          `${apiUrl}/api/products/${productId}/upload-images`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-
-        if (!imageRes.ok) {
-          const err = await imageRes.json();
-          throw new Error(err.error || "Görsel yüklenirken hata oluştu.");
-        }
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || "Ürün güncellenemedi.");
       }
 
       message.success("Ürün başarıyla güncellendi.");
       navigate("/admin/products");
-    } catch (error) {
-      console.error("Güncelleme hatası:", error);
-      message.error(error.message || "Güncelleme sırasında hata oluştu.");
+    } catch (err) {
+      console.error("Update error:", err);
+      message.error(err.message || "Güncelleme sırasında hata oluştu.");
     } finally {
       setLoading(false);
     }
@@ -228,6 +227,11 @@ const UpdateProductPage = () => {
             beforeUpload={() => false}
             fileList={fileList}
             onChange={handleChange}
+            onRemove={(file) => {
+              setFileList((prev) =>
+                prev.filter((item) => item.uid !== file.uid)
+              );
+            }}
           >
             {fileList.length < MAX_IMAGES && (
               <Button icon={<UploadOutlined />}>Dosya Seç (Max 6)</Button>
