@@ -15,16 +15,13 @@ const CartProvider = ({ children }) => {
 
   const addToCart = (newItem) => {
     setCartItems((prevCart) => {
-      // Aynı ürün, aynı renk ve boyda mı?
       const existingItem = prevCart.find(
         (item) =>
           item._id === newItem._id &&
           item.selectedColor === newItem.selectedColor &&
           item.selectedSize === newItem.selectedSize
       );
-  
       if (existingItem) {
-        // Aynı ürün var, sadece miktarını artır
         return prevCart.map((item) =>
           item._id === newItem._id &&
           item.selectedColor === newItem.selectedColor &&
@@ -33,15 +30,21 @@ const CartProvider = ({ children }) => {
             : item
         );
       } else {
-        // Farklı renk veya boyutta yeni ürün ekle
         return [...prevCart, { ...newItem, quantity: newItem.quantity || 1 }];
       }
     });
   };
 
-  const removeFromCart = (itemId) => {
+  const removeFromCart = (itemToRemove) => {
     setCartItems((prevCart) =>
-      prevCart.filter((cartItem) => cartItem._id !== itemId)
+      prevCart.filter(
+        (item) =>
+          !(
+            item._id === itemToRemove._id &&
+            (item.selectedColor || "") === (itemToRemove.selectedColor || "") &&
+            (item.selectedSize || "") === (itemToRemove.selectedSize || "")
+          )
+      )
     );
   };
 
@@ -60,7 +63,7 @@ const CartProvider = ({ children }) => {
         setCartItems,
         addToCart,
         removeFromCart,
-        updateCartItemQuantity, // ✅ BURAYA EKLENDİ
+        updateCartItemQuantity,
       }}
     >
       {children}

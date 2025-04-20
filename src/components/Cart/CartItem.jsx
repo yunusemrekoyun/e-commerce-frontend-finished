@@ -27,7 +27,7 @@ const CartItem = ({ cartItem }) => {
           />
           <i
             className="bi bi-x delete-cart"
-            onClick={() => removeFromCart(cartItem._id)}
+            onClick={() => removeFromCart(cartItem)}
           ></i>
         </div>
       </td>
