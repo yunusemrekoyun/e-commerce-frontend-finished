@@ -6,7 +6,7 @@ import ProductDetailsModal from "../ProductDetails/ProductDetailsModal";
 
 const ProductItem = ({ productItem }) => {
   const averageRating = productItem?.averageRating ?? 0;
-  
+
   const originalPrice = productItem?.price?.current ?? 0;
   const discountPercentage = productItem?.price?.discount ?? 0;
   const discountedPrice =
@@ -27,14 +27,6 @@ const ProductItem = ({ productItem }) => {
   const handleCardClick = () => {
     navigate(`/product/${productItem?._id}`);
   };
-
-
-  // useEffect(() => {
-  //   console.log("ProductItem değişti, ortalama puan:", productItem?.averageRating);
-  // }, [productItem]);
-  
-
-
   const renderStars = (rating) => {
     const full = Math.floor(rating);
     const half = rating % 1 >= 0.5;
@@ -61,7 +53,6 @@ const ProductItem = ({ productItem }) => {
     );
   };
 
-
   return (
     <>
       <div
@@ -82,9 +73,7 @@ const ProductItem = ({ productItem }) => {
           <a href="#!" className="product-title">
             {productItem?.name}
           </a>
-          <div className="product-star">
-            {renderStars(averageRating)}
-          </div>
+          <div className="product-star">{renderStars(averageRating)}</div>
           <div className="product-prices">
             <strong className="new-price">₺{discountedPrice.toFixed(2)}</strong>
             <span className="old-price">₺{originalPrice.toFixed(2)}</span>

@@ -1,3 +1,4 @@
+// /Applications/Works/kozmetik/frontend/src/components/ProductDetails/Info/Info.jsx
 import PropTypes from "prop-types";
 import "./Info.css";
 import { useContext, useRef, useState } from "react";
@@ -27,20 +28,9 @@ const Info = ({ singleProduct, compact = false }) => {
   const [sizeError, setSizeError] = useState(false);
   const [colorError, setColorError] = useState(false);
 
-  const calculateAverageRating = (reviews) => {
-    if (!reviews || reviews.length === 0) return 0;
-    let totalRating = 0,
-      totalReviews = 0;
-    reviews.forEach((r) => {
-      if (r.rating) {
-        totalRating += r.rating;
-        totalReviews++;
-      }
-    });
-    return totalReviews === 0 ? 0 : (totalRating / totalReviews).toFixed(1);
-  };
-
-  const averageRating = calculateAverageRating(singleProduct?.reviews);
+  // Artık calculateAverageRating yok, DB'den gelen değeri kullanıyoruz
+  const averageRating = singleProduct?.averageRating ?? 0;
+  const reviewsCount = singleProduct?.reviews?.length ?? 0;
 
   const renderStars = (rating) => {
     const full = Math.floor(rating);
@@ -66,8 +56,6 @@ const Info = ({ singleProduct, compact = false }) => {
       </ul>
     );
   };
-
-  const reviewsCount = singleProduct?.reviews?.length ?? 0;
 
   const handleSizeChange = (size) => {
     setSelectedSize(size);
@@ -95,14 +83,15 @@ const Info = ({ singleProduct, compact = false }) => {
       ...singleProduct,
       price: discountedPrice,
       quantity: parseInt(quantityRef.current.value, 10) || 1,
-      ...(selectedColor ? { selectedColor } : {}),
-      ...(selectedSize ? { selectedSize } : {}),
+      ...(selectedColor && { selectedColor }),
+      ...(selectedSize && { selectedSize }),
     });
   };
 
   return (
     <div className="product-info">
       <h1 className="product-title">{singleProduct?.name}</h1>
+
       {!compact && (
         <div className="product-review">
           {renderStars(averageRating)}
@@ -111,10 +100,12 @@ const Info = ({ singleProduct, compact = false }) => {
           </span>
         </div>
       )}
+
       <div className="product-price">
         <s className="old-price">${originalPrice.toFixed(2)}</s>
         <strong className="new-price">${discountedPrice.toFixed(2)}</strong>
       </div>
+
       <form className="variations-form">
         <div className="variations">
           {colors.length > 0 && (
@@ -137,6 +128,7 @@ const Info = ({ singleProduct, compact = false }) => {
               )}
             </div>
           )}
+
           {sizes.length > 0 && (
             <div className="sizes">
               <div className="values-list">
@@ -158,6 +150,7 @@ const Info = ({ singleProduct, compact = false }) => {
               )}
             </div>
           )}
+
           <div className="cart-button">
             <input type="number" defaultValue="1" min="1" ref={quantityRef} />
             <button
@@ -175,7 +168,18 @@ const Info = ({ singleProduct, compact = false }) => {
 };
 
 Info.propTypes = {
-  singleProduct: PropTypes.object.isRequired,
+  singleProduct: PropTypes.shape({
+    _id: PropTypes.string,
+    name: PropTypes.string,
+    price: PropTypes.shape({
+      current: PropTypes.number,
+      discount: PropTypes.number,
+    }),
+    colors: PropTypes.arrayOf(PropTypes.string),
+    sizes: PropTypes.arrayOf(PropTypes.string),
+    reviews: PropTypes.array,
+    averageRating: PropTypes.number,
+  }).isRequired,
   compact: PropTypes.bool,
 };
 

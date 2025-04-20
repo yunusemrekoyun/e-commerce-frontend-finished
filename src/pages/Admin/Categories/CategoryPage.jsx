@@ -1,13 +1,16 @@
-/*
+/********************************************************
  * /Applications/Works/e-commerce/frontend/src/pages/Admin/Categories/CategoryPage.jsx
- */
-import { Button, Popconfirm, Space, Table, message } from "antd";
+ ********************************************************/
+import { Button, Popconfirm, Space, Table, message, Input } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+const { Search } = Input;
 
 const CategoryPage = () => {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -25,6 +28,10 @@ const CategoryPage = () => {
     }
   }, [apiUrl]);
 
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
   const deleteCategory = async (categoryId) => {
     try {
       const res = await fetch(`${apiUrl}/api/categories/${categoryId}`, {
@@ -38,9 +45,10 @@ const CategoryPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+  // Arama metnine göre filtrelenmiş liste
+  const filteredData = dataSource.filter((cat) =>
+    cat.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   const columns = [
     {
@@ -83,12 +91,20 @@ const CategoryPage = () => {
   ];
 
   return (
-    <Table
-      rowKey="_id"
-      dataSource={dataSource}
-      columns={columns}
-      loading={loading}
-    />
+    <>
+      <Search
+        placeholder="Kategori adına göre ara"
+        allowClear
+        onChange={(e) => setSearchText(e.target.value)}
+        style={{ width: 300, marginBottom: 16 }}
+      />
+      <Table
+        rowKey="_id"
+        dataSource={filteredData}
+        columns={columns}
+        loading={loading}
+      />
+    </>
   );
 };
 

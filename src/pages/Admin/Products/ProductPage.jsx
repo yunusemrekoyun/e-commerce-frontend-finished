@@ -1,13 +1,38 @@
-import { Button, Popconfirm, Space, Table, message } from "antd";
-import { useEffect, useState } from "react";
+//Applications/Works/e-commerce/frontend/src/pages/Admin/ProductPage.jsx
+import { Button, Popconfirm, Space, Table, message, Input } from "antd";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+
+const { Search } = Input;
 
 const ProductPage = () => {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
+  // Ürün silme fonksiyonu
+  const deleteProduct = async (productId) => {
+    try {
+      const response = await fetch(`${apiUrl}/api/products/${productId}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        message.success("Ürün başarıyla silindi.");
+        setDataSource((prev) =>
+          prev.filter((product) => product._id !== productId)
+        );
+      } else {
+        message.error("Silme işlemi başarısız.");
+      }
+    } catch (error) {
+      console.error("Silme hatası:", error);
+      message.error("Silme sırasında bir hata oluştu.");
+    }
+  };
+
+  // Tablo kolonları
   const columns = [
     {
       title: "Product Görseli",
@@ -25,23 +50,21 @@ const ProductPage = () => {
       title: "Kategori",
       dataIndex: "categoryName",
       key: "categoryName",
-      render: (text) => <span>{text}</span>,
     },
     {
       title: "Fiyat",
       dataIndex: "price",
       key: "price",
-      render: (text) => <span>{text.current.toFixed(2)}</span>,
+      render: (price) => <span>{price.current.toFixed(2)}</span>,
     },
     {
       title: "İndirim",
       dataIndex: "price",
-      key: "price",
-      render: (text) => <span>%{text.discount}</span>,
+      key: "discount",
+      render: (price) => <span>%{price.discount}</span>,
     },
     {
       title: "Actions",
-      dataIndex: "actions",
       key: "actions",
       render: (_, record) => (
         <Space>
@@ -52,10 +75,10 @@ const ProductPage = () => {
             Güncelle
           </Button>
           <Popconfirm
-            title="Ürünü Sil"
-            description="Ürünü silmek istediğinizden emin misiniz ?"
-            okText="Yes"
-            cancelText="No"
+            title="Ürünü sil"
+            description="Silmek istediğinize emin misiniz?"
+            okText="Evet"
+            cancelText="Hayır"
             onConfirm={() => deleteProduct(record._id)}
           >
             <Button type="primary" danger>
@@ -67,73 +90,62 @@ const ProductPage = () => {
     },
   ];
 
-  const deleteProduct = async (productId) => {
+  // Verileri çekme
+  const fetchData = useCallback(async () => {
+    setLoading(true);
     try {
-      const response = await fetch(`${apiUrl}/api/products/${productId}`, {
-        method: "DELETE",
+      const [categoriesRes, productsRes] = await Promise.all([
+        fetch(`${apiUrl}/api/categories`),
+        fetch(`${apiUrl}/api/products`),
+      ]);
+      if (!categoriesRes.ok || !productsRes.ok) {
+        throw new Error();
+      }
+      const [categoriesData, productsData] = await Promise.all([
+        categoriesRes.json(),
+        productsRes.json(),
+      ]);
+      // Her ürüne categoryName ekle
+      const withCatName = productsData.map((prod) => {
+        const cat = categoriesData.find((c) => c._id === prod.category);
+        return {
+          ...prod,
+          categoryName: cat ? cat.name : "",
+        };
       });
-
-      if (response.ok) {
-        message.success("Ürün başarıyla silindi.");
-        setDataSource((prevProducts) => {
-          return prevProducts.filter((product) => product._id !== productId);
-        });
-      } else {
-        message.error("Silme işlemi başarısız.");
-      }
-    } catch (error) {
-      console.log("Silme hatası:", error);
+      setDataSource(withCatName);
+    } catch (err) {
+      console.error("Veri getirme hatası:", err);
+      message.error("Veri getirme başarısız.");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-
-      try {
-        const [categoriesResponse, productsResponse] = await Promise.all([
-          fetch(`${apiUrl}/api/categories`),
-          fetch(`${apiUrl}/api/products`),
-        ]);
-
-        if (!categoriesResponse.ok || !productsResponse.ok) {
-          message.error("Veri getirme başarısız.");
-        }
-
-        const [categoriesData, productsData] = await Promise.all([
-          categoriesResponse.json(),
-          productsResponse.json(),
-        ]);
-
-        const productsWithCategories = productsData.map((product) => {
-          const categoryId = product.category;
-          const category = categoriesData.find(
-            (item) => item._id === categoryId
-          );
-
-          return {
-            ...product,
-            categoryName: category ? category.name : "",
-          };
-        });
-
-        setDataSource(productsWithCategories);
-      } catch (error) {
-        console.log("Veri hatası:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
   }, [apiUrl]);
 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Arama metnine göre filtre
+  const filteredData = dataSource.filter((item) =>
+    item.name.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   return (
-    <Table
-      dataSource={dataSource}
-      columns={columns}
-      rowKey={(record) => record._id}
-      loading={loading}
-    />
+    <>
+      <Search
+        placeholder="Ürün adına göre ara"
+        allowClear
+        onChange={(e) => setSearchText(e.target.value)}
+        style={{ width: 300, marginBottom: 16 }}
+      />
+      <Table
+        dataSource={filteredData}
+        columns={columns}
+        rowKey={(record) => record._id}
+        loading={loading}
+      />
+    </>
   );
 };
 

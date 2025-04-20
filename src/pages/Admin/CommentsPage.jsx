@@ -2,15 +2,18 @@
  * frontend/src/pages/Admin/CommentsPage.jsx
  ********************************************************/
 import { useEffect, useState, useCallback } from "react";
-import { Tabs, Table, Button, message, Popconfirm, Spin } from "antd";
+import { Tabs, Table, Button, message, Popconfirm, Spin, Input } from "antd";
 import { fetchWithAuth } from "../../components/Auth/fetchWithAuth";
 import dayjs from "dayjs";
+
+const { Search } = Input;
 
 const CommentsPage = () => {
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
   const [loading, setLoading] = useState(false);
   const [pending, setPending] = useState([]);
   const [approved, setApproved] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
   const fetchComments = useCallback(async () => {
     setLoading(true);
@@ -63,6 +66,14 @@ const CommentsPage = () => {
     }
   };
 
+  // Tabloları arama metnine göre filtrele
+  const filteredPending = pending.filter((r) =>
+    r.productName.toLowerCase().includes(searchText.toLowerCase())
+  );
+  const filteredApproved = approved.filter((r) =>
+    r.productName.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   const columns = [
     { title: "Ürün", dataIndex: "productName", key: "productName" },
     { title: "Kullanıcı", dataIndex: "user", key: "user" },
@@ -72,7 +83,10 @@ const CommentsPage = () => {
       title: "Tarih",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (d) => dayjs(d).format("DD/MM/YYYY HH:mm"),
+      render: (date) => dayjs(date).format("DD/MM/YYYY HH:mm"),
+      sorter: (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      defaultSortOrder: "descend",
     },
     {
       title: "İşlem",
@@ -104,7 +118,7 @@ const CommentsPage = () => {
       label: "Onay Bekleyen",
       children: (
         <Table
-          dataSource={pending}
+          dataSource={filteredPending}
           columns={columns}
           rowKey="reviewId"
           pagination={{ pageSize: 10 }}
@@ -116,7 +130,7 @@ const CommentsPage = () => {
       label: "Onaylanan",
       children: (
         <Table
-          dataSource={approved}
+          dataSource={filteredApproved}
           columns={columns}
           rowKey="reviewId"
           pagination={{ pageSize: 10 }}
@@ -127,6 +141,12 @@ const CommentsPage = () => {
 
   return (
     <Spin spinning={loading}>
+      <Search
+        placeholder="Ürün adına göre ara"
+        allowClear
+        onChange={(e) => setSearchText(e.target.value)}
+        style={{ width: 300, marginBottom: 16 }}
+      />
       <Tabs defaultActiveKey="pending" items={tabsItems} />
     </Spin>
   );
