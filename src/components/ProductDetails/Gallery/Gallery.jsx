@@ -43,7 +43,7 @@ const Gallery = ({ singleProduct }) => {
     imgIndex: 0,
   });
 
-  const [zoomed, setZoomed] = useState(false); // Zoom durumunu takip et
+  const [zoomed, setZoomed] = useState(false);
   const [transformOrigin, setTransformOrigin] = useState("center center");
 
   useEffect(() => {
@@ -62,17 +62,16 @@ const Gallery = ({ singleProduct }) => {
 
   const sliderSettings = {
     dots: false,
-    infinite: true,
-    slidesToShow: 3,
+    infinite: singleProduct.img.length > 1, // 🔥 Bu satır önemli
+    slidesToShow: Math.min(3, singleProduct.img.length), // Az foto varsa ona göre
     slidesToScroll: 1,
     nextArrow: <NextBtn />,
     prevArrow: <PrevBtn />,
   };
 
   const handleClick = (e) => {
-    // Toggle zoom state
     setZoomed(!zoomed);
-  
+
     if (!zoomed) {
       const rect = e.target.getBoundingClientRect();
       const offsetX = e.clientX - rect.left;
@@ -81,7 +80,6 @@ const Gallery = ({ singleProduct }) => {
       const newOriginY = (offsetY / rect.height) * 100;
       setTransformOrigin(`${newOriginX}% ${newOriginY}%`);
     } else {
-      // Zoom-out işlemi: merkezi yeniden ayarla
       setTransformOrigin("center center");
     }
   };
@@ -97,12 +95,12 @@ const Gallery = ({ singleProduct }) => {
           src={activeImg.img}
           id="single-image"
           alt="product"
-          onClick={handleClick} // Fotoğrafı tıklayınca zoom yap
+          onClick={handleClick}
           style={{
-            cursor: zoomed ? "zoom-out" : "zoom-in", // Zoom durumuna göre cursor değişir
-            transform: zoomed ? "scale(2)" : "scale(1)", // Zoom yapılmışsa büyük göster
-            transformOrigin: transformOrigin, // Zoom yapılırken hangi noktada odaklanacağını belirler
-            transition: "transform 0.3s ease", // Yumuşak geçiş
+            cursor: zoomed ? "zoom-out" : "zoom-in",
+            transform: zoomed ? "scale(2)" : "scale(1)",
+            transformOrigin: transformOrigin,
+            transition: "transform 0.3s ease",
           }}
         />
       </div>

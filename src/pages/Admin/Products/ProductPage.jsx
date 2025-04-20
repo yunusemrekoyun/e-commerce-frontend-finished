@@ -52,8 +52,8 @@ const ProductPage = () => {
             Güncelle
           </Button>
           <Popconfirm
-            title="Kategoriyi Sil"
-            description="Kategoriyi silmek istediğinizden emin misiniz?"
+            title="Ürünü Sil"
+            description="Ürünü silmek istediğinizden emin misiniz ?"
             okText="Yes"
             cancelText="No"
             onConfirm={() => deleteProduct(record._id)}
