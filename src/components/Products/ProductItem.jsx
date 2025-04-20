@@ -6,7 +6,7 @@ import ProductDetailsModal from "../ProductDetails/ProductDetailsModal";
 
 const ProductItem = ({ productItem }) => {
   const averageRating = productItem?.averageRating ?? 0;
-  // console.log(averageRating);
+  
   const originalPrice = productItem?.price?.current ?? 0;
   const discountPercentage = productItem?.price?.discount ?? 0;
   const discountedPrice =
@@ -86,8 +86,8 @@ const ProductItem = ({ productItem }) => {
             {renderStars(averageRating)}
           </div>
           <div className="product-prices">
-            <strong className="new-price">${discountedPrice.toFixed(2)}</strong>
-            <span className="old-price">${originalPrice.toFixed(2)}</span>
+            <strong className="new-price">₺{discountedPrice.toFixed(2)}</strong>
+            <span className="old-price">₺{originalPrice.toFixed(2)}</span>
           </div>
           <span className="product-discount">-{discountPercentage}%</span>
         </div>
