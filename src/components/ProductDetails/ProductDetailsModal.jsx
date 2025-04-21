@@ -1,46 +1,64 @@
+import { useEffect, useState } from "react";
 import { Modal } from "antd";
 import PropTypes from "prop-types";
 import ProductDetails from "./ProductDetails";
 
-/**
- * Bu bileşen, ProductDetails'i bir Modal (pop-up) içinde göstermek için kullanılır.
- * - isVisible: Modal açık/kapalı kontrolü
- * - onClose: Modal kapatıldığında yapılacak eylem
- * - singleProduct, setSingleProduct => Ürün detayları (aynı props'u ProductDetails alıyor)
- */
 const ProductDetailsModal = ({
   isVisible,
   onClose,
   singleProduct,
   setSingleProduct,
 }) => {
-  // 🧠 singleProduct.img string dizisiyse, objeye çevir
+  const [fullProduct, setFullProduct] = useState(null);
+
+  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
+  useEffect(() => {
+    const fetchFullProduct = async () => {
+      if (!singleProduct?._id) return;
+      try {
+        const res = await fetch(`${apiUrl}/api/products/${singleProduct._id}`);
+        const data = await res.json();
+        setFullProduct(data);
+      } catch (err) {
+        console.error("Ürün detayı alınamadı", err);
+      }
+    };
+
+    if (isVisible) {
+      fetchFullProduct();
+    }
+  }, [isVisible, singleProduct, apiUrl]);
+
+  if (!fullProduct) return null;
+
   const convertedProduct = {
-    ...singleProduct,
-    img: Array.isArray(singleProduct?.img)
-      ? singleProduct.img.map((img, index) =>
+    ...fullProduct,
+    img: Array.isArray(fullProduct?.img)
+      ? fullProduct.img.map((img, index) =>
           typeof img === "string" ? { _id: index.toString(), base64: img } : img
         )
       : [],
-    price: singleProduct.price, // TL fiyatı burada alıyoruz
+    price: fullProduct.price,
+    reviews: fullProduct.reviews ?? [],
   };
 
   return (
     <Modal
       open={isVisible}
       onCancel={onClose}
-      footer={null} // Alttaki butonlar kapansın
-      title={null} // Üst başlık kapansın
-      closable={true} // X butonu görünsün
-      maskClosable={true} // Maske (arka plan) tıklanınca kapansın
-      width="80vw" // Daha geniş bir modal (istersen ayarla)
-      style={{ top: 20 }} // Biraz yukarıda açılsın istersen
+      footer={null}
+      title={null}
+      closable={true}
+      maskClosable={true}
+      width="80vw"
+      style={{ top: 20 }}
     >
       <ProductDetails
         singleProduct={convertedProduct}
         setSingleProduct={setSingleProduct}
-        compact={true} // ✅ sadece görsel gelecek şekilde
-        priceSymbol="₺" // TL işaretini burada ekliyoruz
+        compact={true}
+        priceSymbol="₺"
       />
     </Modal>
   );

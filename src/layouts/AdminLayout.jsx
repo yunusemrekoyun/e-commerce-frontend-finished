@@ -67,46 +67,51 @@ const AdminLayout = ({ children }) => {
           label: "Yeni Ürün Oluştur",
           onClick: () => navigate("/admin/products/create"),
         },
+        {
+          key: "8",
+          label: "İndirimli Ürünler",
+          onClick: () => navigate("/admin/products/discounts"),
+        },
       ],
     },
     {
-      key: "8",
+      key: "9",
       icon: <BarcodeOutlined />,
       label: "Kuponlar",
       children: [
         {
-          key: "9",
+          key: "10",
           label: "Kupon Listesi",
           onClick: () => navigate("/admin/coupons"),
         },
         {
-          key: "10",
+          key: "11",
           label: "Yeni Kupon Oluştur",
           onClick: () => navigate("/admin/coupons/create"),
         },
       ],
     },
     {
-      key: "11",
+      key: "12",
       icon: <UserOutlined />,
       label: "Kullanıcı Listesi",
       onClick: () => navigate("/admin/users"),
     },
     {
-      key: "12",
+      key: "13",
       icon: <ShoppingCartOutlined />,
       label: "Siparişler",
       onClick: () => navigate("/admin/orders"),
     },
     // **Yorumlar** sekmesi:
     {
-      key: "13",
+      key: "14",
       icon: <CommentOutlined />,
       label: "Yorumlar",
       onClick: () => navigate("/admin/comments"),
     },
     {
-      key: "14",
+      key: "15",
       icon: <RollbackOutlined />,
       label: "Ana Sayfa",
       onClick: () => navigate("/"),

@@ -8,10 +8,10 @@ import "./Tabs.css";
 
 const Tabs = ({ singleProduct, setSingleProduct }) => {
   const [activeTab, setActiveTab] = useState("desc");
-  const colors = Array.isArray(singleProduct?.colors)
-    ? singleProduct.colors
-    : [];
-  const sizes = Array.isArray(singleProduct?.sizes) ? singleProduct.sizes : [];
+  // const colors = Array.isArray(singleProduct?.colors)
+  //   ? singleProduct.colors
+  //   : [];
+  // const sizes = Array.isArray(singleProduct?.sizes) ? singleProduct.sizes : [];
 
   const handleTabClick = (e, tab) => {
     e.preventDefault();
@@ -32,7 +32,7 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
             Ürün Bilgisi
           </a>
         </li>
-  
+
         <li>
           <a
             href="#"
@@ -53,8 +53,6 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
             dangerouslySetInnerHTML={{ __html: singleProduct?.description }}
           />
         </div>
-
-
 
         <Reviews
           active={activeTab === "reviews" ? "content active" : "content"}
