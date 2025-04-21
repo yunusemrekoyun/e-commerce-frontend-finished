@@ -228,11 +228,7 @@ const UpdateProductPage = () => {
           <InputNumber style={{ width: "100%" }} />
         </Form.Item>
 
-        <Form.Item
-          label="İndirim Oranı"
-          name="discount"
-          rules={[{ required: true, message: "İndirim oranı zorunludur!" }]}
-        >
+        <Form.Item label="İndirim Oranı" name="discount">
           <InputNumber style={{ width: "100%" }} />
         </Form.Item>
 

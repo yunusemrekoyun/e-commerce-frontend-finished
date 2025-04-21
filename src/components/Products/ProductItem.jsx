@@ -1,3 +1,4 @@
+//Applications/Works/kozmetik/frontend/src/components/ProductItem.jsx
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -13,20 +14,12 @@ const ProductItem = ({ productItem }) => {
     originalPrice - (originalPrice * discountPercentage) / 100;
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-
   const navigate = useNavigate();
 
-  const handleOpenModal = () => {
-    setIsModalVisible(true);
-  };
+  const handleOpenModal = () => setIsModalVisible(true);
+  const handleCloseModal = () => setIsModalVisible(false);
+  const handleCardClick = () => navigate(`/product/${productItem?._id}`);
 
-  const handleCloseModal = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleCardClick = () => {
-    navigate(`/product/${productItem?._id}`);
-  };
   const renderStars = (rating) => {
     const full = Math.floor(rating);
     const half = rating % 1 >= 0.5;
@@ -35,19 +28,11 @@ const ProductItem = ({ productItem }) => {
     return (
       <ul className="product-star">
         {[...Array(full)].map((_, i) => (
-          <li key={`f-${i}`}>
-            <i className="bi bi-star-fill"></i>
-          </li>
+          <li key={`f-${i}`}><i className="bi bi-star-fill" /></li>
         ))}
-        {half && (
-          <li key="half">
-            <i className="bi bi-star-half"></i>
-          </li>
-        )}
+        {half && <li key="half"><i className="bi bi-star-half" /></li>}
         {[...Array(empty)].map((_, i) => (
-          <li key={`e-${i}`}>
-            <i className="bi bi-star"></i>
-          </li>
+          <li key={`e-${i}`}><i className="bi bi-star" /></li>
         ))}
       </ul>
     );
@@ -73,12 +58,23 @@ const ProductItem = ({ productItem }) => {
           <a href="#!" className="product-title">
             {productItem?.name}
           </a>
-          <div className="product-star">{renderStars(averageRating)}</div>
-          <div className="product-prices">
-            <strong className="new-price">₺{discountedPrice.toFixed(2)}</strong>
-            <span className="old-price">₺{originalPrice.toFixed(2)}</span>
+          <div className="product-star">
+            {renderStars(averageRating)}
           </div>
-          <span className="product-discount">-{discountPercentage}%</span>
+          <div className="product-prices">
+            <strong className="new-price">
+              ₺{discountedPrice.toFixed(2)}
+            </strong>
+            <span className="old-price">
+              ₺{originalPrice.toFixed(2)}
+            </span>
+          </div>
+          {/* İndirim yüzdesi 0 ise burası görünmeyecek */}
+          {discountPercentage > 0 && (
+            <span className="product-discount">
+              -{discountPercentage}%
+            </span>
+          )}
         </div>
       </div>
 
