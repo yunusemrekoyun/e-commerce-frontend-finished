@@ -22,6 +22,7 @@ const ProductDetailsModal = ({
           typeof img === "string" ? { _id: index.toString(), base64: img } : img
         )
       : [],
+    price: singleProduct.price, // TL fiyatı burada alıyoruz
   };
 
   return (
@@ -39,7 +40,7 @@ const ProductDetailsModal = ({
         singleProduct={convertedProduct}
         setSingleProduct={setSingleProduct}
         compact={true} // ✅ sadece görsel gelecek şekilde
-
+        priceSymbol="₺" // TL işaretini burada ekliyoruz
       />
     </Modal>
   );

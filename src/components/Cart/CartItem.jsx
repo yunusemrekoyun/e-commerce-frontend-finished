@@ -13,6 +13,9 @@ const CartItem = ({ cartItem }) => {
   const handleDecrease = () => {
     if (cartItem.quantity > 1) {
       updateCartItemQuantity(cartItem._id, cartItem.quantity - 1);
+    } else {
+      // Eğer miktar 1'e düşerse, ürünü sepetten kaldır
+      removeFromCart(cartItem);
     }
   };
 
@@ -25,10 +28,6 @@ const CartItem = ({ cartItem }) => {
             alt={cartItem.name}
             className="cart-thumbnail"
           />
-          <i
-            className="bi bi-x delete-cart"
-            onClick={() => removeFromCart(cartItem)}
-          ></i>
         </div>
       </td>
       <td>
@@ -47,12 +46,11 @@ const CartItem = ({ cartItem }) => {
           </div>
         )}
       </td>
-      <td>${cartItem.price.toFixed(2)}</td>
+      <td>₺{cartItem.price.toFixed(2)}</td>
       <td className="product-quantity">
         <button
           className="quantity-btn"
           onClick={handleDecrease}
-          disabled={cartItem.quantity <= 1}
         >
           -
         </button>
@@ -62,7 +60,7 @@ const CartItem = ({ cartItem }) => {
         </button>
       </td>
       <td className="product-subtotal">
-        ${(cartItem.price * cartItem.quantity).toFixed(2)}
+        ₺{(cartItem.price * cartItem.quantity).toFixed(2)}
       </td>
     </tr>
   );
