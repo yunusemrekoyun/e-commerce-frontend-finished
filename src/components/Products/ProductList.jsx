@@ -3,7 +3,11 @@ import PropTypes from "prop-types";
 import ProductItem from "./ProductItem";
 import "./ProductList.css";
 
-const ProductList = ({ categoryName, selectedBrands }) => {
+const ProductList = ({
+  categoryName,
+  selectedBrands,
+  onlyDiscounted = false,
+}) => {
   const [products, setProducts] = useState([]);
   const [visibleCount, setVisibleCount] = useState(20);
   const [allLoaded, setAllLoaded] = useState(false);
@@ -29,6 +33,9 @@ const ProductList = ({ categoryName, selectedBrands }) => {
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+  const filteredProducts = onlyDiscounted
+    ? products.filter((p) => (p.price?.discount ?? 0) > 0)
+    : products;
 
   const displayed = products.slice(0, visibleCount);
 
@@ -62,7 +69,7 @@ const ProductList = ({ categoryName, selectedBrands }) => {
       </div>
 
       <div style={{ textAlign: "center", marginTop: 20 }}>
-        {!allLoaded && displayed.length < products.length && (
+        {!allLoaded && displayed.length < filteredProducts.length && (
           <button onClick={() => setVisibleCount((c) => c + 20)}>
             Daha Fazla Ürün
           </button>
@@ -76,6 +83,7 @@ const ProductList = ({ categoryName, selectedBrands }) => {
 ProductList.propTypes = {
   categoryName: PropTypes.string,
   selectedBrands: PropTypes.array.isRequired,
+  onlyDiscounted: PropTypes.bool,
 };
 
 export default ProductList;
