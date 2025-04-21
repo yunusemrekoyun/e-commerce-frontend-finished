@@ -102,8 +102,8 @@ const Info = ({ singleProduct, compact = false }) => {
       )}
 
       <div className="product-price">
-        <s className="old-price">${originalPrice.toFixed(2)}</s>
-        <strong className="new-price">${discountedPrice.toFixed(2)}</strong>
+        <s className="old-price">₺{originalPrice.toFixed(2)}</s>
+        <strong className="new-price">₺{discountedPrice.toFixed(2)}</strong>
       </div>
 
       <form className="variations-form">
