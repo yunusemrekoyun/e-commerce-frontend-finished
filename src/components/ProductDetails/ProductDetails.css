@@ -32,4 +32,80 @@
       display: inline-block;
     }
   }
-  
+/* Ürün detayları bölümünde renk ve boyut seçeneklerine boşluk ekleme */
+.product-details .options {
+  margin-top: 20px;
+}
+
+.product-details .options .option {
+  margin-bottom: 20px; /* İki seçenek arasında boşluk */
+}
+
+/* Renk ve boyut seçeneği için dikdörtgen butonlar */
+.product-details .color-options {
+  display: flex;
+  gap: 10px; /* Renkler arasında boşluk */
+  flex-wrap: wrap;
+}
+
+.product-details .color-options .color-option {
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover efekti ve seçili renk efekti */
+.product-details .color-options .color-option:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.product-details .color-options .color-option.selected {
+  border: 3px solid #333;
+}
+
+/* Boyut seçeneği için buton stili */
+.product-details .size-options {
+  display: flex;
+  gap: 10px;
+}
+
+.product-details .size-options .size-option {
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover efekti ve seçili boyut efekti */
+.product-details .size-options .size-option:hover {
+  background-color: #ccc;
+  transform: scale(1.05);
+}
+
+.product-details .size-options .size-option.selected {
+  background-color: #333;
+  color: #fff;
+}
+/* Renk seçenekleri arasındaki boşluk */
+.color-options {
+  display: flex;
+  gap: 10px; /* Bu değer ile renkler arasındaki boşluğu ayarlayabilirsiniz */
+  margin-bottom: 20px; /* Renk seçeneklerinin altına boşluk eklemek için */
+}
+
+/* Boyut seçenekleri arasındaki boşluk */
+.size-options {
+  display: flex;
+  gap: 15px; /* Bu değer ile boyutlar arasındaki boşluğu ayarlayabilirsiniz */
+  margin-bottom: 20px; /* Boyut seçeneklerinin altına boşluk eklemek için */
+}
+
+/* Genel seçenekler arası boşluk */
+.options {
+  margin-top: 20px; /* Üstten boşluk eklemek için */
+}

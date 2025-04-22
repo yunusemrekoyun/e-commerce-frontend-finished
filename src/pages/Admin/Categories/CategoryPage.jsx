@@ -67,9 +67,10 @@ const CategoryPage = () => {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
-        <Space>
+        <Space direction="vertical" size="small">
           <Button
             type="primary"
+            size="small"
             onClick={() => navigate(`/admin/categories/update/${record._id}`)}
           >
             Güncelle
@@ -81,7 +82,7 @@ const CategoryPage = () => {
             cancelText="Hayır"
             onConfirm={() => deleteCategory(record._id)}
           >
-            <Button type="primary" danger>
+            <Button type="primary" danger size="small">
               Sil
             </Button>
           </Popconfirm>
@@ -96,13 +97,22 @@ const CategoryPage = () => {
         placeholder="Kategori adına göre ara"
         allowClear
         onChange={(e) => setSearchText(e.target.value)}
-        style={{ width: 300, marginBottom: 16 }}
+        style={{
+          width: '100%',
+          maxWidth: 300,
+          marginBottom: 16,
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
       />
       <Table
         rowKey="_id"
         dataSource={filteredData}
         columns={columns}
         loading={loading}
+        pagination={{ pageSize: 10 }} // Added pagination for better mobile experience
+        scroll={{ x: 'max-content' }} // Ensures horizontal scrolling on small screens
+        responsive // Makes the table responsive to smaller screens
       />
     </>
   );

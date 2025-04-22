@@ -21,7 +21,7 @@ const Reviews = ({ active, singleProduct, setSingleProduct }) => {
         </ul>
       )}
 
-      <h3 className="add-review-title">Add a review</h3>
+      <h1 className="add-review-title">Bu ürün hakkında yorum yapın.</h1>
       <ReviewForm
         singleProduct={singleProduct}
         setSingleProduct={setSingleProduct}

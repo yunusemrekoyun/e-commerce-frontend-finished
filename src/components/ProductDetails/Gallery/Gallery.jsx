@@ -84,6 +84,9 @@ const Gallery = ({ singleProduct }) => {
     }
   };
 
+  // Fotoğraf sayısına göre küçük fotoğraf galerisini gizle veya göster
+  const hasMultipleImages = singleProduct.img?.length > 1;
+
   if (!singleProduct.img) {
     return null;
   }
@@ -105,40 +108,43 @@ const Gallery = ({ singleProduct }) => {
         />
       </div>
 
-      <div className="product-thumb">
-        <div className="glide__track" data-glide-el="track">
-          <ol className="gallery-thumbs glide__slides">
-            <Slider {...sliderSettings}>
-              {singleProduct.img.map((imageObj, index) => (
-                <li
-                  className="glide__slide glide__slide--active"
-                  key={imageObj._id || index}
-                  onClick={() =>
-                    setActiveImg({
-                      img: imageObj.base64,
-                      imgIndex: index,
-                    })
-                  }
-                >
-                  <img
-                    src={imageObj.base64}
-                    alt=""
-                    className={`img-fluid ${
-                      activeImg.imgIndex === index ? "active" : ""
-                    }`}
-                  />
-                </li>
-              ))}
-            </Slider>
-          </ol>
+      {/* Küçük fotoğraf galerisi yalnızca birden fazla fotoğraf varsa gösterilir */}
+      {hasMultipleImages && (
+        <div className="product-thumb">
+          <div className="glide__track" data-glide-el="track">
+            <ol className="gallery-thumbs glide__slides">
+              <Slider {...sliderSettings}>
+                {singleProduct.img.map((imageObj, index) => (
+                  <li
+                    className="glide__slide glide__slide--active"
+                    key={imageObj._id || index}
+                    onClick={() =>
+                      setActiveImg({
+                        img: imageObj.base64,
+                        imgIndex: index,
+                      })
+                    }
+                  >
+                    <img
+                      src={imageObj.base64}
+                      alt=""
+                      className={`img-fluid ${
+                        activeImg.imgIndex === index ? "active" : ""
+                      }`}
+                    />
+                  </li>
+                ))}
+              </Slider>
+            </ol>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
 
-export default Gallery;
-
 Gallery.propTypes = {
-  singleProduct: PropTypes.object,
+  singleProduct: PropTypes.object.isRequired,
 };
+
+export default Gallery;

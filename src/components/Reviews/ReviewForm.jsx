@@ -1,6 +1,3 @@
-/********************************************************
- * /Applications/Works/kozmetik/frontend/src/components/Reviews/ReviewForm.jsx
- ********************************************************/
 import { useEffect, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { message } from "antd";
@@ -10,6 +7,7 @@ const ReviewForm = ({ singleProduct }) => {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
   const [userInfo, setUserInfo] = useState(null);
+  const [isAccepted, setIsAccepted] = useState(false); // Checkbox durumu
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
   const fetchUserInfo = useCallback(async () => {
@@ -71,6 +69,9 @@ const ReviewForm = ({ singleProduct }) => {
     if (rating === 0) {
       return message.warning("Puan seçiniz!");
     }
+    if (!isAccepted) { // Checkbox işaretlenmemişse
+      return message.warning("Yorum yapabilmek için kuralları kabul etmelisiniz!");
+    }
 
     try {
       const res = await fetchWithAuth(
@@ -94,22 +95,26 @@ const ReviewForm = ({ singleProduct }) => {
       );
       setReview("");
       setRating(0);
+      setIsAccepted(false); // Form gönderildikten sonra checkbox'ı sıfırlıyoruz
     } catch (error) {
       console.error("handleSubmit error:", error);
       message.error("Bir hata oluştu. Lütfen tekrar deneyin.");
     }
   };
 
+  const handleCheckboxChange = () => {
+    setIsAccepted((prevState) => !prevState);
+  };
+
   return (
     <form className="comment-form" onSubmit={handleSubmit}>
       <p className="comment-notes">
-        Your email address will not be published. Required fields are marked
         <span className="required">*</span>
       </p>
 
       <div className="comment-form-rating">
         <label>
-          Your rating<span className="required">*</span>
+          Puanınız<span className="required">*</span>
         </label>
         <div className="stars">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -129,7 +134,7 @@ const ReviewForm = ({ singleProduct }) => {
 
       <div className="comment-form-comment form-comment">
         <label htmlFor="comment">
-          Your review<span className="required">*</span>
+          Yorumunuz<span className="required">*</span>
         </label>
         <textarea
           id="comment"
@@ -142,10 +147,14 @@ const ReviewForm = ({ singleProduct }) => {
       </div>
 
       <div className="comment-form-cookies">
-        <input id="cookies" type="checkbox" />
+        <input
+          id="cookies"
+          type="checkbox"
+          checked={isAccepted} // Checkbox'ın işaretli olup olmadığı
+          onChange={handleCheckboxChange} // Durum değişikliğini takip et
+        />
         <label htmlFor="cookies">
-          Save my name, email, and website in this browser for the next time I
-          comment.<span className="required">*</span>
+          Yorum yapma kurallarını kabul ediyorum.<span className="required">*</span>
         </label>
       </div>
 

@@ -1,4 +1,4 @@
-import { Spin, Table, Select, message, Input } from "antd";
+import { Spin, Table, Select, message, Input, Card, Row, Col } from "antd";
 import { useEffect, useState, useCallback } from "react";
 import { fetchWithAuth } from "../../../components/Auth/fetchWithAuth";
 import AdminOrderDetailsModal from "./AdminOrderDetailsModal";
@@ -115,23 +115,51 @@ const OrderPage = () => {
 
   return (
     <>
-      <div style={{ marginBottom: 16 }}>
+      <div style={{ marginBottom: 16, textAlign: "center" }}>
         <Input.Search
           placeholder="Sipariş No ile ara"
           allowClear
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ width: 300 }}
+          style={{ width: "100%", maxWidth: 300, margin: "0 auto" }}
         />
       </div>
 
       <Spin spinning={loading}>
-        <Table
-          dataSource={filteredOrders}
-          columns={columns}
-          rowKey={(rec) => rec._id}
-          pagination={{ pageSize: 10 }}
-        />
+        <div style={{ overflowX: "auto", display: "block" }}>
+          <Table
+            dataSource={filteredOrders}
+            columns={columns}
+            rowKey={(rec) => rec._id}
+            pagination={{ pageSize: 10 }}
+            scroll={{ x: "max-content" }}
+            style={{ width: "100%" }}
+          />
+        </div>
       </Spin>
+
+      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+        {filteredOrders.map((order) => (
+          <Col xs={24} sm={12} md={8} key={order._id}>
+            <Card
+              title={`Sipariş No: ${order._id.slice(-6)}`}
+              extra={<a onClick={() => setSelectedOrder(order)}>Detaylar</a>}
+              style={{ width: "100%" }}
+            >
+              <p>Email: {order.email}</p>
+              <p>Fiyat: <b>{order.total.toFixed(2)}₺</b></p>
+              <p>Durum: {order.status}</p>
+              <p>
+                Tarih: {new Date(order.createdAt).toLocaleDateString("tr-TR")}
+                <br />
+                Saat: {new Date(order.createdAt).toLocaleTimeString("tr-TR", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
+            </Card>
+          </Col>
+        ))}
+      </Row>
 
       <AdminOrderDetailsModal
         visible={!!selectedOrder}

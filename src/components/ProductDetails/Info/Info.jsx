@@ -96,7 +96,7 @@ const Info = ({ singleProduct, compact = false }) => {
         <div className="product-review">
           {renderStars(averageRating)}
           <span>
-            {reviewsCount} review{reviewsCount !== 1 && "s"}
+            {reviewsCount} Yorum {reviewsCount !== 1 && "s"}
           </span>
         </div>
       )}
@@ -158,7 +158,7 @@ const Info = ({ singleProduct, compact = false }) => {
               className="btn btn-lg btn-primary"
               onClick={handleAddToCart}
             >
-              Add to cart
+              Sepete Ekle
             </button>
           </div>
         </div>

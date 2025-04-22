@@ -1,4 +1,3 @@
-// /Applications/Works/e-commerce/frontend/src/pages/Admin/DiscountPage.jsx
 import { useEffect, useState } from "react";
 import { Table, Select, InputNumber, Button, Spin, message, Modal } from "antd";
 import { fetchWithAuth } from "../../../components/Auth/fetchWithAuth";
@@ -6,21 +5,19 @@ import { fetchWithAuth } from "../../../components/Auth/fetchWithAuth";
 const { Option } = Select;
 
 const DiscountPage = () => {
-  // State’ler
   const [categories, setCategories] = useState([]);
   const [brandOptions, setBrandOptions] = useState([]);
   const [discounted, setDiscounted] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [selCat, setSelCat] = useState();
-  const [selBrands, setSelBrands] = useState(["all"]);
-  const [discValue, setDiscValue] = useState(0);
+  const [selCat, setSelCat] = useState(null); // Başlangıçta null
+  const [selBrands, setSelBrands] = useState(["all"]); // Başlangıçta "all"
+  const [discValue, setDiscValue] = useState(0); // Başlangıçta 0
 
   const [modalVisible, setModalVisible] = useState(false);
 
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-  // İlk yüklemede kategoriler + indirimli ürünler
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -41,15 +38,22 @@ const DiscountPage = () => {
     })();
   }, [apiUrl]);
 
-  // Kategori seçildiğinde o kategoriye ait markaları hazırla
+  // Modal açıldığında sıfırlama işlemi
+  useEffect(() => {
+    if (modalVisible) {
+      setSelCat(null); // Kategori sıfırlama
+      setSelBrands(["all"]); // Markalar sıfırlama
+      setDiscValue(0); // İndirim sıfırlama
+    }
+  }, [modalVisible]); // Modal her açıldığında bu effect çalışacak
+
   const onCatChange = (catId) => {
     setSelCat(catId);
     const cat = categories.find((c) => c._id === catId);
     setBrandOptions(cat?.brands || []);
-    setSelBrands(["all"]);
+    setSelBrands(["all"]); // Markalar sıfırlanıyor
   };
 
-  // İndirim uygula
   const applyDiscount = async () => {
     if (!selCat) {
       message.warning("Önce kategori seçin.");
@@ -58,12 +62,10 @@ const DiscountPage = () => {
 
     setLoading(true);
     try {
-      // Backend’in beklediği alan isimlerini kullan
       const body = {
         categoryId: selCat,
         discount: discValue,
       };
-      // "all" seçili değilse brandIds gönder
       if (!selBrands.includes("all")) {
         body.brandIds = selBrands;
       }
@@ -78,7 +80,6 @@ const DiscountPage = () => {
       message.success("İndirim güncellendi.");
       setModalVisible(false);
 
-      // Listeyi yenile
       const updated = await fetchWithAuth(`${apiUrl}/api/discounts/products`);
       setDiscounted(await updated.json());
     } catch (err) {
@@ -89,7 +90,6 @@ const DiscountPage = () => {
     }
   };
 
-  // Tablo sütunları
   const columns = [
     { title: "Ürün Adı", dataIndex: "name", key: "name" },
     {
@@ -115,16 +115,14 @@ const DiscountPage = () => {
 
   return (
     <Spin spinning={loading}>
-      {/* İndirim Üret Butonu */}
       <Button
         type="primary"
-        style={{ marginBottom: 16 }}
+        className="discount-btn"
         onClick={() => setModalVisible(true)}
       >
         İndirim Üret
       </Button>
 
-      {/* İndirim Modalı */}
       <Modal
         title="Kategori/Marka Bazlı İndirim Oluştur"
         open={modalVisible}
@@ -132,12 +130,12 @@ const DiscountPage = () => {
         footer={null}
         maskClosable
       >
-        <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+        <div className="discount-form">
           <Select
             placeholder="Kategori seç"
             value={selCat}
             onChange={onCatChange}
-            style={{ width: 200 }}
+            className="select"
           >
             {categories.map((c) => (
               <Option key={c._id} value={c._id}>
@@ -151,7 +149,7 @@ const DiscountPage = () => {
             placeholder="Marka seç (all=Tüm)"
             value={selBrands}
             onChange={setSelBrands}
-            style={{ width: 300 }}
+            className="select"
           >
             <Option key="all" value="all">
               Tüm Markalar
@@ -168,7 +166,8 @@ const DiscountPage = () => {
             max={100}
             placeholder="İndirim %"
             value={discValue}
-            onChange={setDiscValue} 
+            onChange={setDiscValue}
+            className="input-number"
           />
 
           <Button type="primary" onClick={applyDiscount}>
@@ -177,12 +176,13 @@ const DiscountPage = () => {
         </div>
       </Modal>
 
-      {/* İndirimli Ürünler Tablosu */}
       <Table
         rowKey="_id"
         dataSource={discounted}
         columns={columns}
         pagination={{ pageSize: 10 }}
+        className="discount-table"
+        scroll={{ x: 'max-content' }} // Bu, geniş tablolar için yatay kaydırma ekler
       />
     </Spin>
   );

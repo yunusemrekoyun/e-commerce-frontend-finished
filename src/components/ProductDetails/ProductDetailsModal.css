@@ -1,0 +1,119 @@
+/* Modal genel stilleri */
+.ant-modal {
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Modal başlığı */
+  .ant-modal-header {
+    display: none; /* Başlığı gizle */
+  }
+  
+  /* Modal dışındaki maskenin görünürlüğünü iyileştirme */
+  .ant-modal-mask {
+    background-color: rgba(0, 0, 0, 0.4); /* Daha soft bir mask */
+  }
+  
+  /* Modal içeriği */
+  .ant-modal-content {
+    border-radius: 10px;
+    padding: 0; /* İçeriği modal içine tam oturt */
+  }
+  
+  /* Modalın içinde bulunan butonlar ve footer */
+  .ant-modal-footer {
+    display: none; /* Footer'ı gizle */
+  }
+  
+  /* Modal içeriğini hizalama */
+  .ant-modal-body {
+    padding: 20px;
+    max-height: 80vh; /* Yüksekliği sınırlama */
+    overflow-y: auto; /* İçerik çoksa kaydırılabilir yap */
+  }
+  
+  /* ProductDetails içeriği */
+  .product-details {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Ürün resimleri */
+  .product-details-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  
+  .product-details-images img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Ürün ismi */
+  .product-details-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+  
+  /* Fiyat ve inceleme kısmı */
+  .product-details-price {
+    font-size: 1.25rem;
+    color: #ff5722;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  .product-details-reviews {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+  }
+  
+  .product-details-reviews span {
+    font-size: 1rem;
+    color: #888;
+  }
+  
+  /* Mobil uyumlu stil */
+  @media (max-width: 768px) {
+    .ant-modal-body {
+      padding: 10px; /* Daha az padding */
+    }
+  
+    .product-details {
+      gap: 15px;
+    }
+  
+    .product-details-title {
+      font-size: 1.3rem; /* Başlık fontunu küçült */
+    }
+  
+    .product-details-price {
+      font-size: 1.1rem; /* Fiyatı küçült */
+    }
+  
+    .product-details-images {
+      gap: 5px; /* Resimler arası boşluğu küçült */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .product-details-title {
+      font-size: 1.2rem; /* Başlık fontunu daha da küçült */
+    }
+  
+    .product-details-price {
+      font-size: 1rem; /* Fiyatı daha da küçült */
+    }
+  
+    .product-details-images {
+      gap: 3px; /* Resimler arası boşluğu daha da küçült */
+    }
+  }

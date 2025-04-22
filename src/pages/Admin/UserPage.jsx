@@ -1,15 +1,13 @@
-/* frontend/src/pages/Admin/UserPage.jsx */
-import { Button, Popconfirm, Table, message } from "antd";
+import { Button, Popconfirm, Table, message, Input } from "antd";
 import { useCallback, useEffect, useState } from "react";
 
-/* /src/pages/Admin/UserPage.jsx */
 const UserPage = () => {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
   const columns = [
-    // Avatar kolonu tamamen kaldırıldı
     {
       title: "Username",
       dataIndex: "username",
@@ -83,12 +81,22 @@ const UserPage = () => {
   }, [fetchUsers]);
 
   return (
-    <Table
-      dataSource={dataSource}
-      columns={columns}
-      rowKey={(rec) => rec._id}
-      loading={loading}
-    />
+    <div style={{ padding: "16px" }}>
+      {/* Kullanıcı adıyla arama kutusu */}
+      <Input
+        placeholder="Kullanıcı adıyla ara"
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+        style={{ width: 300, marginBottom: 16 }}
+      />
+      <Table
+        dataSource={dataSource}
+        columns={columns}
+        rowKey={(rec) => rec._id}
+        loading={loading}
+        scroll={{ x: "max-content" }} // Taşmayı önlemek için scroll özelliği
+      />
+    </div>
   );
 };
 
