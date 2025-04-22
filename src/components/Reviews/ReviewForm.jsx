@@ -14,13 +14,38 @@ const ReviewForm = ({ singleProduct }) => {
 
   const fetchUserInfo = useCallback(async () => {
     try {
-      const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
-      if (res && res.ok) {
+      let res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
+  
+      // 🟡 Token expired ise refresh dene
+      if (res.status === 401) {
+        const refreshToken = localStorage.getItem("refreshToken");
+        if (refreshToken) {
+          const refreshRes = await fetch(`${apiUrl}/api/auth/refresh`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refreshToken }),
+          });
+  
+          if (refreshRes.ok) {
+            const data = await refreshRes.json();
+            localStorage.setItem("token", data.token);
+  
+            // Yeni token ile tekrar kullanıcı bilgisi al
+            res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
+          } else {
+            // Refresh de başarısızsa token'ları sil
+            localStorage.removeItem("token");
+            localStorage.removeItem("refreshToken");
+          }
+        }
+      }
+  
+      if (res.ok) {
         const data = await res.json();
         setUserInfo(data);
       }
-    } catch {
-      // silent: kullanıcı girişli değilse burada sessizce fail et
+    } catch (err) {
+      console.error("fetchUserInfo error:", err);
     }
   }, [apiUrl]);
 
