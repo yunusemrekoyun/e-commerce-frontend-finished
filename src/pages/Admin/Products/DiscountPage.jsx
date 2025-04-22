@@ -26,6 +26,10 @@ const DiscountPage = () => {
           fetch(`${apiUrl}/api/categories`),
           fetchWithAuth(`${apiUrl}/api/discounts/products`),
         ]);
+        if (catRes.status === 401 || prodRes.status === 401) {
+          window.location.reload();
+          return;
+        }
         if (!catRes.ok) throw new Error("Kategori alınamadı");
         setCategories(await catRes.json());
         setDiscounted(await prodRes.json());
@@ -182,7 +186,7 @@ const DiscountPage = () => {
         columns={columns}
         pagination={{ pageSize: 10 }}
         className="discount-table"
-        scroll={{ x: 'max-content' }} // Bu, geniş tablolar için yatay kaydırma ekler
+        scroll={{ x: "max-content" }} // Bu, geniş tablolar için yatay kaydırma ekler
       />
     </Spin>
   );
