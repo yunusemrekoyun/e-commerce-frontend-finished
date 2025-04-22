@@ -9,6 +9,26 @@
   gap: 24px;
 }
 
+
+.discount-badge {
+  background-color: rgba(0, 0, 0, 0.05); /* hafif şeffaf gri */
+  color: #333;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 16px 0; /* header altında biraz boşluk */
+}
+
+.discount-badge .clear-filter {
+  margin-left: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
 /* Mobil görünüm */
 @media (max-width: 768px) {
   .shop-layout {
