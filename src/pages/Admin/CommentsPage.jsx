@@ -1,12 +1,19 @@
-/********************************************************
- * frontend/src/pages/Admin/CommentsPage.jsx
- ********************************************************/
 import { useEffect, useState, useCallback } from "react";
-import { Tabs, Table, Button, message, Popconfirm, Spin, Input } from "antd";
+import {
+  Tabs,
+  Table,
+  Button,
+  message,
+  Popconfirm,
+  Spin,
+  Input,
+  Typography,
+} from "antd";
 import { fetchWithAuth } from "../../components/Auth/fetchWithAuth";
 import dayjs from "dayjs";
 
 const { Search } = Input;
+const { Paragraph } = Typography;
 
 const CommentsPage = () => {
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
@@ -66,7 +73,6 @@ const CommentsPage = () => {
     }
   };
 
-  // Tabloları arama metnine göre filtrele
   const filteredPending = pending.filter((r) =>
     r.productName.toLowerCase().includes(searchText.toLowerCase())
   );
@@ -75,10 +81,41 @@ const CommentsPage = () => {
   );
 
   const columns = [
-    { title: "Ürün", dataIndex: "productName", key: "productName" },
-    { title: "Kullanıcı", dataIndex: "user", key: "user" },
-    { title: "Puan", dataIndex: "rating", key: "rating" },
-    { title: "Yorum", dataIndex: "text", key: "text" },
+    {
+      title: "Ürün",
+      dataIndex: "productName",
+      key: "productName",
+      responsive: ["xs", "sm", "md", "lg"], // Ekran boyutlarına göre görünürlük ayarları
+    },
+    {
+      title: "Kullanıcı",
+      dataIndex: "user",
+      key: "user",
+      responsive: ["md"], // Sadece orta ve üstü ekran boyutlarında görünsün
+    },
+    {
+      title: "Puan",
+      dataIndex: "rating",
+      key: "rating",
+      responsive: ["sm", "md"], // Küçük ve orta ekranlarda görünsün
+    },
+    {
+      title: "Yorum",
+      dataIndex: "text",
+      key: "text",
+      render: (text) => (
+        <Paragraph
+          ellipsis={{
+            rows: 2,
+            expandable: true,
+            symbol: "daha fazla",
+          }}
+        >
+          {text}
+        </Paragraph>
+      ),
+      responsive: ["sm", "md"], // Küçük ve orta ekranlarda görünsün
+    },
     {
       title: "Tarih",
       dataIndex: "createdAt",
@@ -87,6 +124,7 @@ const CommentsPage = () => {
       sorter: (a, b) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
       defaultSortOrder: "descend",
+      responsive: ["lg"], // Yalnızca büyük ekranlarda görünsün
     },
     {
       title: "İşlem",
@@ -117,36 +155,53 @@ const CommentsPage = () => {
       key: "pending",
       label: "Onay Bekleyen",
       children: (
-        <Table
-          dataSource={filteredPending}
-          columns={columns}
-          rowKey="reviewId"
-          pagination={{ pageSize: 10 }}
-        />
+        <div style={{ overflowX: "auto" }}>
+          <Table
+            dataSource={filteredPending}
+            columns={columns}
+            rowKey="reviewId"
+            pagination={{ pageSize: 10 }}
+            scroll={{ x: true }}
+          />
+        </div>
       ),
     },
     {
       key: "approved",
       label: "Onaylanan",
       children: (
-        <Table
-          dataSource={filteredApproved}
-          columns={columns}
-          rowKey="reviewId"
-          pagination={{ pageSize: 10 }}
-        />
+        <div style={{ overflowX: "auto" }}>
+          <Table
+            dataSource={filteredApproved}
+            columns={columns}
+            rowKey="reviewId"
+            pagination={{ pageSize: 10 }}
+            scroll={{ x: true }}
+          />
+        </div>
       ),
     },
   ];
 
   return (
     <Spin spinning={loading}>
-      <Search
-        placeholder="Ürün adına göre ara"
-        allowClear
-        onChange={(e) => setSearchText(e.target.value)}
-        style={{ width: 300, marginBottom: 16 }}
-      />
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "1rem",
+          justifyContent: "flex-start",
+          marginBottom: 16,
+        }}
+      >
+        <Search
+          placeholder="Ürün adına göre ara"
+          allowClear
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ flex: 1, minWidth: 200, maxWidth: 400 }}
+        />
+      </div>
+  
       <Tabs defaultActiveKey="pending" items={tabsItems} />
     </Spin>
   );

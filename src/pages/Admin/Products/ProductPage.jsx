@@ -1,4 +1,6 @@
-//Applications/Works/e-commerce/frontend/src/pages/Admin/ProductPage.jsx
+/********************************************************
+ * /Applications/Works/e-commerce/frontend/src/pages/Admin/ProductPage.jsx
+ ********************************************************/
 import { Button, Popconfirm, Space, Table, message, Input } from "antd";
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -67,9 +69,10 @@ const ProductPage = () => {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
-        <Space>
+        <Space direction="vertical" size="small">
           <Button
             type="primary"
+            size="small"
             onClick={() => navigate(`/admin/products/update/${record._id}`)}
           >
             Güncelle
@@ -81,7 +84,7 @@ const ProductPage = () => {
             cancelText="Hayır"
             onConfirm={() => deleteProduct(record._id)}
           >
-            <Button type="primary" danger>
+            <Button type="primary" danger size="small">
               Sil
             </Button>
           </Popconfirm>
@@ -137,13 +140,22 @@ const ProductPage = () => {
         placeholder="Ürün adına göre ara"
         allowClear
         onChange={(e) => setSearchText(e.target.value)}
-        style={{ width: 300, marginBottom: 16 }}
+        style={{
+          width: '100%',
+          maxWidth: 300,
+          marginBottom: 16,
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
       />
       <Table
         dataSource={filteredData}
         columns={columns}
         rowKey={(record) => record._id}
         loading={loading}
+        pagination={{ pageSize: 10 }} // Added pagination for better mobile experience
+        scroll={{ x: 'max-content' }} // Ensures horizontal scrolling on small screens
+        responsive // Makes the table responsive to smaller screens
       />
     </>
   );

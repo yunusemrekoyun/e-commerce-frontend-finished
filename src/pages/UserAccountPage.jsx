@@ -1,15 +1,14 @@
-/********************************************************
- * /Applications/Works/e-commerce/frontend/src/pages/UserAccountPage.jsx
- ********************************************************/
-import { Layout, Menu, Table, Form, Input, Button, message } from "antd";
+import { Layout, Table, Form, Input, Button, message, Avatar, Collapse } from "antd";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchWithAuth } from "../components/Auth/fetchWithAuth";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import OrderDetailsModal from "../components/Orders/OrderDetailModal";
+import "./UserAccountPage.css";
 
-const { Sider, Content } = Layout;
+const { Content } = Layout;
+const { Panel } = Collapse;
 
 const UserAccountPage = () => {
   const navigate = useNavigate();
@@ -24,7 +23,6 @@ const UserAccountPage = () => {
   const [profileForm] = Form.useForm();
   const [addressForm] = Form.useForm();
 
-  /*** FETCH USER ***/
   const fetchUserInfo = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
@@ -40,7 +38,6 @@ const UserAccountPage = () => {
     }
   }, [apiUrl, navigate, profileForm]);
 
-  /*** FETCH ADDRESS ***/
   const fetchAddress = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/address`);
@@ -53,7 +50,6 @@ const UserAccountPage = () => {
     }
   }, [apiUrl]);
 
-  /*** FETCH ORDERS ***/
   const fetchOrders = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/orders`);
@@ -69,7 +65,6 @@ const UserAccountPage = () => {
     fetchUserInfo();
   }, [fetchUserInfo]);
 
-  // Menü değiştiğinde veri çek
   useEffect(() => {
     if (selectedMenu === "address") {
       fetchAddress();
@@ -78,7 +73,6 @@ const UserAccountPage = () => {
     }
   }, [selectedMenu, fetchAddress, fetchOrders]);
 
-  // Adres yüklendikten sonra forma set et
   useEffect(() => {
     if (addressData && selectedMenu === "address") {
       addressForm.setFieldsValue({
@@ -92,7 +86,6 @@ const UserAccountPage = () => {
     }
   }, [addressData, userInfo, selectedMenu, addressForm]);
 
-  /*** PROFİL & ŞİFRE GÜNCELLEME ***/
   const handleProfileSubmit = async (values) => {
     try {
       const { username, oldPassword, newPassword, confirmPassword } = values;
@@ -162,7 +155,7 @@ const UserAccountPage = () => {
           ({ getFieldValue }) => ({
             validator(_, value) {
               if (!getFieldValue("oldPassword")) return Promise.resolve();
-              if (!value) return Promise.reject("Yeni şifre zorunlu.");
+              if (!value) return Promise.reject("Yeni şifre zorunludur.");
               if (value.length < 6)
                 return Promise.reject("En az 6 karakter girin.");
               return Promise.resolve();
@@ -256,56 +249,58 @@ const UserAccountPage = () => {
     </Form>
   );
 
-  const menuItems = [
-    { key: "profile", label: "Hesap Bilgilerim" },
-    { key: "address", label: "Adresim" },
-    { key: "orders", label: "Siparişlerim" },
-  ];
-
   return (
-    <Layout>
-      <Sider width={200}>
-        <Menu
-          mode="inline"
-          selectedKeys={[selectedMenu]}
-          onClick={(e) => setSelectedMenu(e.key)}
-          style={{ height: "100%", borderRight: 0 }}
-          items={menuItems}
+    <Layout className="layout-with-border">
+      <Layout.Header className="header">
+        <div className="logo" />
+        <Avatar
+          style={{ cursor: "pointer" }}
+          src={userInfo?.profilePicture}
+          size="large"
         />
-      </Sider>
+      </Layout.Header>
+
       <Layout style={{ minHeight: "10vh" }}>
         <Content style={{ padding: 24, minHeight: 280 }}>
-          {selectedMenu === "orders" && (
-            <Table
-              dataSource={orders}
-              columns={[
-                {
-                  title: "Sipariş No",
-                  dataIndex: "_id",
-                  key: "_id",
-                  render: (id, record) => (
-                    <a onClick={() => setModalOrder(record)}>{id.slice(-6)}</a>
-                  ),
-                },
-                {
-                  title: "Tarih",
-                  dataIndex: "createdAt",
-                  key: "createdAt",
-                  render: (d) => new Date(d).toLocaleDateString(),
-                },
-                {
-                  title: "Durum",
-                  dataIndex: "status",
-                  key: "status",
-                  render: (s) => s || "Processing",
-                },
-              ]}
-              rowKey={(rec) => rec._id}
-              pagination={{ pageSize: 5 }}
-            />
-          )}
-          {selectedMenu === "profile" && profileFormJsx}
-          {selectedMenu === "address" && addressFormJsx}
+          <Collapse defaultActiveKey={["profile"]} accordion>
+            <Panel header="Profil Bilgilerim" key="profile">
+              {profileFormJsx}
+            </Panel>
+            <Panel header="Adres Bilgilerim" key="address">
+              {addressFormJsx}
+            </Panel>
+            <Panel header="Siparişlerim" key="orders">
+              <div className="orders-table-container">
+                <Table
+                  dataSource={orders}
+                  columns={[
+                    {
+                      title: "Sipariş No",
+                      dataIndex: "_id",
+                      key: "_id",
+                      render: (id, record) => (
+                        <a onClick={() => setModalOrder(record)}>{id.slice(-6)}</a>
+                      ),
+                    },
+                    {
+                      title: "Tarih",
+                      dataIndex: "createdAt",
+                      key: "createdAt",
+                      render: (d) => new Date(d).toLocaleDateString(),
+                    },
+                    {
+                      title: "Durum",
+                      dataIndex: "status",
+                      key: "status",
+                      render: (s) => s || "Processing",
+                    },
+                  ]}
+                  rowKey={(rec) => rec._id}
+                  pagination={{ pageSize: 5 }}
+                />
+              </div>
+            </Panel>
+          </Collapse>
         </Content>
       </Layout>
 

@@ -1,0 +1,164 @@
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    /* Sidebar for mobile view */
+    .desktop-sidebar {
+      display: none; /* Hide sidebar on mobile */
+    }
+  
+    .ant-layout-content {
+      margin-left: 0; /* Content full width on mobile */
+    }
+  
+    /* Mobile Drawer for menu */
+    .ant-drawer-body {
+      padding: 10px;
+    }
+  
+    .ant-menu-inline .ant-menu-item {
+      font-size: 16px;
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+  
+    /* Table for mobile view */
+    .ant-table th,
+    .ant-table td {
+      font-size: 12px;
+      padding: 8px;
+    }
+  
+    .ant-table .ant-table-cell a {
+      font-size: 12px;
+    }
+  
+    .ant-table-pagination {
+      margin-top: 20px;
+      text-align: center;
+    }
+  
+    /* Form input fields */
+    .ant-input,
+    .ant-input-password,
+    .ant-select-selector,
+    .ant-phone-input {
+      font-size: 14px;
+      padding: 10px;
+    }
+  
+    /* Button */
+    .ant-btn-primary {
+      padding: 10px;
+      font-size: 14px;
+    }
+  
+    /* Modal */
+    .ant-modal-body {
+      padding: 16px;
+    }
+  
+    .ant-modal-title {
+      font-size: 16px;
+    }
+  
+    .order-detail-content {
+      padding: 16px;
+    }
+  
+    .order-detail-content p {
+      font-size: 12px;
+    }
+  
+    .order-detail-content .order-detail-button {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 15px;
+    }
+  }
+  /* General mobile-friendly styling */
+@media (max-width: 768px) {
+    .ant-layout-content {
+      padding: 10px;
+    }
+  
+    .orders-table-container {
+      overflow-x: auto; /* Enable horizontal scrolling */
+    }
+  
+    .ant-table {
+      min-width: 600px; /* Set a minimum width for the table */
+    }
+  
+    .ant-table th,
+    .ant-table td {
+      font-size: 12px; /* Smaller font size for mobile */
+      padding: 8px;
+    }
+  
+    .ant-table .ant-table-cell a {
+      font-size: 12px;
+    }
+  
+    /* Form and button adjustments */
+    .ant-input,
+    .ant-input-password,
+    .ant-select-selector {
+      font-size: 14px;
+      padding: 10px;
+    }
+  
+    .ant-btn-primary {
+      padding: 10px;
+      font-size: 14px;
+    }
+  
+    /* Sidebar and drawer for mobile */
+    .desktop-sidebar {
+      display: none;
+    }
+  
+    .ant-drawer-body {
+      padding: 10px;
+    }
+  
+    .ant-menu-item {
+      font-size: 14px;
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  
+    /* Modal content */
+    .ant-modal-body {
+      padding: 16px;
+    }
+  
+    .ant-modal-title {
+      font-size: 16px;
+    }
+  }
+  /* Tüm sayfayı kaplayan çizgi */
+.layout-with-border {
+    border-bottom: 1px solid #dcdcdc; /* Çizgi rengini ve stilini değiştirebilirsiniz */
+    width: 100%;
+    position: relative;
+    z-index: 1; /* Çizginin diğer içeriklerin üstünde görünmesini sağlar */
+  }
+  
+  .header {
+    background: #fff;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .orders-table-container {
+    margin-top: 20px;
+  }
+  
+  .ant-collapse > .ant-collapse-item {
+    border-bottom: none; /* Collapse panelleri arasındaki çizgileri kaldırır */
+  }
+
+  .ant-avatar {
+    display: none !important;
+  }
