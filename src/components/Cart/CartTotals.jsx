@@ -37,23 +37,22 @@ const CartTotals = () => {
           freeShippingThreshold - totalAmount
         ).toFixed(2)} TL ürün ekleyin.`;
 
-  // 1) fetchUserInfo artık token yoksa hiçbir zaman çalışmayacak
+  // 1) Sadece token varsa /me çağrısı yap
   const fetchUserInfo = useCallback(async () => {
     const token = localStorage.getItem("token");
-    if (!token) return;
-
+    if (!token) return; // token yoksa sessiz çık
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
-      if (res.ok) {
-        const data = await res.json();
-        setUserInfo(data);
-      }
+      if (!res.ok) return; // geçersiz token da sessiz çık
+      const data = await res.json();
+      setUserInfo(data);
     } catch {
-      // giriş yoksa ya da 401/403 dönmüşse sessizce geç
+      // sessizce geç
     }
   }, [apiUrl]);
 
   const fetchAddress = useCallback(async () => {
+    if (!userInfo) return;
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/address`);
       if (res.ok) {
@@ -61,20 +60,18 @@ const CartTotals = () => {
         setAddressData(arr[0] || null);
       }
     } catch {
-      // adres yoksa sessizce geç
+      // sessizce geç
     }
-  }, [apiUrl]);
+  }, [apiUrl, userInfo]);
 
-  // 2) component mount olduğunda doğrudan fetchUserInfo() çağır
+  // Mount’ta kullanıcı bilgisini çek
   useEffect(() => {
     fetchUserInfo();
   }, [fetchUserInfo]);
 
-  // 3) userInfo geldi mi, adresi getir
+  // userInfo geldikten sonra adresi çek
   useEffect(() => {
-    if (userInfo) {
-      fetchAddress();
-    }
+    if (userInfo) fetchAddress();
   }, [userInfo, fetchAddress]);
 
   const handlePayment = async () => {
@@ -108,11 +105,11 @@ const CartTotals = () => {
         name: item.name,
         quantity: item.quantity,
         price: item.price,
-        color: item.color,
-        size: item.size,
+        color: item.selectedColor,
+        size: item.selectedSize,
       })),
       user: {
-        _id: userInfo._id,
+        _id: userInfo.id,
         email: userInfo.email,
       },
       cargoFee: totalAmount >= freeShippingThreshold ? 0 : cargoFee,
@@ -125,19 +122,12 @@ const CartTotals = () => {
         method: "POST",
         body: JSON.stringify(body),
       });
-
       if (!res.ok) {
-        return Modal.error({
-          title: "Hata",
-          content: "Ödeme işlemi başarısız oldu.",
-        });
+        throw new Error();
       }
-
       const { id: sessionId } = await res.json();
-      const result = await stripe.redirectToCheckout({ sessionId });
-      if (result.error) throw new Error(result.error.message);
-    } catch (err) {
-      console.error(err);
+      await stripe.redirectToCheckout({ sessionId });
+    } catch {
       Modal.error({
         title: "Hata",
         content: "Ödeme sırasında bir hata oluştu.",
@@ -174,7 +164,6 @@ const CartTotals = () => {
           </tr>
         </tbody>
       </table>
-
       <div className="free-progress-bar">
         <p className="progress-bar-title">{shippingMessage}</p>
         <div className="progress-bar">
@@ -184,7 +173,6 @@ const CartTotals = () => {
           />
         </div>
       </div>
-
       <div className="checkout">
         <Spin spinning={loading}>
           <button className="btn btn-lg" onClick={handlePayment}>

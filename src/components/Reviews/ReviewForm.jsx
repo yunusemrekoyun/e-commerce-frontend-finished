@@ -11,19 +11,22 @@ const ReviewForm = ({ singleProduct }) => {
   const [isAccepted, setIsAccepted] = useState(false);
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-  // 1) Token yoksa return et, öyle değilse sadece /me isteği at
+  // 1) Sadece token varsa /me çağrısı yap
   const fetchUserInfo = useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
-
     try {
-      const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
+      let res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
+      if (res.status === 401) {
+        // opsiyonel: refresh logic burada da olabilir ama fetchWithAuth zaten hallediyor
+        return;
+      }
       if (res.ok) {
         const data = await res.json();
         setUserInfo(data);
       }
-    } catch (err) {
-      console.error("fetchUserInfo error:", err);
+    } catch {
+      // sessiz
     }
   }, [apiUrl]);
 
@@ -38,7 +41,6 @@ const ReviewForm = ({ singleProduct }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!userInfo) {
       return message.warning("Yorum yapabilmek için giriş yapmalısınız!");
     }
@@ -57,39 +59,24 @@ const ReviewForm = ({ singleProduct }) => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            text: review,
-            rating: parseInt(rating, 10),
-          }),
+          body: JSON.stringify({ text: review, rating }),
         }
       );
       if (!res.ok) {
         const err = await res.json();
-        return message.error(err.error || "Yorum eklenemedi.");
+        throw new Error(err.error || "Yorum eklenemedi.");
       }
-
-      message.success(
-        "Yorumunuz alındı, onaylandıktan sonra ürün sayfasında yayınlanacaktır."
-      );
+      message.success("Yorumunuz alındı, onaylandıktan sonra yayınlanacaktır.");
       setReview("");
       setRating(0);
       setIsAccepted(false);
-    } catch (error) {
-      console.error("handleSubmit error:", error);
-      message.error("Bir hata oluştu. Lütfen tekrar deneyin.");
+    } catch (err) {
+      message.error(err.message);
     }
-  };
-
-  const handleCheckboxChange = () => {
-    setIsAccepted((prev) => !prev);
   };
 
   return (
     <form className="comment-form" onSubmit={handleSubmit}>
-      <p className="comment-notes">
-        <span className="required">*</span>
-      </p>
-
       <div className="comment-form-rating">
         <label>
           Puanınız<span className="required">*</span>
@@ -103,40 +90,34 @@ const ReviewForm = ({ singleProduct }) => {
               onClick={(e) => handleRatingChange(e, star)}
             >
               {[...Array(star)].map((_, i) => (
-                <i className="bi bi-star-fill" key={i}></i>
+                <i className="bi bi-star-fill" key={i} />
               ))}
             </a>
           ))}
         </div>
       </div>
-
       <div className="comment-form-comment form-comment">
         <label htmlFor="comment">
           Yorumunuz<span className="required">*</span>
         </label>
         <textarea
           id="comment"
-          cols="50"
-          rows="10"
-          onChange={(e) => setReview(e.target.value)}
+          rows={5}
           value={review}
+          onChange={(e) => setReview(e.target.value)}
           required
-        ></textarea>
+        />
       </div>
-
       <div className="comment-form-cookies">
         <input
-          id="cookies"
           type="checkbox"
           checked={isAccepted}
-          onChange={handleCheckboxChange}
+          onChange={() => setIsAccepted((p) => !p)}
         />
-        <label htmlFor="cookies">
-          Yorum yapma kurallarını kabul ediyorum.
-          <span className="required">*</span>
+        <label>
+          Kuralları kabul ediyorum<span className="required">*</span>
         </label>
       </div>
-
       <div className="form-submit">
         <input type="submit" className="btn submit" />
       </div>

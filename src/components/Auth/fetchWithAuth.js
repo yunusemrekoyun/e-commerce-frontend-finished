@@ -1,10 +1,10 @@
+// /Applications/Works/kozmetik/frontend/src/components/Auth/fetchWithAuth.js
 export const fetchWithAuth = async (url, options = {}) => {
   const token = localStorage.getItem("token");
   const refreshToken = localStorage.getItem("refreshToken");
 
   const makeRequest = async (accessToken) => {
     const isFormData = options.body instanceof FormData;
-
     return fetch(url, {
       ...options,
       headers: {
@@ -15,10 +15,10 @@ export const fetchWithAuth = async (url, options = {}) => {
     });
   };
 
-  // İlk deneme → Access Token ile
+  // 1. Önce mevcut token ile dene
   let res = await makeRequest(token);
 
-  // Token süresi dolmuşsa → Refresh ile yenile
+  // 2. 401/403 gelirse refresh token ile yenile
   if ((res.status === 401 || res.status === 403) && refreshToken) {
     try {
       const refreshRes = await fetch(
@@ -29,21 +29,16 @@ export const fetchWithAuth = async (url, options = {}) => {
           body: JSON.stringify({ refreshToken, oldAccessToken: token }),
         }
       );
-
-      if (!refreshRes.ok) {
-        throw new Error("Refresh token geçersiz");
-      }
-
+      if (!refreshRes.ok) throw new Error("Refresh token geçersiz");
       const { token: newToken } = await refreshRes.json();
       localStorage.setItem("token", newToken);
-
-      // Yeni token ile tekrar dene
+      // Yeni token ile tekrar isteği çalıştır
       res = await makeRequest(newToken);
-    } catch (err) {
-      console.warn("Token yenileme başarısız. Oturum sona erdi.");
+    } catch {
+      // Yenileme başarısızsa logout
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToken");
-      window.location.href = "/login";
+      window.location.href = "/auth";
       return new Response(null, { status: 401 });
     }
   }
