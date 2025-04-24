@@ -1,3 +1,4 @@
+// /Applications/Works/kozmetik/frontend/src/components/Reviews/ReviewForm.jsx
 import { useEffect, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { message } from "antd";
@@ -7,37 +8,16 @@ const ReviewForm = ({ singleProduct }) => {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
   const [userInfo, setUserInfo] = useState(null);
-  const [isAccepted, setIsAccepted] = useState(false); // Checkbox durumu
+  const [isAccepted, setIsAccepted] = useState(false);
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
+  // 1) Token yoksa return et, öyle değilse sadece /me isteği at
   const fetchUserInfo = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
     try {
-      let res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
-  
-      // 🟡 Token expired ise refresh dene
-      if (res.status === 401) {
-        const refreshToken = localStorage.getItem("refreshToken");
-        if (refreshToken) {
-          const refreshRes = await fetch(`${apiUrl}/api/auth/refresh`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refreshToken }),
-          });
-  
-          if (refreshRes.ok) {
-            const data = await refreshRes.json();
-            localStorage.setItem("token", data.token);
-  
-            // Yeni token ile tekrar kullanıcı bilgisi al
-            res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
-          } else {
-            // Refresh de başarısızsa token'ları sil
-            localStorage.removeItem("token");
-            localStorage.removeItem("refreshToken");
-          }
-        }
-      }
-  
+      const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
       if (res.ok) {
         const data = await res.json();
         setUserInfo(data);
@@ -47,12 +27,8 @@ const ReviewForm = ({ singleProduct }) => {
     }
   }, [apiUrl]);
 
-  // Sadece token varsa kullanıcı bilgisini getir
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      fetchUserInfo();
-    }
+    fetchUserInfo();
   }, [fetchUserInfo]);
 
   const handleRatingChange = (e, newRating) => {
@@ -69,8 +45,10 @@ const ReviewForm = ({ singleProduct }) => {
     if (rating === 0) {
       return message.warning("Puan seçiniz!");
     }
-    if (!isAccepted) { // Checkbox işaretlenmemişse
-      return message.warning("Yorum yapabilmek için kuralları kabul etmelisiniz!");
+    if (!isAccepted) {
+      return message.warning(
+        "Yorum yapabilmek için kuralları kabul etmelisiniz!"
+      );
     }
 
     try {
@@ -95,7 +73,7 @@ const ReviewForm = ({ singleProduct }) => {
       );
       setReview("");
       setRating(0);
-      setIsAccepted(false); // Form gönderildikten sonra checkbox'ı sıfırlıyoruz
+      setIsAccepted(false);
     } catch (error) {
       console.error("handleSubmit error:", error);
       message.error("Bir hata oluştu. Lütfen tekrar deneyin.");
@@ -103,7 +81,7 @@ const ReviewForm = ({ singleProduct }) => {
   };
 
   const handleCheckboxChange = () => {
-    setIsAccepted((prevState) => !prevState);
+    setIsAccepted((prev) => !prev);
   };
 
   return (
@@ -150,11 +128,12 @@ const ReviewForm = ({ singleProduct }) => {
         <input
           id="cookies"
           type="checkbox"
-          checked={isAccepted} // Checkbox'ın işaretli olup olmadığı
-          onChange={handleCheckboxChange} // Durum değişikliğini takip et
+          checked={isAccepted}
+          onChange={handleCheckboxChange}
         />
         <label htmlFor="cookies">
-          Yorum yapma kurallarını kabul ediyorum.<span className="required">*</span>
+          Yorum yapma kurallarını kabul ediyorum.
+          <span className="required">*</span>
         </label>
       </div>
 

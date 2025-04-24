@@ -1,3 +1,4 @@
+// /Applications/Works/kozmetik/frontend/src/components/Cart/CartTotals.jsx
 import { useContext, useState, useEffect, useCallback } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Modal, Spin } from "antd";
@@ -32,24 +33,30 @@ const CartTotals = () => {
   const shippingMessage =
     totalAmount >= freeShippingThreshold
       ? "Tebrikler! Kargonuz Ücretsiz."
-      : `Ücretsiz kargo için sepetinize ${(freeShippingThreshold - totalAmount).toFixed(2)} TL ürün ekleyin.`;
+      : `Ücretsiz kargo için sepetinize ${(
+          freeShippingThreshold - totalAmount
+        ).toFixed(2)} TL ürün ekleyin.`;
 
+  // 1) fetchUserInfo artık token yoksa hiçbir zaman çalışmayacak
   const fetchUserInfo = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
-      if (res && res.ok) {
+      if (res.ok) {
         const data = await res.json();
         setUserInfo(data);
       }
     } catch {
-      // kullanıcı giriş yapmamışsa sessizce geç
+      // giriş yoksa ya da 401/403 dönmüşse sessizce geç
     }
   }, [apiUrl]);
 
   const fetchAddress = useCallback(async () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/address`);
-      if (res && res.ok) {
+      if (res.ok) {
         const arr = await res.json();
         setAddressData(arr[0] || null);
       }
@@ -58,18 +65,21 @@ const CartTotals = () => {
     }
   }, [apiUrl]);
 
+  // 2) component mount olduğunda doğrudan fetchUserInfo() çağır
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) fetchUserInfo();
+    fetchUserInfo();
   }, [fetchUserInfo]);
 
+  // 3) userInfo geldi mi, adresi getir
   useEffect(() => {
-    if (userInfo) fetchAddress();
+    if (userInfo) {
+      fetchAddress();
+    }
   }, [userInfo, fetchAddress]);
 
   const handlePayment = async () => {
     if (!userInfo) {
-      Modal.confirm({
+      return Modal.confirm({
         title: "Giriş Gerekli",
         content: "Ödeme yapabilmek için lütfen giriş yapın.",
         okText: "Giriş Yap",
@@ -78,11 +88,10 @@ const CartTotals = () => {
           navigate("/auth");
         },
       });
-      return;
     }
 
     if (!addressData) {
-      Modal.warning({
+      return Modal.warning({
         title: "Adres Bilgisi Eksik",
         content:
           "Ödeme işlemi yapabilmek için adres bilgilerinizi girmelisiniz.",
@@ -91,7 +100,6 @@ const CartTotals = () => {
           navigate("/account");
         },
       });
-      return;
     }
 
     const body = {
@@ -119,16 +127,14 @@ const CartTotals = () => {
       });
 
       if (!res.ok) {
-        Modal.error({
+        return Modal.error({
           title: "Hata",
           content: "Ödeme işlemi başarısız oldu.",
         });
-        return;
       }
 
       const { id: sessionId } = await res.json();
       const result = await stripe.redirectToCheckout({ sessionId });
-
       if (result.error) throw new Error(result.error.message);
     } catch (err) {
       console.error(err);
@@ -169,14 +175,13 @@ const CartTotals = () => {
         </tbody>
       </table>
 
-      {/* Free shipping progress bar */}
       <div className="free-progress-bar">
         <p className="progress-bar-title">{shippingMessage}</p>
         <div className="progress-bar">
           <span
             className="progress"
             style={{ width: `${progressBarWidth}%` }}
-          ></span>
+          />
         </div>
       </div>
 

@@ -1,3 +1,4 @@
+// /Applications/Works/kozmetik/frontend/src/pages/UserAccountPage.jsx
 import { Layout, Table, Form, Input, Button, message, Collapse } from "antd";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +9,6 @@ import OrderDetailsModal from "../components/Orders/OrderDetailModal";
 import "./UserAccountPage.css";
 
 const { Content } = Layout;
-// const { Panel } = Collapse;
 
 const UserAccountPage = () => {
   const navigate = useNavigate();
@@ -22,10 +22,19 @@ const UserAccountPage = () => {
   const [profileForm] = Form.useForm();
   const [addressForm] = Form.useForm();
 
+  // 1) Sadece token varsa /me isteği yap, yoksa ana sayfaya yönlendir
   const fetchUserInfo = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+      return;
+    }
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/auth/me`);
-      if (!res.ok) return navigate("/");
+      if (!res.ok) {
+        navigate("/");
+        return;
+      }
       const data = await res.json();
       setUserInfo(data);
       profileForm.setFieldsValue({
@@ -60,10 +69,12 @@ const UserAccountPage = () => {
     }
   }, [apiUrl]);
 
+  // Mount’ta kullanıcı bilgilerini çek
   useEffect(() => {
     fetchUserInfo();
   }, [fetchUserInfo]);
 
+  // Adres verisi geldikçe formu güncelle
   useEffect(() => {
     if (addressData) {
       addressForm.setFieldsValue({
@@ -79,8 +90,11 @@ const UserAccountPage = () => {
 
   const handleCollapseChange = (key) => {
     const activeKey = Array.isArray(key) ? key[0] : key;
-    if (activeKey === "address") fetchAddress();
-    else if (activeKey === "orders") fetchOrders();
+    if (activeKey === "address") {
+      fetchAddress();
+    } else if (activeKey === "orders") {
+      fetchOrders();
+    }
   };
 
   const handleProfileSubmit = async (values) => {
@@ -251,7 +265,6 @@ const UserAccountPage = () => {
       <Layout.Header className="header">
         <div className="logo" />
       </Layout.Header>
-
       <Layout style={{ minHeight: "10vh" }}>
         <Content style={{ padding: 24, minHeight: 280 }}>
           <Collapse
@@ -310,7 +323,6 @@ const UserAccountPage = () => {
           />
         </Content>
       </Layout>
-
       <OrderDetailsModal
         visible={!!modalOrder}
         onClose={() => setModalOrder(null)}
