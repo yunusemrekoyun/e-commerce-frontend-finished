@@ -8,7 +8,7 @@ const AdminOrderDetailsModal = ({ visible, onClose, order }) => {
     { title: "Ürün Adı", dataIndex: "name", key: "name" },
     { title: "Marka", dataIndex: "brand", key: "brand" },
     { title: "Kategori", dataIndex: "category", key: "category" },
-    { title: "Renk", dataIndex: "color", key: "color" }, 
+    { title: "Renk", dataIndex: "color", key: "color" },
     { title: "Beden", dataIndex: "size", key: "size" },
     { title: "Adet", dataIndex: "quantity", key: "quantity" },
     {
@@ -39,17 +39,24 @@ const AdminOrderDetailsModal = ({ visible, onClose, order }) => {
       title={`Admin Sipariş Detayı - #${order._id.slice(-6)}`}
       width="90%" // Make the modal width responsive
       style={{ maxWidth: 800 }}
-      bodyStyle={{ padding: "16px 24px" }} // Ensure padding is consistent on mobile
+      // bodyStyle={{ padding: "16px 24px" }} // Ensure padding is consistent on mobile  YANLIŞ KULLANIM
+      styles={{ body: { padding: "16px 24px" } }}
     >
       <Row gutter={[16, 8]}>
         <Col span={24}>
-          <p><strong>Sipariş ID:</strong> {order._id}</p>
+          <p>
+            <strong>Sipariş ID:</strong> {order._id}
+          </p>
         </Col>
         <Col span={24}>
-          <p><strong>Kullanıcı ID:</strong> {order.userId}</p>
+          <p>
+            <strong>Kullanıcı ID:</strong> {order.userId}
+          </p>
         </Col>
         <Col span={24}>
-          <p><strong>Email:</strong> {order.email}</p>
+          <p>
+            <strong>Email:</strong> {order.email}
+          </p>
         </Col>
       </Row>
 
@@ -57,27 +64,40 @@ const AdminOrderDetailsModal = ({ visible, onClose, order }) => {
 
       <Row gutter={[16, 8]}>
         <Col span={24}>
-          <p><strong>Alıcı:</strong> {order.name}</p>
+          <p>
+            <strong>Alıcı:</strong> {order.name}
+          </p>
         </Col>
         <Col span={24}>
-          <p><strong>Telefon Numarası:</strong> {formatPhone(order.phone)}</p>
+          <p>
+            <strong>Telefon Numarası:</strong> {formatPhone(order.phone)}
+          </p>
         </Col>
         <Col span={24}>
-          <p><strong>Adres:</strong> {order.address}, {order.district}, {order.city}</p>
+          <p>
+            <strong>Adres:</strong> {order.address}, {order.district},{" "}
+            {order.city}
+          </p>
         </Col>
         {order.paymentMethod && (
           <Col span={24}>
-            <p><strong>Ödeme Yöntemi:</strong> {order.paymentMethod}</p>
+            <p>
+              <strong>Ödeme Yöntemi:</strong> {order.paymentMethod}
+            </p>
           </Col>
         )}
         {order.shippingMethod && (
           <Col span={24}>
-            <p><strong>Kargo Yöntemi:</strong> {order.shippingMethod}</p>
+            <p>
+              <strong>Kargo Yöntemi:</strong> {order.shippingMethod}
+            </p>
           </Col>
         )}
         {order.note && (
           <Col span={24}>
-            <p><strong>Not:</strong> {order.note}</p>
+            <p>
+              <strong>Not:</strong> {order.note}
+            </p>
           </Col>
         )}
       </Row>

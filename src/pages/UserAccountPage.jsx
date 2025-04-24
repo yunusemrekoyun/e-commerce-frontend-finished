@@ -1,4 +1,4 @@
-import { Layout, Table, Form, Input, Button, message, Avatar, Collapse } from "antd";
+import { Layout, Table, Form, Input, Button, message, Collapse } from "antd";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchWithAuth } from "../components/Auth/fetchWithAuth";
@@ -8,13 +8,12 @@ import OrderDetailsModal from "../components/Orders/OrderDetailModal";
 import "./UserAccountPage.css";
 
 const { Content } = Layout;
-const { Panel } = Collapse;
+// const { Panel } = Collapse;
 
 const UserAccountPage = () => {
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-  const [selectedMenu, setSelectedMenu] = useState("profile");
   const [userInfo, setUserInfo] = useState(null);
   const [addressData, setAddressData] = useState(null);
   const [orders, setOrders] = useState([]);
@@ -66,15 +65,7 @@ const UserAccountPage = () => {
   }, [fetchUserInfo]);
 
   useEffect(() => {
-    if (selectedMenu === "address") {
-      fetchAddress();
-    } else if (selectedMenu === "orders") {
-      fetchOrders();
-    }
-  }, [selectedMenu, fetchAddress, fetchOrders]);
-
-  useEffect(() => {
-    if (addressData && selectedMenu === "address") {
+    if (addressData) {
       addressForm.setFieldsValue({
         email: userInfo?.email || "",
         name: addressData.name || "",
@@ -84,7 +75,13 @@ const UserAccountPage = () => {
         city: addressData.city || "",
       });
     }
-  }, [addressData, userInfo, selectedMenu, addressForm]);
+  }, [addressData, userInfo, addressForm]);
+
+  const handleCollapseChange = (key) => {
+    const activeKey = Array.isArray(key) ? key[0] : key;
+    if (activeKey === "address") fetchAddress();
+    else if (activeKey === "orders") fetchOrders();
+  };
 
   const handleProfileSubmit = async (values) => {
     try {
@@ -253,54 +250,64 @@ const UserAccountPage = () => {
     <Layout className="layout-with-border">
       <Layout.Header className="header">
         <div className="logo" />
-        <Avatar
-          style={{ cursor: "pointer" }}
-          src={userInfo?.profilePicture}
-          size="large"
-        />
       </Layout.Header>
 
       <Layout style={{ minHeight: "10vh" }}>
         <Content style={{ padding: 24, minHeight: 280 }}>
-          <Collapse defaultActiveKey={["profile"]} accordion>
-            <Panel header="Profil Bilgilerim" key="profile">
-              {profileFormJsx}
-            </Panel>
-            <Panel header="Adres Bilgilerim" key="address">
-              {addressFormJsx}
-            </Panel>
-            <Panel header="Siparişlerim" key="orders">
-              <div className="orders-table-container">
-                <Table
-                  dataSource={orders}
-                  columns={[
-                    {
-                      title: "Sipariş No",
-                      dataIndex: "_id",
-                      key: "_id",
-                      render: (id, record) => (
-                        <a onClick={() => setModalOrder(record)}>{id.slice(-6)}</a>
-                      ),
-                    },
-                    {
-                      title: "Tarih",
-                      dataIndex: "createdAt",
-                      key: "createdAt",
-                      render: (d) => new Date(d).toLocaleDateString(),
-                    },
-                    {
-                      title: "Durum",
-                      dataIndex: "status",
-                      key: "status",
-                      render: (s) => s || "Processing",
-                    },
-                  ]}
-                  rowKey={(rec) => rec._id}
-                  pagination={{ pageSize: 5 }}
-                />
-              </div>
-            </Panel>
-          </Collapse>
+          <Collapse
+            defaultActiveKey={["profile"]}
+            accordion
+            onChange={handleCollapseChange}
+            items={[
+              {
+                key: "profile",
+                label: "Profil Bilgilerim",
+                children: profileFormJsx,
+              },
+              {
+                key: "address",
+                label: "Adres Bilgilerim",
+                children: addressFormJsx,
+              },
+              {
+                key: "orders",
+                label: "Siparişlerim",
+                children: (
+                  <div className="orders-table-container">
+                    <Table
+                      dataSource={orders}
+                      columns={[
+                        {
+                          title: "Sipariş No",
+                          dataIndex: "_id",
+                          key: "_id",
+                          render: (id, record) => (
+                            <a onClick={() => setModalOrder(record)}>
+                              {id.slice(-6)}
+                            </a>
+                          ),
+                        },
+                        {
+                          title: "Tarih",
+                          dataIndex: "createdAt",
+                          key: "createdAt",
+                          render: (d) => new Date(d).toLocaleDateString(),
+                        },
+                        {
+                          title: "Durum",
+                          dataIndex: "status",
+                          key: "status",
+                          render: (s) => s || "Processing",
+                        },
+                      ]}
+                      rowKey={(rec) => rec._id}
+                      pagination={{ pageSize: 5 }}
+                    />
+                  </div>
+                ),
+              },
+            ]}
+          />
         </Content>
       </Layout>
 
