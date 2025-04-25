@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import "./ProductFilter.css";
 
@@ -11,7 +12,34 @@ const ProductFilter = ({
   const [isMobile, setIsMobile] = useState(false);
   const [isBrandOpen, setIsBrandOpen] = useState(true);
 
-  // Mobil / desktop toggle
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { category } = useParams(); // /shop/:category varsa al
+
+  // ✔️ Sayfa yüklendiğinde URL'deki brand parametresini selectedBrands'e aktar
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const brandParam = searchParams.get("brand");
+
+    if (brandParam) {
+      const brandList = brandParam.split(",");
+
+      // Karşılaştırarak gereksiz setState’i engelle
+      if (
+        JSON.stringify(selectedBrands.sort()) !==
+        JSON.stringify(brandList.sort())
+      ) {
+        setSelectedBrands(brandList);
+      }
+    } else {
+      // URL'de yoksa varsa temizle
+      if (selectedBrands.length > 0) {
+        setSelectedBrands([]);
+      }
+    }
+  }, [location.search, selectedBrands, setSelectedBrands]);
+
+  // ✔️ Mobil mi değil mi kontrolü
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
@@ -19,7 +47,7 @@ const ProductFilter = ({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Kategoriye göre (veya tümden) markaları ayarla
+  // ✔️ Kategoriye göre markaları çek
   useEffect(() => {
     const fetchAll = async () => {
       try {
@@ -27,6 +55,7 @@ const ProductFilter = ({
           `${import.meta.env.VITE_API_BASE_URL}/api/categories`
         );
         const data = await res.json();
+
         if (categoryName) {
           const cat = data.find((c) => c.name === categoryName);
           setBrands(cat?.brands || []);
@@ -41,11 +70,28 @@ const ProductFilter = ({
     fetchAll();
   }, [categoryName]);
 
+  // ✔️ Checkbox seçimi
   const handleBrandChange = (e) => {
     const { value, checked } = e.target;
-    setSelectedBrands((prev) =>
-      checked ? [...prev, value] : prev.filter((b) => b !== value)
-    );
+
+    const updated = checked
+      ? [...selectedBrands, value]
+      : selectedBrands.filter((b) => b !== value);
+
+    setSelectedBrands(updated);
+
+    // URL'yi oluştur
+    const params = new URLSearchParams(location.search);
+    if (updated.length > 0) {
+      params.set("brand", updated.join(","));
+    } else {
+      params.delete("brand");
+    }
+
+    const basePath = category ? `/shop/${category}` : `/shop`;
+    const newUrl = params.toString() ? `${basePath}?${params}` : basePath;
+
+    navigate(newUrl);
   };
 
   return (
@@ -58,6 +104,7 @@ const ProductFilter = ({
         >
           Marka {isMobile && <span>{isBrandOpen ? "▲" : "▼"}</span>}
         </div>
+
         {(!isMobile || isBrandOpen) && (
           <ul className="filter-list">
             {brands.map((brand) => (
