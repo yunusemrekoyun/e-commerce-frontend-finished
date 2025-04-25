@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import ProductItem from "./ProductItem";
 import "./ProductList.css";
 import { Spin } from "antd";
+
 const ProductList = ({
   categoryName,
   selectedBrands,
@@ -11,14 +12,11 @@ const ProductList = ({
   const [products, setProducts] = useState([]);
   const [visibleCount, setVisibleCount] = useState(20);
   const [allLoaded, setAllLoaded] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // ✅ Yüklenme kontrolü
+  const [isLoading, setIsLoading] = useState(true);
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
   const fetchProducts = useCallback(async () => {
-    console.log("🔥 fetchProducts çağrıldı:");
-    console.log("👉 categoryName:", categoryName);
-    console.log("👉 selectedBrands:", selectedBrands);
-    console.log("👉 onlyDiscounted:", onlyDiscounted);
+ 
 
     try {
       const params = new URLSearchParams();
@@ -28,32 +26,29 @@ const ProductList = ({
       }
 
       if (selectedBrands.length > 0) {
-        const normalizedBrands = selectedBrands.map((b) =>
-          b.toLowerCase().trim()
-        );
-        params.append("brand", normalizedBrands.join(","));
+        params.append("brand", selectedBrands.join(","));
       }
 
       const fullUrl = `${apiUrl}/api/products?${params.toString()}`;
-      console.log("👉 Fetch URL:", fullUrl);
 
-      setIsLoading(true); // ✅ başta yükleniyor
+      setIsLoading(true);
       const res = await fetch(fullUrl);
       const data = await res.json();
       setProducts(data);
       setVisibleCount(20);
       setAllLoaded(data.length <= 20);
-      setIsLoading(false); // ✅ işlem bitti
+      setIsLoading(false);
     } catch (err) {
       console.error("Ürün alınamadı:", err);
       setIsLoading(false);
     }
-  }, [apiUrl, categoryName, selectedBrands]);
+  }, [apiUrl, categoryName, selectedBrands, onlyDiscounted]);
 
   useEffect(() => {
-    console.log("📢 useEffect tetiklendi");
-    fetchProducts();
-  }, [fetchProducts]);
+    if (selectedBrands.length > 0 || categoryName || onlyDiscounted) {
+      fetchProducts();
+    }
+  }, [fetchProducts, selectedBrands, categoryName, onlyDiscounted]);
 
   const filteredProducts = onlyDiscounted
     ? products.filter((p) => (p.price?.discount ?? 0) > 0)
@@ -88,8 +83,8 @@ const ProductList = ({
         <div
           style={{
             display: "flex",
-            justifyContent: "center", // Yatayda ortala
-            marginTop: "40px", // Üstten boşluk ver
+            justifyContent: "center",
+            marginTop: "40px",
           }}
         >
           <Spin tip="Yükleniyor..." size="large" />
@@ -108,7 +103,6 @@ const ProductList = ({
                 Daha Fazla Ürün
               </button>
             )}
-            {allLoaded && <p></p>}
           </div>
         </>
       )}

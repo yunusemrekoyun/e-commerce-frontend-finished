@@ -21,7 +21,7 @@ const ShopPage = () => {
     return brandParam ? brandParam.split(",") : [];
   }, [searchParams]);
 
-  // ✅ Sayfa açıldığında selectedBrands state'ini URL'e göre belirle
+  // ✅ İlk açılışta URL'den gelen markaları oku
   useLayoutEffect(() => {
     setSelectedBrands(selectedBrandsFromUrl);
   }, [selectedBrandsFromUrl]);
