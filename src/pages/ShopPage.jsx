@@ -12,48 +12,38 @@ const ShopPage = () => {
 
   const onlyDiscounted = searchParams.get("discounted") === "true";
   const [categories, setCategories] = useState([]);
-  const [decodedCategoryName, setDecodedCategoryName] = useState("");
+  const [decodedCategoryName, setDecoded] = useState("");
   const [selectedBrands, setSelectedBrands] = useState([]);
 
-  // ✅ URL'den brand parametresini bir kere hesapla
-  const selectedBrandsFromUrl = useMemo(() => {
-    const brandParam = searchParams.get("brand");
-    return brandParam ? brandParam.split(",") : [];
+  /* URL'deki brand parametresini bir kez çöz ------------------------------ */
+  const selectedFromUrl = useMemo(() => {
+    const p = searchParams.get("brand");
+    return p ? p.split(",").map((b) => b.trim().toLowerCase()) : [];
   }, [searchParams]);
 
-  // ✅ İlk açılışta URL'den gelen markaları oku
-  useLayoutEffect(() => {
-    setSelectedBrands(selectedBrandsFromUrl);
-  }, [selectedBrandsFromUrl]);
+  useLayoutEffect(() => setSelectedBrands(selectedFromUrl), [selectedFromUrl]);
 
-  // ✅ Kategorileri getir
+  /* kategorileri çek ------------------------------------------------------- */
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/categories`)
-      .then((res) => res.json())
-      .then((data) => setCategories(data))
-      .catch((err) => console.error("Kategori alınamadı:", err));
+      .then((r) => r.json())
+      .then(setCategories)
+      .catch((e) => console.error("Kategori alınamadı:", e));
   }, []);
 
-  // ✅ Kategori slug'ı değişince decoded halini bul
+  /* slug → gerçek isim ----------------------------------------------------- */
   useEffect(() => {
-    if (categorySlug && categories.length > 0) {
-      const match = categories.find(
+    if (categorySlug && categories.length) {
+      const m = categories.find(
         (c) => c.name.toLowerCase().replace(/\s+/g, "-") === categorySlug
       );
-      setDecodedCategoryName(match ? match.name : "");
-    } else {
-      setDecodedCategoryName("");
-    }
+      setDecoded(m ? m.name : "");
+    } else setDecoded("");
   }, [categorySlug, categories]);
 
-  // ✅ İndirim filtresini temizle
-  const clearDiscountFilter = () => {
-    if (categorySlug) {
-      navigate(`/shop/${categorySlug}`);
-    } else {
-      navigate("/shop");
-    }
-  };
+  /* indirim filtresini temizle -------------------------------------------- */
+  const clearDiscount = () =>
+    navigate(categorySlug ? `/shop/${categorySlug}` : "/shop");
 
   return (
     <Fragment>
@@ -62,10 +52,7 @@ const ShopPage = () => {
       {onlyDiscounted && (
         <div className="discount-badge">
           <span>İndirimli Ürünler</span>
-          <button
-            className="discount-badge__close"
-            onClick={clearDiscountFilter}
-          >
+          <button className="discount-badge__close" onClick={clearDiscount}>
             ×
           </button>
         </div>

@@ -16,13 +16,13 @@ const Sliders = () => {
     <section className="slider">
       <div className="slider-elements">
         {currentSlide === 0 && (
-          <SliderItem imageSrc="img/slider/slider1.jpg" brand="Samsung" />
+          <SliderItem imageSrc="img/slider/slider1.jpg" brand="NIVEA" />
         )}
         {currentSlide === 1 && (
-          <SliderItem imageSrc="img/slider/slider2.jpg" brand="Apple" />
+          <SliderItem imageSrc="img/slider/slider2.jpg" brand="CLEAR" />
         )}
         {currentSlide === 2 && (
-          <SliderItem imageSrc="img/slider/slider3.jpg" brand="Asus" />
+          <SliderItem imageSrc="img/slider/slider3.jpg" brand="Head & Shoulder" />
         )}
 
         <div className="slider-buttons">

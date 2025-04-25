@@ -16,8 +16,6 @@ const ProductList = ({
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
   const fetchProducts = useCallback(async () => {
- 
-
     try {
       const params = new URLSearchParams();
 
@@ -26,7 +24,10 @@ const ProductList = ({
       }
 
       if (selectedBrands.length > 0) {
-        params.append("brand", selectedBrands.join(","));
+        selectedBrands.forEach((b) => {
+          /* özel karakterleri (& gibi) güvenli hâle getiriyoruz */
+          params.append("brand", encodeURIComponent(b));
+        });
       }
 
       const fullUrl = `${apiUrl}/api/products?${params.toString()}`;
@@ -42,13 +43,12 @@ const ProductList = ({
       console.error("Ürün alınamadı:", err);
       setIsLoading(false);
     }
-  }, [apiUrl, categoryName, selectedBrands, onlyDiscounted]);
+  }, [apiUrl, categoryName, selectedBrands]);
 
   useEffect(() => {
-    if (selectedBrands.length > 0 || categoryName || onlyDiscounted) {
-      fetchProducts();
-    }
-  }, [fetchProducts, selectedBrands, categoryName, onlyDiscounted]);
+    console.log("📢 useEffect tetiklendi");
+    fetchProducts();
+  }, [fetchProducts]);
 
   const filteredProducts = onlyDiscounted
     ? products.filter((p) => (p.price?.discount ?? 0) > 0)

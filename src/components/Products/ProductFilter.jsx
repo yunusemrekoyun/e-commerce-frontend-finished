@@ -14,40 +14,37 @@ const ProductFilter = ({
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { category } = useParams(); // /shop/:category varsa al
+  const { category } = useParams(); //  /shop/:category varsa
 
-  // ✔️ Sayfa yüklendiğinde URL'deki brand parametresini selectedBrands'e aktar
+  /* URL → state senkronu --------------------------------------------------- */
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const brandParam = searchParams.get("brand");
+    const s = new URLSearchParams(location.search);
+    const urlB = s.get("brand");
 
-    if (brandParam) {
-      const brandList = brandParam.split(",");
-
-      // Karşılaştırarak gereksiz setState’i engelle
+    if (urlB) {
+      const brandList = urlB
+        .split(",")
+        .map((b) => decodeURIComponent(b).trim().toLowerCase());
       if (
-        JSON.stringify(selectedBrands.sort()) !==
-        JSON.stringify(brandList.sort())
+        JSON.stringify(brandList.sort()) !==
+        JSON.stringify([...selectedBrands].sort())
       ) {
         setSelectedBrands(brandList);
       }
-    } else {
-      // URL'de yoksa varsa temizle
-      if (selectedBrands.length > 0) {
-        setSelectedBrands([]);
-      }
+    } else if (selectedBrands.length) {
+      setSelectedBrands([]);
     }
   }, [location.search, selectedBrands, setSelectedBrands]);
 
-  // ✔️ Mobil mi değil mi kontrolü
+  /* mobil ekran kontrolü --------------------------------------------------- */
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    const fn = () => setIsMobile(window.innerWidth <= 768);
+    fn();
+    window.addEventListener("resize", fn);
+    return () => window.removeEventListener("resize", fn);
   }, []);
 
-  // ✔️ Kategoriye göre markaları çek
+  /* kategoriye göre markaları çek ----------------------------------------- */
   useEffect(() => {
     const fetchAll = async () => {
       try {
@@ -58,10 +55,10 @@ const ProductFilter = ({
 
         if (categoryName) {
           const cat = data.find((c) => c.name === categoryName);
-          setBrands(cat?.brands || []);
+          setBrands((cat?.brands || []).map((b) => b.trim().toLowerCase()));
         } else {
           const all = data.flatMap((c) => c.brands);
-          setBrands([...new Set(all)]);
+          setBrands([...new Set(all.map((b) => b.trim().toLowerCase()))]);
         }
       } catch (err) {
         console.error("Marka alınamadı:", err);
@@ -70,28 +67,22 @@ const ProductFilter = ({
     fetchAll();
   }, [categoryName]);
 
-  // ✔️ Checkbox seçimi
+  /* checkbox tıklandığında ------------------------------------------------- */
   const handleBrandChange = (e) => {
-    const { value, checked } = e.target;
-
-    const updated = checked
-      ? [...selectedBrands, value]
-      : selectedBrands.filter((b) => b !== value);
-
+    const { value, checked } = e.target; // value zaten küçük-harf
+    let updated;
+    if (checked) {
+      updated = [...new Set([...selectedBrands, value])]; // tekrar eklenmez
+    } else {
+      updated = selectedBrands.filter((b) => b !== value);
+    }
     setSelectedBrands(updated);
 
-    // URL'yi oluştur
-    const params = new URLSearchParams(location.search);
-    if (updated.length > 0) {
-      params.set("brand", updated.join(","));
-    } else {
-      params.delete("brand");
-    }
+    const p = new URLSearchParams(location.search);
+    updated.length ? p.set("brand", updated.join(",")) : p.delete("brand");
 
-    const basePath = category ? `/shop/${category}` : `/shop`;
-    const newUrl = params.toString() ? `${basePath}?${params}` : basePath;
-
-    navigate(newUrl);
+    const base = category ? `/shop/${category}` : "/shop";
+    navigate(p.toString() ? `${base}?${p}` : base);
   };
 
   return (
@@ -107,16 +98,16 @@ const ProductFilter = ({
 
         {(!isMobile || isBrandOpen) && (
           <ul className="filter-list">
-            {brands.map((brand) => (
-              <li key={brand} className="filter-item">
+            {brands.map((b) => (
+              <li key={b} className="filter-item">
                 <label>
                   <input
                     type="checkbox"
-                    value={brand}
+                    value={b}
+                    checked={selectedBrands.includes(b)}
                     onChange={handleBrandChange}
-                    checked={selectedBrands.includes(brand)}
                   />
-                  <span>{brand}</span>
+                  <span>{b.toUpperCase()}</span> {/* ekranda büyük göster */}
                 </label>
               </li>
             ))}
