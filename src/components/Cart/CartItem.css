@@ -1,19 +1,68 @@
+/* Satır içi hizalama için table hücresi */
 .product-quantity {
-    display: flex;
-    align-items: center; /* Dikeyde ortalamak için */
-    justify-content: center; /* Yatayda ortalamak için */
+  display: flex;
+  align-items: center;      /* Dikeyde ortalama */
+  justify-content: center;  /* Yatayda ortalama */
+  gap: 6px;
+  height: 100%;
+  line-height: 1.5;
+  padding-top: 60px; /* Butonları biraz aşağı alır */
+
+}
+.cart-image {
+  padding-right: 20px; /* Görselle metin arasında boşluk */
+}
+
+/* Buton stilleri */
+.quantity-btn {
+  padding: 6px 12px;
+  font-size: 16px;
+  background-color: #ddd;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  margin-top: 25px; /* Butonu manuel olarak aşağı çeker */
+
+}
+
+/* Miktar yazısı */
+.quantity-text {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 500;
+  line-height: 36px; /* Butonla dikeyde hizalı */
+  margin-top: 25px; /* Butonu manuel olarak aşağı çeker */
+
+}
+
+@media (max-width: 768px) {
+  .product-quantity {
+    gap: 4px;
+    padding-top: 6px;
   }
-  
+
   .quantity-btn {
-    width: 30px;
-    height: 30px;
-    font-size: 18px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    cursor: pointer;
+    padding: 6px 10px; /* Aşırı iç boşluğu azalt */
+    font-size: 14px;
+    height: 36px; /* Sabit yükseklik */
+    margin-top: 4px;
+    box-sizing: border-box; /* Yükseklik aşımını engeller */
+    margin-top: 25px; /* Butonu manuel olarak aşağı çeker */
+
   }
-  
+
   .quantity-text {
-    margin: 0 10px;
-    font-size: 18px;
+    min-width: 20px;
+    font-size: 14px;
+    line-height: 36px;
+    margin-top: 4px;
+    margin-top: 25px; /* Butonu manuel olarak aşağı çeker */
+
   }
+}

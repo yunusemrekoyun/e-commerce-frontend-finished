@@ -8,6 +8,8 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
   font-family: "Inter", sans-serif;
   transition: all 0.3s ease;
+  overflow: hidden;
+  max-width: 120%; /* Maksimum genişlik %100 */
 }
 
 .filter-section {
@@ -65,16 +67,15 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.filter-item input[type="checkbox"] {
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-  background-color: white;
-  position: relative;
-  cursor: pointer;
-  transition: 0.3s all ease;
+.filter-item input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  color: white;
+  font-weight: bold;
 }
 
 .filter-item input[type="checkbox"]:checked {
@@ -102,9 +103,9 @@
 
 .filter-item:hover span {
   background: linear-gradient(90deg, #4f46e5, #8b5cf6);
-  background-clip: text;                 /* ✅ Standart olan bu */
-  -webkit-background-clip: text;         /* ✅ WebKit (Safari, eski Chrome) için */
-  -webkit-text-fill-color: transparent;  /* ✅ WebKit için şeffaf yazı */
+  background-clip: text; /* ✅ Standart olan bu */
+  -webkit-background-clip: text; /* ✅ WebKit (Safari, eski Chrome) için */
+  -webkit-text-fill-color: transparent; /* ✅ WebKit için şeffaf yazı */
   font-weight: 600;
   transform: translateX(2px);
 }
@@ -112,9 +113,10 @@
 /* Responsive için */
 @media (max-width: 768px) {
   .product-filter {
-    width: 100%;
+    width: 100%; /* Genişliği %100 yapıyoruz */
     margin-bottom: 24px;
     padding: 20px 16px;
+    max-width: none; /* Maksimum genişlik sınırlamasını kaldırıyoruz */
   }
 
   .filter-list {
@@ -126,5 +128,52 @@
   .filter-item label {
     font-size: 14px;
     padding: 8px 10px;
+  }
+
+  .filter-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+  }
+
+  .filter-item span {
+    font-size: 14px;
+  }
+
+  .filter-title {
+    font-size: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #e4e4e4;
+    padding-bottom: 4px;
+  }
+
+  .filter-title span {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-filter {
+    padding: 16px;
+    width: 100%; /* Tam genişlikte olmalı */
+    max-width: none; /* Maksimum genişlik sınırı kaldırıldı */
+  }
+
+  .filter-list {
+    grid-template-columns: 1fr;
+    gap: 8px 12px;
+  }
+
+  .filter-item label {
+    font-size: 13px;
+    padding: 6px 8px;
+  }
+
+  .filter-item input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+  }
+
+  .filter-item span {
+    font-size: 13px;
   }
 }

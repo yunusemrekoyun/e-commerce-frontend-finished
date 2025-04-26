@@ -42,9 +42,9 @@
 }
 
 /* Renk ve boyut seçeneği için dikdörtgen butonlar */
-.product-details .color-options {
+.single-product .color-options {
   display: flex;
-  gap: 10px; /* Renkler arasında boşluk */
+  gap: 50px;
   flex-wrap: wrap;
 }
 

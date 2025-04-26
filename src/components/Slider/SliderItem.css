@@ -1,0 +1,22 @@
+.slider-item .slider-content {
+    position: relative;
+    z-index: 1;
+    text-align: center; /* Yazıyı ortalamak için */
+    padding: 0 20px; /* Yazı ve butonlara etki edecek padding */
+  }
+  
+  .slider-item .slider-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin-top: 30px; /* Yazıyı biraz daha aşağıya almak için */
+  }
+  
+  .slider-item .slider-heading {
+    font-size: 200px;
+    font-weight: 6000;
+    margin-top: 20px; /* Yazıyı biraz daha aşağıya almak için */
+  }
+  
+  .slider-item a.btn {
+    margin-top: 200px; /* Butonu biraz aşağıya almak için */
+  }

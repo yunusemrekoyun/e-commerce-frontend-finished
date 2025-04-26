@@ -12,9 +12,7 @@ const HomePage = () => {
       <Sliders />
       <Categories />
       <Products />
-      <Products />
-      <Products />
-      {/* <Blogs /> */}
+
       <CampaignSingle />
       <Brands />
     </Fragment>

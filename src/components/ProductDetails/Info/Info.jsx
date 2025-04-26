@@ -96,7 +96,7 @@ const Info = ({ singleProduct, compact = false }) => {
         <div className="product-review">
           {renderStars(averageRating)}
           <span>
-            {reviewsCount} Yorum {reviewsCount !== 1 && "s"}
+            {reviewsCount} Yorum {reviewsCount !== 1 && ""}
           </span>
         </div>
       )}

@@ -37,12 +37,12 @@ const CartItem = ({ cartItem }) => {
       <td className="product-options">
         {cartItem.selectedColor && (
           <div className="cart-item-option">
-            <strong>Color:</strong> {cartItem.selectedColor}
+            <strong>Renk:</strong> {cartItem.selectedColor}
           </div>
         )}
         {cartItem.selectedSize && (
           <div className="cart-item-option">
-            <strong>Size:</strong> {cartItem.selectedSize}
+            <strong>Boyut:</strong> {cartItem.selectedSize}
           </div>
         )}
       </td>

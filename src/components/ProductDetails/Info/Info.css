@@ -321,3 +321,20 @@
 .cart-button button:hover {
   background-color: #0056b3;
 }
+.single-product .color-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+}
+
+.single-product .color-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.single-product .color-button.active {
+  border: 3px solid #333;
+}

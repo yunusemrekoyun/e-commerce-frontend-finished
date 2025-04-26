@@ -9,7 +9,7 @@ const ProductFilter = ({
 }) => {
   const [brands, setBrands] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
-  const [isBrandOpen, setIsBrandOpen] = useState(true);
+  const [isBrandOpen, setIsBrandOpen] = useState(false);
 
   // Mobil / desktop toggle
   useEffect(() => {
@@ -56,7 +56,7 @@ const ProductFilter = ({
           onClick={() => isMobile && setIsBrandOpen(!isBrandOpen)}
           style={{ cursor: isMobile ? "pointer" : "default" }}
         >
-          Marka {isMobile && <span>{isBrandOpen ? "▲" : "▼"}</span>}
+          Markalar {isMobile && <span>{isBrandOpen ? "▲" : "▼"}</span>}
         </div>
         {(!isMobile || isBrandOpen) && (
           <ul className="filter-list">
