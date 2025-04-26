@@ -46,7 +46,6 @@ const ProductList = ({
   }, [apiUrl, categoryName, selectedBrands]);
 
   useEffect(() => {
-   
     fetchProducts();
   }, [fetchProducts]);
 
@@ -87,7 +86,9 @@ const ProductList = ({
             marginTop: "40px",
           }}
         >
-          <Spin tip="Yükleniyor..." size="large" />
+          <Spin tip="Yükleniyor..." size="large">
+            <div style={{ minHeight: "100px" }} />{" "}
+          </Spin>
         </div>
       ) : (
         <>
