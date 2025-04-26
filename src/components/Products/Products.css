@@ -1,12 +1,37 @@
-/*! products start  */
+/* Products.css */
 
+/* Tüm products section'ını küçültüyoruz */
 .products {
-  margin-bottom: 40px;
+  padding: 20px 0; /* Üst ve alt padding değerini küçültme */
+  margin: 0; /* Margin sıfırlama */
+  width: 100%; /* Tam genişlik */
 }
 
-.products .product-list {
-  display: flex;
-  gap: 20px;
-  
+.container {
+  max-width: 1200px; /* İçerik için maksimum genişlik sınırı */
+  margin: 0 auto; /* Ortala */
+  padding: 0 20px; /* İçerik etrafındaki padding */
 }
-/*! products end  */
+
+/* Başlık altındaki boşluğu da küçültelim */
+.section-title {
+  margin-bottom: 5px; /* Başlık altı boşluğu */
+}
+
+/* Slider alanını küçültüyoruz */
+.product-wrapper {
+  max-width: 800px; /* Slider'ın genişliğini daraltma */
+  margin: 0 auto; /* Ortala */
+  padding: 0 20px; /* Padding'i azaltma */
+}
+
+/* Slider içindeki boşlukları düzenliyoruz */
+.product-carousel {
+  padding: 0; /* Padding'i sıfırlama */
+}
+/* Products.css */
+
+/* react-slick ok butonlarını tamamen gizle */
+.glide__arrow {
+  display: none !important;
+}

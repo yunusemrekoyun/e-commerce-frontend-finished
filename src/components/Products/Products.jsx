@@ -52,12 +52,12 @@ const Products = () => {
   const sliderSettings = {
     dots: false,
     infinite: true,
-    slidesToShow: 4,
+    slidesToShow: 3,
     slidesToScroll: 1,
-    nextArrow: <NextBtn />,
-    prevArrow: <PrevBtn />,
     autoplaySpeed: 3000,
     autoplay: true,
+    nextArrow: <NextBtn />,
+    prevArrow: <PrevBtn />,
     responsive: [
       {
         breakpoint: 992,
@@ -68,7 +68,7 @@ const Products = () => {
       {
         breakpoint: 520,
         settings: {
-          slidesToShow: 1,
+          slidesToShow: 2,
         },
       },
     ],
@@ -78,7 +78,7 @@ const Products = () => {
     <section className="products">
       <div className="container">
         <div className="section-title">
-          <h2>İndirimli Ürünler</h2>
+          <h1>Bu Hafta Öne Çıkanlar</h1>
         </div>
         <div className="product-wrapper product-carousel">
           <Slider {...sliderSettings}>

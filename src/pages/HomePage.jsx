@@ -12,7 +12,6 @@ const HomePage = () => {
       <Sliders />
       <Categories />
       <Products />
-
       <CampaignSingle />
       <Brands />
     </Fragment>

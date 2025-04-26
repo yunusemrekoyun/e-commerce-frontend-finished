@@ -22,3 +22,5 @@ CategoryItem.propTypes = {
 };
 
 export default CategoryItem;
+
+
