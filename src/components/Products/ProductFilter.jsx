@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import "./ProductFilter.css";
 
@@ -11,15 +12,39 @@ const ProductFilter = ({
   const [isMobile, setIsMobile] = useState(false);
   const [isBrandOpen, setIsBrandOpen] = useState(false);
 
-  // Mobil / desktop toggle
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { category } = useParams(); //  /shop/:category varsa
+
+  /* URL → state senkronu --------------------------------------------------- */
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    const s = new URLSearchParams(location.search);
+    const urlB = s.get("brand");
+
+    if (urlB) {
+      const brandList = urlB
+        .split(",")
+        .map((b) => decodeURIComponent(b).trim().toLowerCase());
+      if (
+        JSON.stringify(brandList.sort()) !==
+        JSON.stringify([...selectedBrands].sort())
+      ) {
+        setSelectedBrands(brandList);
+      }
+    } else if (selectedBrands.length) {
+      setSelectedBrands([]);
+    }
+  }, [location.search, selectedBrands, setSelectedBrands]);
+
+  /* mobil ekran kontrolü --------------------------------------------------- */
+  useEffect(() => {
+    const fn = () => setIsMobile(window.innerWidth <= 768);
+    fn();
+    window.addEventListener("resize", fn);
+    return () => window.removeEventListener("resize", fn);
   }, []);
 
-  // Kategoriye göre (veya tümden) markaları ayarla
+  /* kategoriye göre markaları çek ----------------------------------------- */
   useEffect(() => {
     const fetchAll = async () => {
       try {
@@ -27,12 +52,13 @@ const ProductFilter = ({
           `${import.meta.env.VITE_API_BASE_URL}/api/categories`
         );
         const data = await res.json();
+
         if (categoryName) {
           const cat = data.find((c) => c.name === categoryName);
-          setBrands(cat?.brands || []);
+          setBrands((cat?.brands || []).map((b) => b.trim().toLowerCase()));
         } else {
           const all = data.flatMap((c) => c.brands);
-          setBrands([...new Set(all)]);
+          setBrands([...new Set(all.map((b) => b.trim().toLowerCase()))]);
         }
       } catch (err) {
         console.error("Marka alınamadı:", err);
@@ -41,11 +67,22 @@ const ProductFilter = ({
     fetchAll();
   }, [categoryName]);
 
+  /* checkbox tıklandığında ------------------------------------------------- */
   const handleBrandChange = (e) => {
-    const { value, checked } = e.target;
-    setSelectedBrands((prev) =>
-      checked ? [...prev, value] : prev.filter((b) => b !== value)
-    );
+    const { value, checked } = e.target; // value zaten küçük-harf
+    let updated;
+    if (checked) {
+      updated = [...new Set([...selectedBrands, value])]; // tekrar eklenmez
+    } else {
+      updated = selectedBrands.filter((b) => b !== value);
+    }
+    setSelectedBrands(updated);
+
+    const p = new URLSearchParams(location.search);
+    updated.length ? p.set("brand", updated.join(",")) : p.delete("brand");
+
+    const base = category ? `/shop/${category}` : "/shop";
+    navigate(p.toString() ? `${base}?${p}` : base);
   };
 
   return (
@@ -58,18 +95,19 @@ const ProductFilter = ({
         >
           Markalar {isMobile && <span>{isBrandOpen ? "▲" : "▼"}</span>}
         </div>
+
         {(!isMobile || isBrandOpen) && (
           <ul className="filter-list">
-            {brands.map((brand) => (
-              <li key={brand} className="filter-item">
+            {brands.map((b) => (
+              <li key={b} className="filter-item">
                 <label>
                   <input
                     type="checkbox"
-                    value={brand}
+                    value={b}
+                    checked={selectedBrands.includes(b)}
                     onChange={handleBrandChange}
-                    checked={selectedBrands.includes(brand)}
                   />
-                  <span>{brand}</span>
+                  <span>{b.toUpperCase()}</span> {/* ekranda büyük göster */}
                 </label>
               </li>
             ))}
