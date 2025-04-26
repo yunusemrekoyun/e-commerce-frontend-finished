@@ -1,4 +1,3 @@
-// /Applications/Works/kozmetik/frontend/src/components/ProductDetails/Info/Info.jsx
 import PropTypes from "prop-types";
 import "./Info.css";
 import { useContext, useRef, useState } from "react";
@@ -106,6 +105,11 @@ const Info = ({ singleProduct, compact = false }) => {
         <strong className="new-price">₺{discountedPrice.toFixed(2)}</strong>
       </div>
 
+      {/* Yıldızların altında Ürün Bilgisi kısmı */}
+      <div className="product-description">
+        <p>{singleProduct?.description}</p> {/* Ürün açıklaması buraya gelecek */}
+      </div>
+
       <form className="variations-form">
         <div className="variations">
           {colors.length > 0 && (
@@ -179,6 +183,7 @@ Info.propTypes = {
     sizes: PropTypes.arrayOf(PropTypes.string),
     reviews: PropTypes.array,
     averageRating: PropTypes.number,
+    description: PropTypes.string,  // Ürün açıklamasını da ekliyoruz
   }).isRequired,
   compact: PropTypes.bool,
 };

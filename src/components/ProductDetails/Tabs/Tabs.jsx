@@ -7,11 +7,7 @@ import Reviews from "../../Reviews/Reviews";
 import "./Tabs.css";
 
 const Tabs = ({ singleProduct, setSingleProduct }) => {
-  const [activeTab, setActiveTab] = useState("desc");
-  // const colors = Array.isArray(singleProduct?.colors)
-  //   ? singleProduct.colors
-  //   : [];
-  // const sizes = Array.isArray(singleProduct?.sizes) ? singleProduct.sizes : [];
+  const [activeTab, setActiveTab] = useState("reviews");
 
   const handleTabClick = (e, tab) => {
     e.preventDefault();
@@ -21,18 +17,6 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
   return (
     <div className="single-tabs">
       <ul className="tab-list">
-        <li>
-          <a
-            href="#"
-            className={
-              activeTab === "desc" ? "tab-button active" : "tab-button"
-            }
-            onClick={(e) => handleTabClick(e, "desc")}
-          >
-            Ürün Bilgisi
-          </a>
-        </li>
-
         <li>
           <a
             href="#"
@@ -47,13 +31,6 @@ const Tabs = ({ singleProduct, setSingleProduct }) => {
       </ul>
 
       <div className="tab-panel">
-        <div className={activeTab === "desc" ? "content active" : "content"}>
-          <div
-            className="product-description"
-            dangerouslySetInnerHTML={{ __html: singleProduct?.description }}
-          />
-        </div>
-
         <Reviews
           active={activeTab === "reviews" ? "content active" : "content"}
           singleProduct={singleProduct}

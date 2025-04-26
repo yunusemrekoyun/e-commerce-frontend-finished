@@ -1,9 +1,30 @@
-/* Info.css */
-
 /* Ürün Bilgileri Alanı */
 .site-main .product-info {
+  margin-top: 50px;
   width: 50%;
   padding-left: 15px;
+  display: flex;
+  flex-direction: column; /* İçeriği dikey olarak hizalar */
+  justify-content: flex-start; /* İçeriği üstten başlatır */
+  height: 100%; /* Yüksekliği %100 yaparak içerik alanını kaplar */
+  transition: all 0.3s ease-in-out; /* Geçiş süresini belirliyoruz */
+}
+
+/* Ürün fiyatı ve sepete ekleme alanını alt tarafa almak için */
+.site-main .product-price,
+.site-main .cart-button {
+  margin-top: auto; /* Alanı aşağıya kaydırır */
+  transition: margin-top 0.3s ease-in-out; /* Yalnızca margin-top üzerinde animasyon */
+}
+
+
+/* Fiyat ve butonlar arasındaki uyum */
+.site-main .product-price {
+  transition: transform 0.3s ease-in-out; /* Transform ile fiyatın hareketini kontrol et */
+}
+
+.site-main .cart-button {
+  transition: transform 0.3s ease-in-out; /* Aynı şekilde sepet butonunun hareketi */
 }
 
 .site-main .product-title {
@@ -33,12 +54,16 @@
   font-size: 12px;
 }
 
+/* Ürün fiyatı kapsayıcısı */
 .site-main .product-price {
   display: flex;
   align-items: center;
   column-gap: 8px;
+  justify-content: flex-start; /* Soldan hizalar */
+  margin-bottom: 20px; /* Fiyat ile buton arasına boşluk ekler */
 }
 
+/* Fiyatın üzerinden çarpan (s) stilini korur */
 .site-main .product-price s {
   font-size: 18px;
   color: #dee0ea;
@@ -46,6 +71,14 @@
 
 .site-main .product-price strong {
   font-size: 20px;
+}
+
+/* Sepete Ekle Butonu */
+.site-main .cart-button {
+  display: flex;
+  justify-content: flex-end; /* Butonu sağa hizalar */
+  width: 100%;
+  margin-top: 20px;
 }
 
 .site-main .product-description {
@@ -337,4 +370,32 @@
 
 .single-product .color-button.active {
   border: 3px solid #333;
+}
+/* Sayı input alanını genişletme */
+.cart-button input {
+  width: 100px; /* Input alanının genişliğini artırdık */
+  height: 65px;
+  padding: 10px;
+  font-size: 16px;
+  text-align: center;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+  margin: 0;
+}
+
+/* Sayı input alanına odaklanıldığında border rengini değiştirme */
+.cart-button input:focus {
+  outline: none;
+  border-color: #007bff; /* Fokusa girildiğinde border rengi mavi */
+}
+.site-main .product-info {
+  margin-top: 20px; /* Üst alanı küçültüyoruz, istediğiniz yüksekliğe göre ayarlayın */
+  width: 50%;
+  padding-left: 15px;
+  display: flex;
+  flex-direction: column; /* İçeriği dikey olarak hizalar */
+  justify-content: flex-start; /* İçeriği üstten başlatır */
+  height: auto; /* Yüksekliği otomatik yapıyoruz */
+  transition: all 0.3s ease-in-out; /* Geçiş süresini belirliyoruz */
 }

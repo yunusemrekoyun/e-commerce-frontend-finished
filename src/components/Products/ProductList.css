@@ -203,5 +203,7 @@
 @media (max-width: 768px) {
   .products .product-list {
     grid-template-columns: 1fr;
+    gap: 120px; /* Ürünler arasına boşluk ekler */
+
   }
 }
