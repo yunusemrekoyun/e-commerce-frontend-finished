@@ -1,18 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SliderItem from "./SliderItem";
 import "./Sliders.css";
 
 const Sliders = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Otomatik geçiş için
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prevSlide) => (prevSlide + 1) % 3);
-    }, 6000); // 4 saniyede bir geçiş
-
-    return () => clearInterval(interval); // componentWillUnmount
-  }, []);
   const nextSlide = () => {
     setCurrentSlide((prevSlide) => (prevSlide + 1) % 3);
   };
@@ -24,15 +16,7 @@ const Sliders = () => {
     <section className="slider">
       <div className="slider-elements">
         {currentSlide === 0 && (
-          <SliderItem imageSrc="img/slider/slider1.jpg" />
-        )}
-        {currentSlide === 1 && (
-          <SliderItem imageSrc="img/slider/slider2.jpg" />
-        )}
-        {currentSlide === 2 && (
-          <SliderItem imageSrc="img/slider/slider3.jpg" />
-        )}
-          <SliderItem imageSrc="img/slider/slider1.jpg" brand="NIVEA" />
+          <SliderItem imageSrc="img/slider/slider1.jpg" brand="kategori" />
         )}
         {currentSlide === 1 && (
           <SliderItem imageSrc="img/slider/slider2.jpg" brand="CLEAR" />
@@ -54,5 +38,4 @@ const Sliders = () => {
   );
 };
 
-export default Sliders;export default Sliders;
 export default Sliders;
