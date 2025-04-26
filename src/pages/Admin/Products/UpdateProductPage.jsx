@@ -14,7 +14,6 @@ import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import imageCompression from "browser-image-compression";
 import { fetchWithAuth } from "../../../components/Auth/fetchWithAuth";
-
 const MAX_IMAGES = 6;
 const { Option } = Select;
 
@@ -41,6 +40,7 @@ const UpdateProductPage = () => {
   const navigate = useNavigate();
   const { id: productId } = useParams();
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const [deletedImages, setDeletedImages] = useState([]);
 
   // Kategorileri ve ürünü getir
   useEffect(() => {
@@ -87,13 +87,15 @@ const UpdateProductPage = () => {
         setBrandOptions(selectedCat?.brands || []);
 
         // görselleri hazırla
+        // görselleri hazırla
         const images = productData.img.map((img) => ({
           uid: img._id,
           name: "image.png",
           status: "done",
-          url: img.base64,
+          thumbUrl: img.base64, // url yerine thumbUrl kullanıyoruz
         }));
         setFileList(images);
+        form.setFieldsValue({ img: images });
       } catch (error) {
         console.error("Veri çekme hatası:", error);
         message.error("Veri yüklenirken hata oluştu.");
@@ -147,11 +149,13 @@ const UpdateProductPage = () => {
         formData.append("img", compressed);
       }
 
-      // eskiyi tut
       const keepIds = fileList
         .filter((f) => !f.originFileObj)
         .map((f) => f.uid);
       formData.append("keepImages", JSON.stringify(keepIds));
+
+      // Silinenleri bildir
+      formData.append("deletedImages", JSON.stringify(deletedImages));
 
       const res = await fetchWithAuth(
         `${apiUrl}/api/products/${productId}`,
@@ -248,24 +252,29 @@ const UpdateProductPage = () => {
           <Select mode="tags" placeholder="Beden ekle (örn: S, M, L)" />
         </Form.Item>
 
-        <Form.Item label="Ürün Görselleri">
+        <Form.Item
+          label="Ürün Görselleri"
+          name="img"
+          valuePropName="fileList"
+          getValueFromEvent={(e) => e.fileList}
+        >
           <Upload
             listType="picture"
             multiple
+            maxCount={MAX_IMAGES}
             beforeUpload={() => false}
-            fileList={fileList}
-            onChange={handleChange}
-            onRemove={(file) =>
+            onRemove={(file) => {
+              if (!file.originFileObj) {
+                setDeletedImages((prev) => [...prev, file.uid]);
+              }
               setFileList((prev) =>
                 prev.filter((item) => item.uid !== file.uid)
-              )
-            }
+              );
+            }}
+            onChange={handleChange}
+            fileList={fileList}
           >
-            {fileList.length < MAX_IMAGES && (
-              <Button icon={<UploadOutlined />}>
-                Dosya Seç (Max {MAX_IMAGES})
-              </Button>
-            )}
+            <Button icon={<UploadOutlined />}>Dosya Seç</Button>
           </Upload>
         </Form.Item>
 
