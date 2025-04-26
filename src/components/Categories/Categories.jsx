@@ -25,13 +25,17 @@ const Categories = () => {
   return (
     <section className="categories">
       <div className="container">
-        <div className="section-title">
-
-        </div>
+        <div className="section-title"></div>
         <ul className="category-list">
-          {categories.map((category) => (
-            <CategoryItem key={category._id} category={category} />
-          ))}
+          {categories
+            .slice(0, categories.length - (categories.length % 2))
+            .map((category, index) => (
+              <CategoryItem
+                key={category._id}
+                category={category}
+                index={index}
+              />
+            ))}
         </ul>
       </div>
     </section>

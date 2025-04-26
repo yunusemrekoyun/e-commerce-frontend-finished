@@ -16,11 +16,11 @@
     font-weight: 500;
 }
 
-.categories .category-item .category-image{
+/* .categories .category-item .category-image{
         width: 100%;
         transition: transform ease .2s;
-}
+} */
 
-.categories .category-item .category-image:hover{
-    transform: scale(1.1);
-}
+/* .categories .category-item .category-image:hover{
+    transform: scale();
+} */
