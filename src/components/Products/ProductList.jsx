@@ -46,7 +46,7 @@ const ProductList = ({
   }, [apiUrl, categoryName, selectedBrands]);
 
   useEffect(() => {
-    console.log("📢 useEffect tetiklendi");
+   
     fetchProducts();
   }, [fetchProducts]);
 
