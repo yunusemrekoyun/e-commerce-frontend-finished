@@ -4,7 +4,7 @@ import CartContext from "../../context/CartContext";
 const CartProgress = () => {
   const { cartItems } = useContext(CartContext);
 
-  const freeShippingThreshold = 161.0;
+  const freeShippingThreshold = 1750.00;
 
   // Sepetteki toplam tutarı hesapla
   const totalAmount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);

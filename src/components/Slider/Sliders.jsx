@@ -28,13 +28,13 @@ const Sliders = () => {
     <section className="slider">
       <div className="slider-elements">
         {currentSlide === 0 && (
-          <SliderItem imageSrc="img/slider/slider1.jpg" brand="kategori" />
+          <SliderItem imageSrc="img/slider/slider1.jpg" brand="OLAPLEX" />
         )}
         {currentSlide === 1 && (
-          <SliderItem imageSrc="img/slider/slider2.jpg" brand="CLEAR" />
+          <SliderItem imageSrc="img/slider/slider2.jpg" brand="OLAPLEX" />
         )}
         {currentSlide === 2 && (
-          <SliderItem imageSrc="img/slider/slider3.jpg" brand="Head & Shoulder" />
+          <SliderItem imageSrc="img/slider/slider3.jpg" brand="LOREAL" />
         )}
 
         {/* Butonları kaldırdık */}

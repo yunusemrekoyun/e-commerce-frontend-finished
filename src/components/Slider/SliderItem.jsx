@@ -1,8 +1,7 @@
 import PropTypes from "prop-types";
 
 const SliderItem = ({ imageSrc, brand }) => {
-  const brandSlug = brand.toLowerCase(); // URL için normalize
-
+  const brandSlug = brand.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
   return (
     <div className="slider-item fade">
       <div className="slider-image">

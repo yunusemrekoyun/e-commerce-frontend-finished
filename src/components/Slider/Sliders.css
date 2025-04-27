@@ -16,7 +16,7 @@
   left: 0;
   height: 100%;
   width: 100%;
-  object-fit: cover; /* Görselin boyutunu sığdır */
+  object-fit: contain;
   object-position: center;
   z-index: -1; /* Görseli arkaya atmak için */
 }

@@ -32,7 +32,7 @@ const ProductFilter = ({
         setSelectedBrands(brandList);
       }
     } else if (selectedBrands.length) {
-      setSelectedBrands([]);
+      setSelectedBrands([]); // Eğer URL'deki brand parametreleri silindiyse, state'i sıfırlıyoruz.
     }
   }, [location.search, selectedBrands, setSelectedBrands]);
 
@@ -44,18 +44,17 @@ const ProductFilter = ({
     return () => window.removeEventListener("resize", fn);
   }, []);
 
-  /* kategoriye göre markaları çek ----------------------------------------- */
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/api/categories`
-        );
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/categories`);
         const data = await res.json();
-
+  
         if (categoryName) {
           const cat = data.find((c) => c.name === categoryName);
           setBrands((cat?.brands || []).map((b) => b.trim().toLowerCase()));
+        } else if (selectedBrands.length > 0) {
+          setBrands(selectedBrands);
         } else {
           const all = data.flatMap((c) => c.brands);
           setBrands([...new Set(all.map((b) => b.trim().toLowerCase()))]);
@@ -64,8 +63,11 @@ const ProductFilter = ({
         console.error("Marka alınamadı:", err);
       }
     };
-    fetchAll();
-  }, [categoryName]);
+  
+    if (categoryName !== "") {   // ⬅️ Burayı ekledik, kategori ismi hazırsa çalışacak!
+      fetchAll();
+    }
+  }, [categoryName, selectedBrands]);
 
   /* checkbox tıklandığında ------------------------------------------------- */
   const handleBrandChange = (e) => {
