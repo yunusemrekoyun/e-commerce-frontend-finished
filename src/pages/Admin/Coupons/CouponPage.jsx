@@ -1,6 +1,7 @@
 import { Button, Popconfirm, Space, Table, message } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import './CouponPage.css'; // CSS dosyasını import ettik
 
 const CouponPage = () => {
   const [dataSource, setDataSource] = useState([]);
@@ -90,12 +91,15 @@ const CouponPage = () => {
   }, [fetchCategories]);
 
   return (
-    <Table
-      dataSource={dataSource}
-      columns={columns}
-      rowKey={(record) => record._id}
-      loading={loading}
-    />
+    <div className="page-container">
+      <Table
+        dataSource={dataSource}
+        columns={columns}
+        rowKey={(record) => record._id}
+        loading={loading}
+        className="coupon-page-table"
+      />
+    </div>
   );
 };
 
