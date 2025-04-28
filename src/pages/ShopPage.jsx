@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useMemo } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import CategoryHeader from "../components/Layout/Headers/CategoryHeader";
 import ProductFilter from "../components/Products/ProductFilter";
