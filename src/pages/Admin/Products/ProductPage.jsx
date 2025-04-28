@@ -1,6 +1,3 @@
-/********************************************************
- * /Applications/Works/e-commerce/frontend/src/pages/Admin/ProductPage.jsx
- ********************************************************/
 import { Button, Popconfirm, Space, Table, message, Input } from "antd";
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -136,27 +133,30 @@ const ProductPage = () => {
 
   return (
     <>
-      <Search
-        placeholder="Ürün adına göre ara"
-        allowClear
-        onChange={(e) => setSearchText(e.target.value)}
-        style={{
-          width: '100%',
-          maxWidth: 300,
-          marginBottom: 16,
-          marginLeft: 'auto',
-          marginRight: 'auto',
-        }}
-      />
+      <div style={{ overflowX: "auto", height: "100vh" }}>
+        <Search
+          placeholder="Ürün adına göre ara"
+          allowClear
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{
+            width: '100%',
+            maxWidth: 300,
+            marginBottom: 16,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+          }}
+        />
       <Table
         dataSource={filteredData}
         columns={columns}
         rowKey={(record) => record._id}
         loading={loading}
-        pagination={{ pageSize: 10 }} // Added pagination for better mobile experience
-        scroll={{ x: 'max-content' }} // Ensures horizontal scrolling on small screens
-        responsive // Makes the table responsive to smaller screens
-      />
+        pagination={{ pageSize: 10 }} // Pagination ekledik
+        responsive // Responsive yapı
+        scroll={{ x: false }} // Yatay kaydırmayı kaldırdık
+        className="ant-table" // Tabloya stil ekledik
+        />  
+      </div>
     </>
   );
 };

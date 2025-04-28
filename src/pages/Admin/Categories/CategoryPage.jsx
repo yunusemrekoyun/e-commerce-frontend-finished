@@ -1,9 +1,7 @@
-/********************************************************
- * /Applications/Works/e-commerce/frontend/src/pages/Admin/Categories/CategoryPage.jsx
- ********************************************************/
 import { Button, Popconfirm, Space, Table, message, Input } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import './CategoryPage.css'; // CSS dosyasını import ettik
 
 const { Search } = Input;
 
@@ -92,7 +90,7 @@ const CategoryPage = () => {
   ];
 
   return (
-    <>
+    <div className="page-container">
       <Search
         placeholder="Kategori adına göre ara"
         allowClear
@@ -110,11 +108,12 @@ const CategoryPage = () => {
         dataSource={filteredData}
         columns={columns}
         loading={loading}
-        pagination={{ pageSize: 10 }} // Added pagination for better mobile experience
-        scroll={{ x: 'max-content' }} // Ensures horizontal scrolling on small screens
-        responsive // Makes the table responsive to smaller screens
+        pagination={{ pageSize: 10 }}
+        scroll={{ x: 'max-content' }}
+        responsive
+        className="category-page-table"
       />
-    </>
+    </div>
   );
 };
 

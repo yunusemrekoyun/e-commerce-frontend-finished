@@ -10,6 +10,7 @@ import {
   Checkbox,
 } from "antd";
 import { fetchWithAuth } from "../../../components/Auth/fetchWithAuth";
+import './DiscountPage.css'; // CSS dosyasını import ettik
 
 const { Option } = Select;
 
@@ -110,7 +111,6 @@ const DiscountPage = () => {
           ? selBrands.map((b) => b.toLowerCase())
           : [selBrands.toLowerCase()];
       }
-
 
       const res = await fetchWithAuth(`${apiUrl}/api/discounts/apply`, {
         method: "POST",
@@ -272,14 +272,16 @@ const DiscountPage = () => {
         </div>
       </Modal>
 
-      <Table
-        rowKey="_id"
-        dataSource={discounted}
-        columns={columns}
-        pagination={{ pageSize: 10 }}
-        className="discount-table"
-        scroll={{ x: "max-content" }}
-      />
+      <div className="page-container">
+        <Table
+          rowKey="_id"
+          dataSource={discounted}
+          columns={columns}
+          pagination={{ pageSize: 10 }}
+          className="discount-table" // Eklediğimiz sınıf
+          scroll={{ x: "max-content" }} // Taşmayı önlemek için scroll özelliği
+        />
+      </div>
     </Spin>
   );
 };

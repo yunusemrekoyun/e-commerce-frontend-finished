@@ -1,5 +1,6 @@
 import { Button, Popconfirm, Table, message, Input } from "antd";
 import { useCallback, useEffect, useState } from "react";
+import './UserPage.css'; // CSS dosyasını import ettik
 
 const UserPage = () => {
   const [dataSource, setDataSource] = useState([]);
@@ -81,7 +82,7 @@ const UserPage = () => {
   }, [fetchUsers]);
 
   return (
-    <div style={{ padding: "16px" }}>
+    <div className="page-container">
       {/* Kullanıcı adıyla arama kutusu */}
       <Input
         placeholder="Kullanıcı adıyla ara"
@@ -94,6 +95,7 @@ const UserPage = () => {
         columns={columns}
         rowKey={(rec) => rec._id}
         loading={loading}
+        className="user-page-table" // Eklediğimiz sınıf
         scroll={{ x: "max-content" }} // Taşmayı önlemek için scroll özelliği
       />
     </div>

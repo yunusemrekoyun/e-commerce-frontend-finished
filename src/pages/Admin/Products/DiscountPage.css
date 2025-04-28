@@ -1,0 +1,15 @@
+/* Modal içindeki formu sınırlayın */
+.discount-form {
+    max-height: 400px; /* Modal içinde form yüksekliğini sınırlayın */
+    overflow-y: auto; /* Yalnızca form alanı kaydırılabilir olsun */
+  }
+  
+  /* Table için mevcut scroll ayarları */
+  .discount-table {
+    overflow: hidden; /* Dışarı taşmayı engelle */
+  }
+  
+  /* Modalın genel boyutunu da kısıtlayabiliriz */
+  .ant-modal-content {
+    max-width: 900px; /* Modalın genişliğini kısıtlayabilirsiniz */
+  }
