@@ -27,16 +27,23 @@
 
 .category-navigation {
   width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: hidden; /* YUKARI-AŞAĞI kaymayı tamamen engelle */
+
+  scrollbar-width: none;
 }
 
 .category-navigation .category-menu-list {
   display: flex;
-  column-gap: 20px;
   align-items: center;
-  justify-content: center;
-  padding: 0;
+  justify-content: flex-start; /* 🔥 center yerine flex-start */
+  padding-left: 120px; /* 🔥 SOLDA boşluk bırakıyoruz */
+  padding-right: 24px;
   margin: 0;
   list-style: none;
+  column-gap: 30px;
+  height: 60px;
 }
 
 .category-menu-list-item {
@@ -45,6 +52,9 @@
 }
 
 .category-menu-link {
+  display: flex; /* 🔥 Link'in içeriğini flex yapalım */
+  align-items: center; /* Dikeyde ortala */
+  justify-content: center; /* İstersen yatayda da ortala */
   font-size: 14px;
   font-weight: 500;
   text-transform: uppercase;
@@ -53,8 +63,8 @@
   text-decoration: none;
   position: relative;
   padding: 10px 5px;
+  height: 100%; /* 🔥 Yüksekliği tamamen kapsasın */
 }
-
 .category-menu-link::after {
   content: "";
   width: 0;

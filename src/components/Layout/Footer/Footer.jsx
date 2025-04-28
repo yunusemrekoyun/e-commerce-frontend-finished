@@ -31,18 +31,18 @@ const Footer = () => {
               <div className="brand-info">
                 <div className="footer-logo">
                   <Link to={"/"} className="logo">
-                    ÜnKo Kozmetik
+                    ÜNKO Kozmetik
                   </Link>
                 </div>
                 <div className="footer-desc">
                   <p>
                     {" "}
-                    ÜnKo Kozmetik, güzelliğin doğallıkla buluştuğu yerdir. Kaliteyi cildinize, güveni ruhunuza sunar.                  </p>
+                    ÜNKO Kozmetik, güzelliğin doğallıkla buluştuğu yerdir. Kaliteyi cildinize, güveni ruhunuza sunar.                  </p>
                 </div>
                 <div className="footer-contact">
                   <p>
-                    <a href="tel:555 555 55 55">(+90)000 000 00 00</a> –{" "}
-                    <a href="mailto:info@example.com">info@example.com</a>
+                    <a href="tel:+9005525395910">(+90)552 539 59 10</a> –{" "}
+                    <a href="info@ünkokozmetik.com">info@ünkokozmetik.com</a>
                   </p>
                 </div>
               </div>

@@ -8,7 +8,7 @@ const Policy = () => {
             <i className="bi bi-truck"></i>
             <div className="policy-texts">
               <strong>Ücretsiz Teslimat</strong>
-              <span>1000TL ve üzeri</span>
+              <span>1750TL ve üzeri</span>
             </div>
           </li>
           <li className="policy-item">

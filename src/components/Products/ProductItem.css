@@ -8,40 +8,23 @@
   border-radius: 4px; /* Köşeleri keskinleştir */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Hafif gölge efekti */
   transition: all 0.3s ease; /* Hover efektine yumuşak geçiş */
+  height: auto; /* Boyutları otomatik yap */
 }
-
-
-
-/* Removed invalid selector */
 
 .products .product-item img {
   width: 100%;
   transition: 0.3s ease-in-out all;
+  object-fit: contain; /* Görsellerin oranlarını koruyarak sığdırılmasını sağlar */
 }
-
-/* .products .product-item .img1:hover {
-  visibility: hidden;
-  opacity: 0;
-}
-
-.products .product-item:hover .img2 {
-  visibility: visible;
-  opacity: 1;
-}
-
-.products .product-item .img2 {
-  display: flex;
-  position: absolute;
-  top: 0;
-  opacity: 0;
-  visibility: hidden;
-} */
 
 .products .product-item .product-title {
   font-size: 14px;
   display: inline-block;
   font-weight: 600;
   margin-top: 15px;
+  white-space: nowrap; /* Tek satırda tut */
+  overflow: hidden; /* Taşmayı engelle */
+  text-overflow: ellipsis; /* Taşan metni '...' ile kes */
 }
 
 .products .product-item .product-star {
@@ -62,6 +45,7 @@
   align-items: center;
   column-gap: 8px;
   padding-bottom: 15px;
+  margin-top: auto; /* Alt kısma yer bırakmak için */
 }
 
 .product-item .product-prices strong {
@@ -163,6 +147,7 @@
     right: 0px;
   }
 }
+
 .products .product-item:hover {
   transform: translateY(-6px); /* Hoverda biraz yukarı hareket */
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Hoverda daha belirgin bir gölge */
