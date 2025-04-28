@@ -149,7 +149,7 @@
 }
 
 .products .product-item:hover {
-  transform: translateY(-6px); /* Hoverda biraz yukarı hareket */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Hoverda daha belirgin bir gölge */
+  transform: translateY(-8px); /* Hoverda biraz daha fazla yukarı hareket */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Hoverda daha belirgin bir gölge */
   border: 1px solid rgba(0, 0, 0, 0.3); /* Hoverda çerçeve daha belirgin */
 }

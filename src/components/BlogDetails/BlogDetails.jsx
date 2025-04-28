@@ -12,9 +12,7 @@ const BlogDetails = () => {
       .catch((err) => console.error("Marka verisi alınamadı", err));
   }, []);
 
-  const handleBrandClick = (imgPath) => {
-    setZoomedImage(imgPath);
-  };
+ 
 
   const closeZoom = () => {
     setZoomedImage(null);

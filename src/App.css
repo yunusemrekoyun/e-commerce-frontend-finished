@@ -15,3 +15,8 @@
 .blog-page{
   margin-top: 40px;
 }
+/* App.css */
+.page-container {
+  width: 100%;
+  overflow-x: hidden; /* Sadece bu bileşenin yatay kaymasını engelle */
+}

@@ -278,8 +278,8 @@ const DiscountPage = () => {
           dataSource={discounted}
           columns={columns}
           pagination={{ pageSize: 10 }}
-          className="discount-table" // Eklediğimiz sınıf
-          scroll={{ x: "max-content" }} // Taşmayı önlemek için scroll özelliği
+          className="discount-table"
+          scroll={{ y: "calc(100vh - 200px)" }}
         />
       </div>
     </Spin>

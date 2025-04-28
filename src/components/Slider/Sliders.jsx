@@ -31,7 +31,7 @@ const Sliders = () => {
           <SliderItem imageSrc="img/slider/slider1.jpg" brand="OLAPLEX" />
         )}
         {currentSlide === 1 && (
-          <SliderItem imageSrc="img/slider/slider2.jpg" brand="OLAPLEX" />
+          <SliderItem imageSrc="img/slider/slider2.jpg" brand="TİGİ" />
         )}
         {currentSlide === 2 && (
           <SliderItem imageSrc="img/slider/slider3.jpg" brand="LOREAL" />
