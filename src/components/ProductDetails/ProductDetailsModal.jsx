@@ -1,7 +1,11 @@
-import { useEffect, useState } from "react";
+/********************************************************
+/Applications/Works/kozmetik/frontend/src/components/ProductDetails/ProductDetailsModal.jsx
+ ********************************************************/
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Modal } from "antd";
 import PropTypes from "prop-types";
 import ProductDetails from "./ProductDetails";
+import "./ProductDetailsModal.css";
 
 const ProductDetailsModal = ({
   isVisible,
@@ -10,9 +14,9 @@ const ProductDetailsModal = ({
   setSingleProduct,
 }) => {
   const [fullProduct, setFullProduct] = useState(null);
-
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
+  /* --- Ürünü getir --- */
   useEffect(() => {
     const fetchFullProduct = async () => {
       if (!singleProduct?._id) return;
@@ -25,21 +29,42 @@ const ProductDetailsModal = ({
       }
     };
 
-    if (isVisible) {
-      fetchFullProduct();
-    }
+    if (isVisible) fetchFullProduct();
   }, [isVisible, singleProduct, apiUrl]);
+
+  /* --- DOM sıralamasını yalnız modal açıkken düzenle --- */
+  useLayoutEffect(() => {
+    if (!isVisible || !fullProduct) return; // veri gelmeden çalışmasın
+
+    const modalBody = document.querySelector(".ant-modal-body");
+    if (!modalBody) return;
+
+    const reviewEl = modalBody.querySelector(".product-review"); // yıldız & yorum
+    const descEl = modalBody.querySelector(".product-description"); // açıklama
+    const priceEl = modalBody.querySelector(".product-price"); // fiyat
+    const cartBtnEl = modalBody.querySelector(".cart-button"); // adet + Sepete Ekle
+
+    /* 1️⃣  Açıklamayı yıldız/yorum bloğunun hemen altına taşı */
+    if (reviewEl && descEl && reviewEl.nextSibling !== descEl) {
+      reviewEl.parentNode.insertBefore(descEl, reviewEl.nextSibling);
+    }
+
+    /* 2️⃣  Fiyatı, CartButton’un hemen üstüne (seçeneklerden sonra) taşı */
+    if (priceEl && cartBtnEl && priceEl.nextSibling !== cartBtnEl) {
+      cartBtnEl.parentNode.insertBefore(priceEl, cartBtnEl);
+    }
+  }, [isVisible, fullProduct]);
 
   if (!fullProduct) return null;
 
+  /* Resimleri { _id, base64 } formuna çevir */
   const convertedProduct = {
     ...fullProduct,
-    img: Array.isArray(fullProduct?.img)
-      ? fullProduct.img.map((img, index) =>
-          typeof img === "string" ? { _id: index.toString(), base64: img } : img
+    img: Array.isArray(fullProduct.img)
+      ? fullProduct.img.map((img, idx) =>
+          typeof img === "string" ? { _id: idx.toString(), base64: img } : img
         )
       : [],
-    price: fullProduct.price,
     reviews: fullProduct.reviews ?? [],
   };
 
@@ -49,15 +74,16 @@ const ProductDetailsModal = ({
       onCancel={onClose}
       footer={null}
       title={null}
-      closable={true}
-      maskClosable={true}
+      closable
+      maskClosable
+      destroyOnClose
       width="80vw"
       style={{ top: 20 }}
     >
       <ProductDetails
         singleProduct={convertedProduct}
         setSingleProduct={setSingleProduct}
-        compact={true}
+        compact={false} /* yıldız & yorum bloğu görünür */
         priceSymbol="₺"
       />
     </Modal>
