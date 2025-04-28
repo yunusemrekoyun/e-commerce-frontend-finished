@@ -1,15 +1,31 @@
-/* Modal içindeki formu sınırlayın */
+body {
+  overflow-y: auto;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.page-container {
+  max-height: 100vh; /* Sayfa yüksekliği sınırlaması */
+  overflow-y: auto; /* Sayfa kaydırılabilir */
+}
+
 .discount-form {
-    max-height: 400px; /* Modal içinde form yüksekliğini sınırlayın */
-    overflow-y: auto; /* Yalnızca form alanı kaydırılabilir olsun */
-  }
-  
-  /* Table için mevcut scroll ayarları */
-  .discount-table {
-    overflow: hidden; /* Dışarı taşmayı engelle */
-  }
-  
-  /* Modalın genel boyutunu da kısıtlayabiliriz */
-  .ant-modal-content {
-    max-width: 900px; /* Modalın genişliğini kısıtlayabilirsiniz */
-  }
+  max-width: 600px;
+  margin: auto;
+}
+
+.discount-btn {
+  margin-bottom: 20px;
+}
+
+.discount-table {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.select,
+.input-number {
+  width: 100%;
+  margin-bottom: 10px;
+}

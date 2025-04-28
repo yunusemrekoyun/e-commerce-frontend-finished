@@ -8,8 +8,10 @@ const SliderItem = ({ imageSrc, brand }) => {
         <img src={imageSrc} className="img-fluid" alt={brand} />
       </div>
       <div className="container">
-        <p className="slider-title">{brand} Marka Ürünlerde</p>
-        <h2 className="slider-heading">İlk Alışverişinize Net %30</h2>
+        <p className="slider-heading">{brand}</p>
+        <h2 className="slider-title">Marka Ürünlerde</h2>
+        <h2 className="slider-title">Net %20 </h2>
+
         <a href={`/shop?brand=${brandSlug}`} className="btn btn-lg btn-primary">
           Alışverişe Başla
         </a>

@@ -1,43 +1,151 @@
-/* Products.css */
-
-/* Tüm products section'ını küçültüyoruz */
+/* General styles for the products section */
 .products {
-  padding: 20px 0; /* Üst ve alt padding değerini küçültme */
-  margin: 0; /* Margin sıfırlama */
-  width: 100%; /* Tam genişlik */
+  padding: 20px 0;
+  margin: 0;
+  width: 100%;
 }
 
 .container {
-  max-width: 1200px; /* İçerik için maksimum genişlik sınırı */
-  margin: 0 auto; /* Ortala */
-  padding: 0 20px; /* İçerik etrafındaki padding */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
-/* Başlık altındaki boşluğu da küçültelim */
 .section-title {
-  margin-bottom: 5px; /* Başlık altı boşluğu */
+  margin-bottom: 40px; /* Space below the title */
 }
 
-/* Slider alanını küçültüyoruz */
+/* Adjust the spacing for product carousel */
 .product-wrapper {
-  max-width: 800px; /* Slider'ın genişliğini daraltma */
-  margin: 0 auto; /* Ortala */
-  padding: 0 20px; /* Padding'i azaltma */
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+  margin-top: 20px;
 }
 
-/* Slider içindeki boşlukları düzenliyoruz */
+/* Removing padding for the carousel */
 .product-carousel {
-  padding: 0; /* Padding'i sıfırlama */
+  padding: 0;
 }
-/* Products.css */
 
-/* react-slick ok butonlarını tamamen gizle */
+/* Styling for the product items */
+.product-item {
+  position: relative;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 0;
+}
+
+.product-item:hover {
+  transform: scale(1.05); /* Slightly increase size on hover */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+}
+
+/* Ensure image inside the product card takes full width */
+.product-item img {
+  width: 100%;
+  height: auto;
+  border-bottom: 2px solid #f1f1f1;
+}
+
+/* Title and description styling inside product item */
+.product-item .product-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 20px 0 10px;
+}
+
+.product-item .product-description {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.product-item .product-price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1367ef;
+}
+
+/* Price color change on hover */
+.product-item:hover .product-price {
+  color: #1367ef;
+}
+
+/* Slick slider settings for arrows and dots */
+.slick-prev,
+.slick-next {
+  z-index: 1; /* Make sure the arrows stay above the carousel */
+}
+
+/* Slick custom next/prev buttons */
+.slick-prev {
+  left: -30px;
+}
+
+.slick-next {
+  right: -30px;
+}
+
+/* Grid layout for products */
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 992px) {
+  .product-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .product-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Slider item text positioning */
+.slider-item .slider-title {
+  font-size: 18px;
+  font-weight: 500;
+  margin-top: 30px;
+}
+
+.slider-item .slider-heading {
+  font-size: 60px;
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+.slider-item a {
+  position: relative;
+  z-index: 1;
+}
+
+.slider-item .slider-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  object-position: center;
+  z-index: -1;
+}
+
+/* Hiding slick arrows for mobile */
 .glide__arrow {
   display: none !important;
 }
+
 @media (max-width: 768px) {
   .products .product-list {
     grid-template-columns: 1fr;
-    gap: 120px; /* Ürünler arasına boşluk ekler */
+    gap: 120px;
   }
 }

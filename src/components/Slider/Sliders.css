@@ -16,6 +16,9 @@
   top: 0;
   left: 0;
   height: 100%;
+  left: 120px; /* Görseli sağa kaydırmak için */
+  width: calc(100% - 40px); /* Sağdan 40px'lik boşluk bırakmak için */
+
   width: 100%;
   object-fit: contain;
   object-position: center;
