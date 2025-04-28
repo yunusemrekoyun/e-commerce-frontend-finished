@@ -16,8 +16,8 @@ const CartTotals = () => {
   const stripePublicKey = import.meta.env.VITE_API_STRIPE_PUBLIC_KEY;
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-  const freeShippingThreshold = 161.0;
-  const cargoFee = 15;
+  const freeShippingThreshold = 1750;
+  const cargoFee = 200;
 
   const subTotals = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -152,7 +152,7 @@ const CartTotals = () => {
               {totalAmount >= freeShippingThreshold ? (
                 <label>Ücretsiz</label>
               ) : (
-                <label>15.00 TL</label>
+                <label>200.00 TL</label>
               )}
             </td>
           </tr>

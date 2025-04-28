@@ -19,6 +19,14 @@
   .contact-bottom .contact-titles p {
     font-size: 14px;
   }
+  .contact .contact-map iframe {
+    width: 100%; /* Yatayda tam genişlik */
+    height: 500px; /* Dikeyde yüksekliği belirleyebilirsiniz, ihtiyacınıza göre artırabilirsiniz */
+    max-width: 100%; /* Genişliğin ekran boyutuna göre ayarlanması */
+    border: none;
+    display: block; /* iframe'in blok seviyesinde olmasını sağlar */
+    margin: 0 auto; /* Ortalamak için */
+  }
   
   .contact-bottom .contact-elements {
     display: flex;
