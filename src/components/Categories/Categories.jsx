@@ -1,42 +1,42 @@
-import CategoryItem from "./CategoryItem";
+/********************************************************
+/Applications/Works/kozmetik/frontend/src/components/Categories/Categories.jsx
+ ********************************************************/
+
 import { useEffect, useState } from "react";
-import "./Categories.css";
 import { message } from "antd";
+import CategoryItem from "./CategoryItem";
+import "./Categories.css";
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
+  /* ► 12 rastgele kategori */
   useEffect(() => {
-    const fetchCategories = async () => {
+    (async () => {
       try {
-        const response = await fetch(`${apiUrl}/api/categories`);
-        if (response.ok) {
-          const data = await response.json();
-          setCategories(data);
-        } else {
-          message.error("Veri getirme başarısız.");
-        }
-      } catch (error) {
-        console.log("Veri hatası:", error);
+        const res   = await fetch(`${apiUrl}/api/categories`);
+        if (!res.ok) throw new Error();
+        const data  = await res.json();
+        const rand  = [...data].sort(() => 0.5 - Math.random()).slice(0, 12);
+        setCategories(rand);
+      } catch {
+        message.error("Kategoriler alınamadı");
       }
-    };
-    fetchCategories();
+    })();
   }, [apiUrl]);
+
   return (
     <section className="categories">
       <div className="container">
-        <div className="section-title"></div>
-        <ul className="category-list">
-          {categories
-            .slice(0, categories.length - (categories.length % 2))
-            .map((category, index) => (
-              <CategoryItem
-                key={category._id}
-                category={category}
-                index={index}
-              />
+        {/*  >>> kaydırmayı yöneten sarmal  */}
+        <div className="category-scroll">
+          <ul className="category-list">
+            {categories.map((c) => (
+              <CategoryItem key={c._id} category={c} />
             ))}
-        </ul>
+          </ul>
+        </div>
       </div>
     </section>
   );

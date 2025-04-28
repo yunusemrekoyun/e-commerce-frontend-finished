@@ -1,36 +1,106 @@
-.categories .category-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 20px;
-  margin-top: 30px;
-  padding: 0;
-  list-style: none;
+/********************************************************
+/Applications/Works/kozmetik/frontend/src/components/Categories/Categories.css
+********************************************************/
+
+/* ------------ GENEL ------------- */
+.categories {
+  margin: 40px 0;
+  overflow-x: hidden;
+}
+.category-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+.category-scroll::-webkit-scrollbar {
+  display: none;
+}
+.category-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-.categories .category-item {
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  text-align: center;
-  transition: transform 0.3s ease;
+/* ------------ MASAÜSTÜ & TABLET (>768 px) ------------- */
+@media (min-width: 769px) {
+  .category-scroll {
+    overflow-x: hidden;
+  } /* geniş ekranda iç scroll kapalı */
+
+  .category-list {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 6 sütun geniş kutular */
+    grid-template-rows: repeat(2, 90px);
+    gap: 20px;
+    padding: 0;
+    margin: 0 auto; /* ortala */
+    list-style: none;
+    width: 100%; /* container’ı doldur */
+    justify-content: center; /* olası genişlik fazlasını dengeler */
+  }
+
+  /* ↘ responsive kırılımlar (5×2, 4×2, 3×2) */
+  @media (max-width: 1400px) {
+    .category-list {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+  @media (max-width: 1200px) {
+    .category-list {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  @media (max-width: 992px) {
+    .category-list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
 }
 
-.categories .category-item a {
+/* ------------ MOBİL (≤768 px) ------------- */
+@media (max-width: 768px) {
+  .category-list {
+    display: grid;
+    grid-auto-flow: column; /* sütun sütun diz */
+    grid-auto-columns: 120px; /* her kutu sabit */
+    grid-template-rows: repeat(2, 110px);
+    gap: 20px;
+
+    width: max-content; /* gerçek ızgara genişliği */
+    margin: 0 auto; /* hafif ortalama */
+    scroll-snap-type: x mandatory;
+    padding-bottom: 6px;
+  }
+
+  .category-item {
+    min-width: 120px;
+    scroll-snap-align: start;
+  }
+}
+
+/* ------------ KUTU STİLİ (değişmedi) ------------- */
+.category-item {
+  background: #f5f5f5;
+  border-radius: 6px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 10px;
-  font-size: 14px;
-  font-weight: 500;
+  justify-content: center;
+  transition: background 0.2s;
 }
-
-.categories .category-item .category-image {
+.category-link {
   width: 100%;
-  height: calc(100% - 30px); /* 30px yazı + margin için alan bırakıyor */
-  object-fit: contain;
-  margin-bottom: 5px;
-  transition: transform 0.2s ease;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  font: 600 15px/1 "inherit";
+  color: #000;
+  text-align: center;
 }
-
-.categories .category-item .category-image:hover {
-  transform: scale(1.1);
+.category-item:hover {
+  background: #1367ef;
+}
+.category-item:hover .category-link {
+  color: #fff;
 }
