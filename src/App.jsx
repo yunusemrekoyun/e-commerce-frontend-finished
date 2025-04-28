@@ -12,7 +12,7 @@ import ProductDetailsPage from "./pages/ProductDetailsPage";
 import BlogDetailsPage from "./pages/BlogDetailsPage";
 import Success from "./pages/Success";
 import UserAccountPage from "./pages/UserAccountPage";
-import DashboardPage from "./pages/Admin/DashBoardPage";
+import DashBoardPage from "./pages/Admin/DashBoardPage";
 import UserPage from "./pages/Admin/UserPage";
 import CategoryPage from "./pages/Admin/Categories/CategoryPage";
 import UpdateCategoryPage from "./pages/Admin/Categories/UpdateCategoryPage";
@@ -58,7 +58,7 @@ function App() {
           </ProtectedAdminRoute>
         }
       >
-        <Route index element={<DashboardPage />} />
+        <Route index element={<DashBoardPage />} />
         <Route path="users" element={<UserPage />} />
         <Route path="categories" element={<CategoryPage />} />
         <Route path="categories/create" element={<CreateCategoryPage />} />
