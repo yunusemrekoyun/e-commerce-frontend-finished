@@ -43,4 +43,10 @@
     border-color: #1367ef;
     color: #fff;
   }
-  
+  @media (max-width: 768px) {
+    .campaign-single {
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+  }

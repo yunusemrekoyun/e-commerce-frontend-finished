@@ -34,7 +34,7 @@ const Sliders = () => {
           <SliderItem imageSrc="img/slider/slider2.jpg" brand="TİGİ" />
         )}
         {currentSlide === 2 && (
-          <SliderItem imageSrc="img/slider/slider3.jpg" brand="LOREAL" />
+          <SliderItem imageSrc="img/slider/slider3.jpg" brand="LOREAL Proffessinnoel" />
         )}
 
         {/* Butonları kaldırdık */}

@@ -35,19 +35,21 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
   z-index: 0;
+  height: 400px; /* Sabit kart yüksekliği */
 }
 
 .product-item:hover {
-  transform: scale(1.05); /* Slightly increase size on hover */
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+  transform: translateY(-10px); /* Hoverda kart biraz yukarı kayar */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Daha belirgin gölge */
 }
 
 /* Ensure image inside the product card takes full width */
 .product-item img {
   width: 100%;
-  height: auto;
+  height: 50%; /* Resmin yüksekliği kartın yarısı kadar */
+  object-fit: cover; /* Görselin düzgün bir şekilde yerleşmesi */
   border-bottom: 2px solid #f1f1f1;
 }
 
@@ -68,11 +70,12 @@
   font-size: 20px;
   font-weight: bold;
   color: #1367ef;
+  transition: color 0.3s ease; /* Hoverda fiyatın rengi değişir */
 }
 
 /* Price color change on hover */
 .product-item:hover .product-price {
-  color: #1367ef;
+  color: #ff4500; /* Hoverda fiyat rengi değişir */
 }
 
 /* Slick slider settings for arrows and dots */
@@ -106,6 +109,15 @@
 @media (max-width: 520px) {
   .product-list {
     grid-template-columns: 1fr;
+    gap: 15px; /* Kartlar arasındaki boşluk daha küçük */
+  }
+
+  .product-item {
+    height: 300px; /* Mobilde kart yüksekliği biraz daha küçük olabilir */
+  }
+
+  .product-item img {
+    height: 50%; /* Resim yüksekliğini biraz küçültüyoruz */
   }
 }
 
@@ -143,7 +155,7 @@
   display: none !important;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 562px) {
   .products .product-list {
     grid-template-columns: 1fr;
     gap: 120px;
