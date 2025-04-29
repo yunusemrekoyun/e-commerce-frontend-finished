@@ -6,15 +6,15 @@ import ProductList from "../components/Products/ProductList";
 import "./ShopPage.css";
 
 const ShopPage = () => {
-  const { category: categorySlug } = useParams();  // Kategori Slug'ı
+  const { category: categorySlug } = useParams(); // Kategori Slug'ı
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const onlyDiscounted = searchParams.get("discounted") === "true";  // Discount parametresi
-  const brandSlug = searchParams.get("brand");  // Brand parametresi
-  const [categories, setCategories] = useState([]);  // Kategoriler
-  const [decodedCategoryName, setDecodedCategoryName] = useState("");  // Decoded kategori adı
-  const [isLoading, setIsLoading] = useState(true);  // Yükleniyor durumu
+  const onlyDiscounted = searchParams.get("discounted") === "true"; // Discount parametresi
+  const brandSlug = searchParams.get("brand"); // Brand parametresi
+  const [categories, setCategories] = useState([]); // Kategoriler
+  const [decodedCategoryName, setDecodedCategoryName] = useState(""); // Decoded kategori adı
+  const [isLoading, setIsLoading] = useState(true); // Yükleniyor durumu
 
   // URL'deki brand parametresini çöz
   const [selectedBrands, setSelectedBrands] = useState([]);
@@ -23,7 +23,7 @@ const ShopPage = () => {
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/categories`)
       .then((r) => r.json())
-      .then(setCategories)
+      .then((response) => setCategories(response.data || []))
       .catch((e) => console.error("Kategori alınamadı:", e));
   }, []);
   useEffect(() => {
@@ -40,12 +40,11 @@ const ShopPage = () => {
         (c) => c.name.toLowerCase().replace(/\s+/g, "-") === categorySlug
       );
       setDecodedCategoryName(category ? category.name : "");
-      setIsLoading(false);  // Yükleme tamamlandı
+      setIsLoading(false); // Yükleme tamamlandı
     } else {
-      setDecodedCategoryName("");  // Eğer kategori slug'ı yoksa boş bırak
-      setIsLoading(false);  // Yükleme tamamlandı
+      setDecodedCategoryName(""); // Eğer kategori slug'ı yoksa boş bırak
+      setIsLoading(false); // Yükleme tamamlandı
     }
-    
   }, [categorySlug, categories]);
 
   // Indirimli ürünleri temizlemek için
@@ -80,11 +79,11 @@ const ShopPage = () => {
       ) : (
         <div className="shop-content">
           <div className="shop-layout">
-          <ProductFilter
-            categoryName={decodedCategoryName}
-            selectedBrands={selectedBrands}
-            setSelectedBrands={setSelectedBrands}
-          />
+            <ProductFilter
+              categoryName={decodedCategoryName}
+              selectedBrands={selectedBrands}
+              setSelectedBrands={setSelectedBrands}
+            />
             <ProductList
               categoryName={decodedCategoryName}
               selectedBrands={selectedBrands}

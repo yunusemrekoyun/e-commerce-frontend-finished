@@ -280,3 +280,15 @@ header .menu-dropdown-content a:hover {
     font-size: 16px !important;
   }
 }
+/*! renk düzeltmesi start */
+
+.header-right i,
+.header-cart-link i,
+.search-button i,
+.exit-button i,
+.header-mobile i,
+.header-center .menu-link i {
+  color: black;
+}
+
+/*! renk düzeltmesi end */

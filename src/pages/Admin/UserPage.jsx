@@ -1,6 +1,6 @@
 import { Button, Popconfirm, Table, message, Input } from "antd";
 import { useCallback, useEffect, useState } from "react";
-import './UserPage.css'; // CSS dosyasını import ettik
+import "./UserPage.css"; // CSS dosyasını import ettik
 
 const UserPage = () => {
   const [dataSource, setDataSource] = useState([]);
@@ -48,7 +48,8 @@ const UserPage = () => {
     try {
       const res = await fetch(`${apiUrl}/api/users`);
       if (res.ok) {
-        setDataSource(await res.json());
+        const responseData = await res.json();
+        setDataSource(responseData.data || []); // 🔥 sadece data kısmını alıyoruz
       } else {
         message.error("Veri getirme başarısız.");
       }

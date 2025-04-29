@@ -95,7 +95,7 @@ const Info = ({ singleProduct, compact = false }) => {
         <div className="product-review">
           {renderStars(averageRating)}
           <span>
-            {reviewsCount} Yorum {reviewsCount !== 1 && ""}
+            {reviewsCount === 0 ? "Henüz yorum yok" : `${reviewsCount} Yorum`}
           </span>
         </div>
       )}
@@ -107,7 +107,8 @@ const Info = ({ singleProduct, compact = false }) => {
 
       {/* Yıldızların altında Ürün Bilgisi kısmı */}
       <div className="product-description">
-        <p>{singleProduct?.description}</p> {/* Ürün açıklaması buraya gelecek */}
+        <p>{singleProduct?.description}</p>{" "}
+        {/* Ürün açıklaması buraya gelecek */}
       </div>
 
       <form className="variations-form">
@@ -183,7 +184,7 @@ Info.propTypes = {
     sizes: PropTypes.arrayOf(PropTypes.string),
     reviews: PropTypes.array,
     averageRating: PropTypes.number,
-    description: PropTypes.string,  // Ürün açıklamasını da ekliyoruz
+    description: PropTypes.string, // Ürün açıklamasını da ekliyoruz
   }).isRequired,
   compact: PropTypes.bool,
 };

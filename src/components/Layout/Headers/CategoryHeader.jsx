@@ -8,7 +8,7 @@ const CategoryHeader = () => {
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/categories`)
       .then((res) => res.json())
-      .then((data) => setCategories(data))
+      .then((data) => setCategories(data.data))
       .catch((err) => console.error("Kategori alınamadı:", err));
   }, []);
 

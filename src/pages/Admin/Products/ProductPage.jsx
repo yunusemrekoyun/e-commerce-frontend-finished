@@ -101,11 +101,12 @@ const ProductPage = () => {
       if (!categoriesRes.ok || !productsRes.ok) {
         throw new Error();
       }
-      const [categoriesData, productsData] = await Promise.all([
+      const [categoriesRaw, productsData] = await Promise.all([
         categoriesRes.json(),
         productsRes.json(),
       ]);
-      // Her ürüne categoryName ekle
+      const categoriesData = categoriesRaw.data; // ✅ sadece data kısmı
+
       const withCatName = productsData.map((prod) => {
         const cat = categoriesData.find((c) => c._id === prod.category);
         return {
@@ -113,6 +114,7 @@ const ProductPage = () => {
           categoryName: cat ? cat.name : "",
         };
       });
+
       setDataSource(withCatName);
     } catch (err) {
       console.error("Veri getirme hatası:", err);
@@ -139,23 +141,23 @@ const ProductPage = () => {
           allowClear
           onChange={(e) => setSearchText(e.target.value)}
           style={{
-            width: '100%',
+            width: "100%",
             maxWidth: 300,
             marginBottom: 16,
-            marginLeft: 'auto',
-            marginRight: 'auto',
+            marginLeft: "auto",
+            marginRight: "auto",
           }}
         />
-      <Table
-        dataSource={filteredData}
-        columns={columns}
-        rowKey={(record) => record._id}
-        loading={loading}
-        pagination={{ pageSize: 10 }} // Pagination ekledik
-        responsive // Responsive yapı
-        scroll={{ x: false }} // Yatay kaydırmayı kaldırdık
-        className="ant-table" // Tabloya stil ekledik
-        />  
+        <Table
+          dataSource={filteredData}
+          columns={columns}
+          rowKey={(record) => record._id}
+          loading={loading}
+          pagination={{ pageSize: 10 }} // Pagination ekledik
+          responsive // Responsive yapı
+          scroll={{ x: false }} // Yatay kaydırmayı kaldırdık
+          className="ant-table" // Tabloya stil ekledik
+        />
       </div>
     </>
   );

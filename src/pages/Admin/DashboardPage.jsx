@@ -49,8 +49,8 @@ const DashboardPage = () => {
         }
 
         if (!res.ok) throw new Error("Veri alınamadı");
-        const data = await res.json();
-        setStats(data);
+        const resJson = await res.json();
+        setStats(resJson.data || {});
       } catch (err) {
         console.error("Dashboard yükleme hatası:", err);
       }

@@ -17,7 +17,7 @@ const Success = () => {
       const addrRes = await fetchWithAuth(`${apiUrl}/api/address`);
       if (!addrRes.ok) throw new Error("Adres alınamadı");
       const addrData = await addrRes.json();
-      const address = addrData[0];
+      const address = addrData.data?.[0];
       if (!address) throw new Error("Adres bulunamadı");
 
       // 2) Sepette ürün yoksa kaydetme, direkt temizle
@@ -32,7 +32,7 @@ const Success = () => {
           productId: it._id,
           quantity: it.quantity,
           price: it.price,
-          selectedColor: it.selectedColor || null, 
+          selectedColor: it.selectedColor || null,
           selectedSize: it.selectedSize || null,
         })),
       };

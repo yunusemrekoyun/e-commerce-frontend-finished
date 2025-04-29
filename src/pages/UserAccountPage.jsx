@@ -50,8 +50,8 @@ const UserAccountPage = () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/address`);
       if (res.ok) {
-        const arr = await res.json();
-        setAddressData(arr[0] || null);
+        const { data } = await res.json();
+        setAddressData(data[0] || null);
       }
     } catch {
       message.error("Adres bilgisi alınamadı.");
@@ -62,8 +62,8 @@ const UserAccountPage = () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/orders`);
       if (!res.ok) throw new Error();
-      const data = await res.json();
-      setOrders(data);
+      const { data } = await res.json();
+      setOrders(data || []);
     } catch {
       message.error("Siparişler alınamadı.");
     }

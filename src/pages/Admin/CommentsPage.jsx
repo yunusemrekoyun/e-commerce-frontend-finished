@@ -30,8 +30,10 @@ const CommentsPage = () => {
         fetchWithAuth(`${apiUrl}/api/products/admin/reviews?approved=true`),
       ]);
       if (pRes.ok && aRes.ok) {
-        setPending(await pRes.json());
-        setApproved(await aRes.json());
+        const pData = await pRes.json();
+        const aData = await aRes.json();
+        setPending(pData.data || []);
+        setApproved(aData.data || []);
       } else {
         message.error("Yorumlar alınamadı.");
       }
@@ -201,7 +203,7 @@ const CommentsPage = () => {
           style={{ flex: 1, minWidth: 200, maxWidth: 400 }}
         />
       </div>
-  
+
       <Tabs defaultActiveKey="pending" items={tabsItems} />
     </Spin>
   );

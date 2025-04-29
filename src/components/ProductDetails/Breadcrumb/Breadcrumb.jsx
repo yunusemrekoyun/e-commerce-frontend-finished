@@ -28,7 +28,7 @@ const Breadcrumb = ({ category, brand, productName }) => {
           <li>{productName}</li>
         </ul>
       </nav>
-      <h1>{productName}</h1>
+      {/* <h1>{productName}</h1> */}
     </div>
   );
 };

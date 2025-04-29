@@ -56,8 +56,8 @@ const CartTotals = () => {
     try {
       const res = await fetchWithAuth(`${apiUrl}/api/address`);
       if (res.ok) {
-        const arr = await res.json();
-        setAddressData(arr[0] || null);
+        const { data } = await res.json();
+        setAddressData(data[0] || null);
       }
     } catch {
       // sessizce geç
@@ -125,7 +125,8 @@ const CartTotals = () => {
       if (!res.ok) {
         throw new Error();
       }
-      const { id: sessionId } = await res.json();
+      const { data } = await res.json();
+      const sessionId = data.sessionId;
       await stripe.redirectToCheckout({ sessionId });
     } catch {
       Modal.error({

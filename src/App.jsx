@@ -1,7 +1,7 @@
 /********************************************************
  * /Applications/Works/e-commerce/frontend/src/App.jsx
  ********************************************************/
-import { Route, Routes, Outlet } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import ShopPage from "./pages/ShopPage";
 // import BlogPage from "./pages/BlogPage";
@@ -12,7 +12,7 @@ import ProductDetailsPage from "./pages/ProductDetailsPage";
 import BlogDetailsPage from "./pages/BlogDetailsPage";
 import Success from "./pages/Success";
 import UserAccountPage from "./pages/UserAccountPage";
-import DashboardPage from "./pages/Admin/DashboardPage";
+import DashboardPage from "./pages/Admin/DashBoardPage";
 import UserPage from "./pages/Admin/UserPage";
 import CategoryPage from "./pages/Admin/Categories/CategoryPage";
 import UpdateCategoryPage from "./pages/Admin/Categories/UpdateCategoryPage";
@@ -25,7 +25,7 @@ import CouponPage from "./pages/Admin/Coupons/CouponPage";
 import CreateCouponPage from "./pages/Admin/Coupons/CreateCouponPage";
 import UpdateCouponPage from "./pages/Admin/Coupons/UpdateCouponPage";
 import OrderPage from "./pages/Admin/Orders/OrderPage";
-
+import NotFound from "./pages/NotFound";
 import CommentsPage from "./pages/Admin/CommentsPage";
 
 import MainLayout from "./layouts/MainLayout";
@@ -47,7 +47,7 @@ function App() {
         <Route path="/success" element={<Success />} />
         <Route path="/account" element={<UserAccountPage />} />
         <Route path="/shop/:category" element={<ShopPage />} />
-        <Route path="*" element={<Outlet />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
 
       <Route
@@ -74,7 +74,7 @@ function App() {
         ***
         <Route path="comments" element={<CommentsPage />} />
         ***
-        <Route path="*" element={<Outlet />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );

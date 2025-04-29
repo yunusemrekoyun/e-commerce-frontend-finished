@@ -3,7 +3,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import imageCompression from "browser-image-compression";
-
+import { fetchWithAuth } from "../../../components/Auth/fetchWithAuth";
 const { Option } = Select;
 
 const CreateProductPage = () => {
@@ -20,7 +20,7 @@ const CreateProductPage = () => {
   useEffect(() => {
     fetch(`${apiUrl}/api/categories`)
       .then((res) => res.json())
-      .then((data) => setCategories(data))
+      .then((response) => setCategories(response.data))
       .catch((err) => console.error("Ürün kategorileri alınamadı:", err));
   }, [apiUrl]);
 
@@ -64,10 +64,15 @@ const CreateProductPage = () => {
         formData.append("img", compressed);
       }
 
-      const res = await fetch(`${apiUrl}/api/products`, {
-        method: "POST",
-        body: formData,
-      });
+      const res = await fetchWithAuth(
+        `${apiUrl}/api/products`,
+        {
+          method: "POST",
+          body: formData,
+        },
+        false
+      ); // 👈 FormData olduğu için 3. parametreyi false yapıyoruz
+
       if (res.ok) {
         message.success("Ürün başarıyla oluşturuldu.");
         form.resetFields();
@@ -75,7 +80,8 @@ const CreateProductPage = () => {
         setSizes([]);
         navigate("/admin/products");
       } else {
-        message.error("Ürün oluşturulurken hata oluştu.");
+        const errorText = await res.text();
+        message.error(errorText || "Ürün oluşturulurken hata oluştu.");
       }
     } catch (err) {
       console.error(err);
@@ -84,7 +90,6 @@ const CreateProductPage = () => {
       setLoading(false);
     }
   };
-
   return (
     <Form form={form} layout="vertical" onFinish={onFinish}>
       <Form.Item
