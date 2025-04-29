@@ -6,14 +6,14 @@
 
 /* Ürün başlığı (product-title) → en fazla 2 satır + üç nokta */
 .ant-modal .product-title {
-  display: -webkit-box; /* çok satırı kutu olarak ölç */
-  -webkit-line-clamp: 2; /* ⬅️ 2 satırı geçme */
+  display: -webkit-box; /* WebKit için */
+  display: box; /* Eski tarayıcılar için */
   -webkit-box-orient: vertical;
+  box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2; /* 🔥 Standart yazımı */
   overflow: hidden;
-  text-overflow: ellipsis; /* satır sonuna … ekle */
-  line-height: 1.2em; /* satır yüksekliği */
-  max-height: calc(1.2em * 2); /* toplam 2 satır yüksekliği */
-  margin-bottom: 0.75rem; /* yıldız/yorum bloğuyla aralık */
+  text-overflow: ellipsis;
 }
 
 /* Açıklamanın üstündeki gereksiz boşluğu sıfırla */

@@ -47,9 +47,12 @@ const ProductFilter = ({
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/categories`);
-        const data = await res.json();
-  
+        const res = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/categories`
+        );
+        const response = await res.json(); // <<< değişti
+        const data = response.data || []; // <<< değişti
+
         if (categoryName) {
           const cat = data.find((c) => c.name === categoryName);
           setBrands((cat?.brands || []).map((b) => b.trim().toLowerCase()));
@@ -63,8 +66,8 @@ const ProductFilter = ({
         console.error("Marka alınamadı:", err);
       }
     };
-  
-    if (categoryName !== "") {   // ⬅️ Burayı ekledik, kategori ismi hazırsa çalışacak!
+
+    if (categoryName !== "") {
       fetchAll();
     }
   }, [categoryName, selectedBrands]);

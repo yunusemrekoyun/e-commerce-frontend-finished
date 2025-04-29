@@ -10,9 +10,13 @@ import {
   Checkbox,
 } from "antd";
 import { fetchWithAuth } from "../../../components/Auth/fetchWithAuth";
-import './DiscountPage.css'; // CSS dosyasını import ettik
+import "./DiscountPage.css"; // CSS dosyasını import ettik
 
 const { Option } = Select;
+
+// Gelen veriyi normalize eden yardımcı fonksiyon
+const normalizeData = (resData) =>
+  Array.isArray(resData) ? resData : resData.data || [];
 
 const DiscountPage = () => {
   const [categories, setCategories] = useState([]);
@@ -36,13 +40,19 @@ const DiscountPage = () => {
           fetch(`${apiUrl}/api/categories`),
           fetchWithAuth(`${apiUrl}/api/discounts/products`),
         ]);
+
         if (catRes.status === 401 || prodRes.status === 401) {
           window.location.reload();
           return;
         }
+
         if (!catRes.ok) throw new Error("Kategori alınamadı");
-        setCategories(await catRes.json());
-        setDiscounted(await prodRes.json());
+
+        const catData = await catRes.json();
+        setCategories(catData.data || []);
+
+        const prodData = await prodRes.json();
+        setDiscounted(normalizeData(prodData));
       } catch (err) {
         console.error(err);
         message.error("Veri alınamadı.");
@@ -57,7 +67,7 @@ const DiscountPage = () => {
       setSelCat(null);
       setSelBrands(["all"]);
       setDiscValue(0);
-      setUpdateAll(false); // 🔥 Modal açılınca checkbox da sıfırlanmalı
+      setUpdateAll(false);
     }
   }, [modalVisible]);
 
@@ -76,9 +86,7 @@ const DiscountPage = () => {
 
     setLoading(true);
     try {
-      const checkBody = {
-        categoryId: selCat,
-      };
+      const checkBody = { categoryId: selCat };
       if (!selBrands.includes("all")) {
         checkBody.brandIds = Array.isArray(selBrands)
           ? selBrands.map((b) => b.toLowerCase())
@@ -92,7 +100,9 @@ const DiscountPage = () => {
       });
 
       const checkData = await checkRes.json();
-      if (checkData.hasDiscountedProducts && !updateAll) {
+
+      const hasExistingDiscount = checkData?.data?.hasDiscountedProducts;
+      if (hasExistingDiscount && !updateAll) {
         message.warning(
           "Seçilen kategoride/markalarda zaten indirimli ürünler var. Mevcut indirimleri değiştirmek için kutucuğu işaretlemelisiniz."
         );
@@ -100,7 +110,7 @@ const DiscountPage = () => {
         return;
       }
 
-      // 🔥 Buraya kadar geldiyse uygula
+      // 🔥 Artık buradaysak ya hiç eski indirim yok ya da kutu işaretli
       const body = {
         categoryId: selCat,
         discount: discValue,
@@ -120,18 +130,25 @@ const DiscountPage = () => {
 
       if (!res.ok) throw new Error("Uygulama başarısız");
 
-      message.success("İndirim güncellendi.");
+      message.success("İndirim başarıyla güncellendi.");
       setModalVisible(false);
 
+      // İndirim sonrası güncel verileri çekiyoruz
       const updated = await fetchWithAuth(`${apiUrl}/api/discounts/products`);
-      setDiscounted(await updated.json());
+      const updatedJson = await updated.json();
+      const updatedProducts = Array.isArray(updatedJson)
+        ? updatedJson
+        : updatedJson.data || [];
+
+      setDiscounted(updatedProducts);
     } catch (err) {
       console.error(err);
-      message.error("Uygulama hatası.");
+      message.error("İndirim uygulama hatası.");
     } finally {
       setLoading(false);
     }
   };
+
   const handleDeleteDiscount = async (productId) => {
     Modal.confirm({
       title: "İndirimi Kaldır",
@@ -150,13 +167,15 @@ const DiscountPage = () => {
           if (!res.ok) throw new Error("Silme başarısız");
 
           message.success("İndirim kaldırıldı.");
+
           const updated = await fetchWithAuth(
             `${apiUrl}/api/discounts/products`
           );
-          setDiscounted(await updated.json());
+          const updatedJson = await updated.json();
+          setDiscounted(updatedJson.data || []);
         } catch (err) {
           console.error(err);
-          message.error("İndirim kaldırılamadı.");
+          message.error("İndirim kaldırılırken hata oluştu.");
         } finally {
           setLoading(false);
         }
@@ -165,25 +184,22 @@ const DiscountPage = () => {
   };
 
   const columns = [
-    { title: "Ürün Adı", dataIndex: "name", key: "name" },
-    {
-      title: "Görsel",
-      dataIndex: "img",
-      key: "img",
-      render: (imgs) => imgs?.[0] && <img src={imgs[0]} alt="" width={60} />,
-    },
     {
       title: "Kategori",
       dataIndex: "category",
       key: "category",
       render: (c) => c?.name || c,
     },
-    { title: "Marka", dataIndex: "brand", key: "brand" },
     {
-      title: "Eski İndirim",
+      title: "Marka",
+      dataIndex: "brand",
+      key: "brand",
+    },
+    {
+      title: "İndirim",
       dataIndex: ["price", "discount"],
-      key: "oldDisc",
-      render: (d) => `${d}%`,
+      key: "discount",
+      render: (discount) => `${discount}%`,
     },
     {
       title: "İşlem",

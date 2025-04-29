@@ -24,8 +24,8 @@ const OrderPage = () => {
         message.error("Siparişler alınamadı.");
         return;
       }
-      const data = await res.json();
-      setDataSource(data);
+      const resJson = await res.json();
+      setDataSource(resJson.data || []); // 🔥 sadece 'data' çekiyoruz
     } catch (err) {
       console.error(err);
       message.error("Veri hatası.");
@@ -146,12 +146,15 @@ const OrderPage = () => {
               style={{ width: "100%" }}
             >
               <p>Email: {order.email}</p>
-              <p>Fiyat: <b>{order.total.toFixed(2)}₺</b></p>
+              <p>
+                Fiyat: <b>{order.total.toFixed(2)}₺</b>
+              </p>
               <p>Durum: {order.status}</p>
               <p>
                 Tarih: {new Date(order.createdAt).toLocaleDateString("tr-TR")}
                 <br />
-                Saat: {new Date(order.createdAt).toLocaleTimeString("tr-TR", {
+                Saat:{" "}
+                {new Date(order.createdAt).toLocaleTimeString("tr-TR", {
                   hour: "2-digit",
                   minute: "2-digit",
                 })}

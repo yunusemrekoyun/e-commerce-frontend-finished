@@ -1,7 +1,7 @@
 import { Button, Popconfirm, Space, Table, message, Input } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import './CategoryPage.css'; // CSS dosyasını import ettik
+import "./CategoryPage.css"; // CSS dosyasını import ettik
 
 const { Search } = Input;
 
@@ -17,8 +17,8 @@ const CategoryPage = () => {
     try {
       const res = await fetch(`${apiUrl}/api/categories`);
       if (!res.ok) throw new Error();
-      const data = await res.json();
-      setDataSource(data);
+      const response = await res.json();
+      setDataSource(response.data || []);
     } catch {
       message.error("Veri getirme başarısız.");
     } finally {
@@ -96,11 +96,11 @@ const CategoryPage = () => {
         allowClear
         onChange={(e) => setSearchText(e.target.value)}
         style={{
-          width: '100%',
+          width: "100%",
           maxWidth: 300,
           marginBottom: 16,
-          marginLeft: 'auto',
-          marginRight: 'auto',
+          marginLeft: "auto",
+          marginRight: "auto",
         }}
       />
       <Table
@@ -109,7 +109,7 @@ const CategoryPage = () => {
         columns={columns}
         loading={loading}
         pagination={{ pageSize: 10 }}
-        scroll={{ x: 'max-content' }}
+        scroll={{ x: "max-content" }}
         responsive
         className="category-page-table"
       />

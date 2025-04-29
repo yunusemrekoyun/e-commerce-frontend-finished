@@ -29,6 +29,10 @@ const CreateCategoryPage = () => {
         message.success("Kategori başarıyla oluşturuldu.");
         form.resetFields();
         navigate("/admin/categories");
+      }
+      const response = await res.json();
+      if (!res.ok || !response.success) {
+        throw new Error(response.message || "Kategori oluşturulamadı");
       } else {
         message.error("Kategori oluşturulurken hata oluştu.");
       }

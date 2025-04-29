@@ -18,8 +18,11 @@ const UpdateCategoryPage = () => {
       try {
         const res = await fetch(`${apiUrl}/api/categories/${categoryId}`);
         if (!res.ok) throw new Error();
-        const data = await res.json();
-        form.setFieldsValue({ name: data.name, brands: data.brands });
+        const response = await res.json();
+        form.setFieldsValue({
+          name: response.data.name,
+          brands: response.data.brands,
+        });
       } catch {
         message.error("Kategori yükleme hatası.");
       } finally {

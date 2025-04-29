@@ -14,6 +14,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import imageCompression from "browser-image-compression";
 import { fetchWithAuth } from "../../../components/Auth/fetchWithAuth";
+
 const MAX_IMAGES = 6;
 const { Option } = Select;
 
@@ -34,15 +35,14 @@ const compressImage = async (file) => {
 const UpdateProductPage = () => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [brandOptions, setBrandOptions] = useState([]); // ← yenisi
+  const [brandOptions, setBrandOptions] = useState([]);
   const [fileList, setFileList] = useState([]);
+  const [deletedImages, setDeletedImages] = useState([]);
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { id: productId } = useParams();
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
-  const [deletedImages, setDeletedImages] = useState([]);
 
-  // Kategorileri ve ürünü getir
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -55,13 +55,12 @@ const UpdateProductPage = () => {
           message.error("Veri getirme başarısız.");
           return;
         }
-        const [categoriesData, productData] = await Promise.all([
+        const [categoriesRaw, productData] = await Promise.all([
           categoriesRes.json(),
           productRes.json(),
         ]);
-        setCategories(categoriesData);
+        setCategories(categoriesRaw.data);
 
-        // form alanlarını doldur
         form.setFieldsValue({
           name: productData.name,
           current: productData.price.current,
@@ -71,13 +70,12 @@ const UpdateProductPage = () => {
             typeof productData.category === "string"
               ? productData.category
               : productData.category?._id,
-          brand: productData.brand, // ← ekledik
+          brand: productData.brand,
           colors: productData.colors || [],
           sizes: productData.sizes || [],
         });
 
-        // kategoriye göre brandOptions ayarla
-        const selectedCat = categoriesData.find(
+        const selectedCat = categoriesRaw.data.find(
           (c) =>
             c._id ===
             (typeof productData.category === "string"
@@ -86,13 +84,11 @@ const UpdateProductPage = () => {
         );
         setBrandOptions(selectedCat?.brands || []);
 
-        // görselleri hazırla
-        // görselleri hazırla
         const images = productData.img.map((img) => ({
           uid: img._id,
           name: "image.png",
           status: "done",
-          thumbUrl: img.base64, // url yerine thumbUrl kullanıyoruz
+          thumbUrl: img.base64,
         }));
         setFileList(images);
         form.setFieldsValue({ img: images });
@@ -106,14 +102,12 @@ const UpdateProductPage = () => {
     fetchData();
   }, [apiUrl, productId, form]);
 
-  // kategori değiştiğinde brandOptions’u güncelle
   const onCategoryChange = (value) => {
     const cat = categories.find((c) => c._id === value);
     setBrandOptions(cat?.brands || []);
     form.setFieldsValue({ brand: undefined });
   };
 
-  // Upload bileşeni değiştiğinde dosya listesi
   const handleChange = ({ fileList: newList }) => {
     const onlyNew = newList.filter((f) => f.originFileObj);
     const existing = fileList.filter((f) => !f.originFileObj);
@@ -125,14 +119,13 @@ const UpdateProductPage = () => {
     setFileList(combined);
   };
 
-  // Form gönderildiğinde
   const onFinish = async (values) => {
     setLoading(true);
     try {
       const formData = new FormData();
       formData.append("name", values.name);
       formData.append("category", values.category);
-      formData.append("brand", values.brand || ""); // ← ekledik
+      formData.append("brand", values.brand || "");
       formData.append("description", values.description);
       formData.append("current", values.current);
       formData.append("discount", values.discount);
@@ -142,7 +135,6 @@ const UpdateProductPage = () => {
       if (values.sizes?.length)
         formData.append("sizes", values.sizes.join(","));
 
-      // yeni görseller
       const newImages = fileList.filter((f) => f.originFileObj);
       for (const file of newImages) {
         const compressed = await compressImage(file.originFileObj);
@@ -153,8 +145,6 @@ const UpdateProductPage = () => {
         .filter((f) => !f.originFileObj)
         .map((f) => f.uid);
       formData.append("keepImages", JSON.stringify(keepIds));
-
-      // Silinenleri bildir
       formData.append("deletedImages", JSON.stringify(deletedImages));
 
       const res = await fetchWithAuth(
@@ -165,10 +155,12 @@ const UpdateProductPage = () => {
         },
         false
       );
+
       if (!res.ok) {
         const errorText = await res.text();
         throw new Error(errorText || "Ürün güncellenemedi.");
       }
+
       message.success("Ürün başarıyla güncellendi.");
       navigate("/admin/products");
     } catch (err) {
@@ -209,7 +201,6 @@ const UpdateProductPage = () => {
           </Select>
         </Form.Item>
 
-        {/** 👉 Yeni: Marka Seçimi **/}
         <Form.Item
           label="Marka"
           name="brand"

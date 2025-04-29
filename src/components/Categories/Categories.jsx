@@ -15,10 +15,12 @@ const Categories = () => {
   useEffect(() => {
     (async () => {
       try {
-        const res   = await fetch(`${apiUrl}/api/categories`);
+        const res = await fetch(`${apiUrl}/api/categories`);
         if (!res.ok) throw new Error();
-        const data  = await res.json();
-        const rand  = [...data].sort(() => 0.5 - Math.random()).slice(0, 12);
+        const data = await res.json();
+        const rand = [...(data.data || [])]
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 12);
         setCategories(rand);
       } catch {
         message.error("Kategoriler alınamadı");

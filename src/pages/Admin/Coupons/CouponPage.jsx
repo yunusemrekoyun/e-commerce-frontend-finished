@@ -1,7 +1,7 @@
 import { Button, Popconfirm, Space, Table, message } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import './CouponPage.css'; // CSS dosyasını import ettik
+import "./CouponPage.css"; // CSS dosyasını import ettik
 
 const CouponPage = () => {
   const [dataSource, setDataSource] = useState([]);
@@ -57,8 +57,8 @@ const CouponPage = () => {
       const response = await fetch(`${apiUrl}/api/coupons`);
 
       if (response.ok) {
-        const data = await response.json();
-        setDataSource(data);
+        const responseData = await response.json();
+        setDataSource(responseData.data || []); // 🔥 sadece data kısmını alıyoruz
       } else {
         message.error("Veri getirme başarısız.");
       }
