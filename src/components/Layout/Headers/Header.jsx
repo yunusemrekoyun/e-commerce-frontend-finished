@@ -1,7 +1,7 @@
 /********************************************************
  * /Applications/Works/e-commerce/frontend/src/components/Layout/Header/Header.jsx
  ********************************************************/
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import PropTypes from "prop-types";
 import { Link, useLocation } from "react-router-dom";
 import { Modal } from "antd";
@@ -46,12 +46,7 @@ const Header = ({ setIsSearchShow }) => {
     (total, item) => total + (item.quantity || 1),
     0
   );
-  useEffect(() => {
-    const isDesktop = window.innerWidth >= 992;
-    if (pathname === "/shop" && isDesktop) {
-      setIsDropdownOpen(true);
-    }
-  }, [pathname]);
+
   return (
     <header>
       <div className="header-row">
@@ -87,15 +82,7 @@ const Header = ({ setIsSearchShow }) => {
                       ANA SAYFA
                     </Link>
                   </li>
-                  <li
-                    className="menu-list-item megamenu-wrapper"
-                    onMouseEnter={() => {
-                      if (window.innerWidth >= 992) setIsDropdownOpen(true);
-                    }}
-                    onMouseLeave={() => {
-                      if (window.innerWidth >= 992) setIsDropdownOpen(false);
-                    }}
-                  >
+                  <li className="menu-list-item megamenu-wrapper">
                     <Link
                       to={"/shop"}
                       className={`menu-link ${
@@ -119,40 +106,40 @@ const Header = ({ setIsSearchShow }) => {
                                   <a href="/shop/saç-bakımı">Saç Bakımı</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-sekllenendiriciler">
+                                  <a href="/shop/saç-şekillenendiriciler">
                                     Saç Şekillendiriciler
                                   </a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sampuan">Şampuan</a>
+                                  <a href="/shop/şampuan">Şampuan</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/erkek-sac-bakimi">
+                                  <a href="/shop/erkek-saç-bakımı">
                                     Erkek Saç Bakımı
                                   </a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-boyalari">Saç Boyaları</a>
+                                  <a href="/shop/saç-boyaları">Saç Boyaları</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-acicilar">Saç Açıcılar</a>
+                                  <a href="/shop/saç-açıcılar">Saç Açıcılar</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-maskesi">Saç Maskesi</a>
+                                  <a href="/shop/saç-maskesi">Saç Maskesi</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-serumu">Saç Serumu</a>
+                                  <a href="/shop/saç-serumu">Saç Serumu</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-kremi">Saç Kremi</a>
+                                  <a href="/shop/saç-kremi">Saç Kremi</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-bakim-yagi">
+                                  <a href="/shop/saç-bakım-yagı">
                                     Saç Bakım Yağı
                                   </a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-spreyi">Saç Spreyi</a>
+                                  <a href="/shop/saç-spreyi">Saç Spreyi</a>
                                 </li>
                               </ul>
                             </div>
@@ -177,7 +164,7 @@ const Header = ({ setIsSearchShow }) => {
                               </h3>
                               <ul className="megamenu-menu-list">
                                 <li>
-                                  <a href="/shop/el-ve-ayak-bakimi">
+                                  <a href="/shop/el-ve-ayak-bakımı">
                                     El ve Ayak Bakımı
                                   </a>
                                 </li>
@@ -190,20 +177,20 @@ const Header = ({ setIsSearchShow }) => {
                               </h3>
                               <ul className="megamenu-menu-list">
                                 <li>
-                                  <a href="/shop/sac-masalar">Saç Maşaları</a>
+                                  <a href="/shop/sac-maşaları">Saç Maşaları</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-duzlestiriciler">
+                                  <a href="/shop/saç-duzlestiricisi">
                                     Saç Düzleştiriciler
                                   </a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-kesim-makinalari">
+                                  <a href="/shop/saç-kesim-makinalari">
                                     Saç Kesim Makinaları
                                   </a>
                                 </li>
                                 <li>
-                                  <a href="/shop/fon-makinalari">
+                                  <a href="/shop/fön-makinalari">
                                     Fön Makinaları
                                   </a>
                                 </li>
