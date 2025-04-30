@@ -46,18 +46,26 @@ const CartItem = ({ cartItem }) => {
           </div>
         )}
       </td>
-      <td>₺{cartItem.price.toFixed(2)}</td>
+      <td>
+        ₺
+        {typeof cartItem.price === "number"
+          ? cartItem.price.toFixed(2)
+          : "0.00"}
+      </td>
       <td className="product-quantity">
-        <button
-          className="quantity-btn"
-          onClick={handleDecrease}
-        >
+        <button className="quantity-btn" onClick={handleDecrease}>
           -
         </button>
         <span className="quantity-text">{cartItem.quantity}</span>
         <button className="quantity-btn" onClick={handleIncrease}>
           +
         </button>
+      </td>
+      <td className="product-subtotal">
+        ₺
+        {typeof cartItem.price === "number"
+          ? (cartItem.price * cartItem.quantity).toFixed(2)
+          : "0.00"}
       </td>
       <td className="product-subtotal">
         ₺{(cartItem.price * cartItem.quantity).toFixed(2)}

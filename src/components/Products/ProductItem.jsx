@@ -28,11 +28,19 @@ const ProductItem = ({ productItem }) => {
     return (
       <ul className="product-star">
         {[...Array(full)].map((_, i) => (
-          <li key={`f-${i}`}><i className="bi bi-star-fill" /></li>
+          <li key={`f-${i}`}>
+            <i className="bi bi-star-fill" />
+          </li>
         ))}
-        {half && <li key="half"><i className="bi bi-star-half" /></li>}
+        {half && (
+          <li key="half">
+            <i className="bi bi-star-half" />
+          </li>
+        )}
         {[...Array(empty)].map((_, i) => (
-          <li key={`e-${i}`}><i className="bi bi-star" /></li>
+          <li key={`e-${i}`}>
+            <i className="bi bi-star" />
+          </li>
         ))}
       </ul>
     );
@@ -58,22 +66,25 @@ const ProductItem = ({ productItem }) => {
           <a href="#!" className="product-title">
             {productItem?.name}
           </a>
-          <div className="product-star">
-            {renderStars(averageRating)}
-          </div>
+          <div className="product-star">{renderStars(averageRating)}</div>
           <div className="product-prices">
             <strong className="new-price">
-              ₺{discountedPrice.toFixed(2)}
+              ₺
+              {discountPercentage > 0
+                ? discountedPrice.toFixed(2)
+                : originalPrice.toFixed(2)}
             </strong>
-            <span className="old-price">
-              ₺{originalPrice.toFixed(2)}
-            </span>
+
+            {discountPercentage > 0 && (
+              <>
+                <span className="old-price">₺{originalPrice.toFixed(2)}</span>
+                <span className="product-discount">-{discountPercentage}%</span>
+              </>
+            )}
           </div>
           {/* İndirim yüzdesi 0 ise burası görünmeyecek */}
           {discountPercentage > 0 && (
-            <span className="product-discount">
-              -{discountPercentage}%
-            </span>
+            <span className="product-discount">-{discountPercentage}%</span>
           )}
         </div>
       </div>

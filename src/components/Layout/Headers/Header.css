@@ -1,5 +1,32 @@
 /*! header start  */
+/* Logo yazısının satır değiştirmesini engelle */
+.header-left .logo {
+  white-space: nowrap; /* Alt satıra geçmesini engelle */
+  font-size: 2rem; /* Başlangıç font boyutu */
+  max-width: 100%; /* Genişlik %100, ihtiyaç halinde küçülür */
+  overflow: hidden; /* Taşan metin gizlenir */
+  text-overflow: ellipsis; /* Taşan metin için üç nokta eklenir */
+}
 
+/* Mobilde logo font boyutunu küçült */
+@media (max-width: 768px) {
+  .header-left .logo {
+    font-size: 1.5rem; /* Daha küçük cihazlarda font boyutunu küçült */
+  }
+}
+
+/* Çok küçük ekranlarda font boyutunu daha da küçült */
+@media (max-width: 480px) {
+  .header-left .logo {
+    font-size: 1.2rem; /* Daha küçük ekranlarda daha da küçült */
+  }
+}
+.header-center .menu-list > li {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 90px;
+}
 header {
   border-bottom: 1px solid #dee0ea;
   position: sticky;
@@ -261,7 +288,7 @@ header .menu-dropdown-content a:hover {
     gap: 24px;
   }
   .header-center .menu-list-item a {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
   }
 
@@ -269,15 +296,8 @@ header .menu-dropdown-content a:hover {
     display: inline-block;
   }
 
-  header .menu-dropdown-wrapper {
-    display: none !important;
-  }
-
   header .menu-list i {
     display: none;
-  }
-  header .menu-list-item a {
-    font-size: 16px !important;
   }
 }
 /*! renk düzeltmesi start */

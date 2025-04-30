@@ -40,6 +40,7 @@ const Header = ({ setIsSearchShow }) => {
     });
   };
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   // 🔥 Toplam ürün adedi (çeşit değil, toplam)
   const totalItems = cartItems.reduce(
     (total, item) => total + (item.quantity || 1),
@@ -59,7 +60,7 @@ const Header = ({ setIsSearchShow }) => {
             {/* Logo */}
             <div className="header-left">
               <Link to="/" className="logo">
-                ÜNKO Kozmetik
+                ÜNKO KOZMETİK
               </Link>
             </div>
 
@@ -81,16 +82,124 @@ const Header = ({ setIsSearchShow }) => {
                       ANA SAYFA
                     </Link>
                   </li>
-                  <li>
+                  <li className="menu-list-item megamenu-wrapper">
                     <Link
-                      to="/shop"
+                      to={"/shop"}
                       className={`menu-link ${
-                        pathname.startsWith("/shop") ? "active" : ""
+                        pathname === "/shop" ? "active" : ""
                       }`}
-                      onClick={() => setIsMenuOpen(false)}
+                      onClick={() => setIsDropdownOpen((prev) => !prev)}
                     >
                       MAĞAZA
+                      <i className="bi bi-chevron-down"></i>
                     </Link>
+                    {isDropdownOpen && (
+                      <div className="menu-dropdown-wrapper">
+                        <div className="menu-dropdown-megamenu">
+                          <div className="megamenu-links">
+                            <div className="megamenu-products">
+                              <h3 className="megamenu-products-title">
+                                Saç bakımı
+                              </h3>
+                              <ul className="megamenu-menu-list">
+                                <li>
+                                  <a href="/shop/saç-bakımı">Saç Bakımı</a>
+                                </li>
+                                <li>
+                                  <a href="/shop/sac-sekllenendiriciler">
+                                    Saç Şekillendiriciler
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="/shop/sampuan">Şampuan</a>
+                                </li>
+                                <li>
+                                  <a href="/shop/erkek-sac-bakimi">
+                                    Erkek Saç Bakımı
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="/shop/sac-boyalari">Saç Boyaları</a>
+                                </li>
+                                <li>
+                                  <a href="/shop/sac-acicilar">Saç Açıcılar</a>
+                                </li>
+                                <li>
+                                  <a href="/shop/sac-maskesi">Saç Maskesi</a>
+                                </li>
+                                <li>
+                                  <a href="/shop/sac-serumu">Saç Serumu</a>
+                                </li>
+                                <li>
+                                  <a href="/shop/sac-kremi">Saç Kremi</a>
+                                </li>
+                                <li>
+                                  <a href="/shop/sac-bakim-yagi">
+                                    Saç Bakım Yağı
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="/shop/sac-spreyi">Saç Spreyi</a>
+                                </li>
+                              </ul>
+                            </div>
+
+                            <div className="megamenu-products">
+                              <h3 className="megamenu-products-title">
+                                Cilt Bakımı
+                              </h3>
+                              <ul className="megamenu-menu-list">
+                                <li>
+                                  <a href="/shop/yuz-maskesi">Yüz Maskesi</a>
+                                </li>
+                                <li>
+                                  <a href="/shop/serumlar">Serumlar</a>
+                                </li>
+                              </ul>
+                            </div>
+
+                            <div className="megamenu-products">
+                              <h3 className="megamenu-products-title">
+                                El ve Ayak Bakımı
+                              </h3>
+                              <ul className="megamenu-menu-list">
+                                <li>
+                                  <a href="/shop/el-ve-ayak-bakimi">
+                                    El ve Ayak Bakımı
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+
+                            <div className="megamenu-products">
+                              <h3 className="megamenu-products-title">
+                                Elektronik
+                              </h3>
+                              <ul className="megamenu-menu-list">
+                                <li>
+                                  <a href="/shop/sac-masalar">Saç Maşaları</a>
+                                </li>
+                                <li>
+                                  <a href="/shop/sac-duzlestiriciler">
+                                    Saç Düzleştiriciler
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="/shop/sac-kesim-makinalari">
+                                    Saç Kesim Makinaları
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="/shop/fon-makinalari">
+                                    Fön Makinaları
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </li>
                   <li>
                     <Link
