@@ -302,6 +302,9 @@ header .menu-dropdown-content a:hover {
     display: none;
   }
 
+  header .menu-list i {
+    display: none;
+  }
 }
 /*! renk düzeltmesi start */
 
