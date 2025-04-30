@@ -12,7 +12,7 @@ import ProductDetailsPage from "./pages/ProductDetailsPage";
 import BlogDetailsPage from "./pages/BlogDetailsPage";
 import Success from "./pages/Success";
 import UserAccountPage from "./pages/UserAccountPage";
-import DashboardPage from "./pages/Admin/DashBoardPage";
+import DashboardPage from "./pages/Admin/DashboardPage";
 import UserPage from "./pages/Admin/UserPage";
 import CategoryPage from "./pages/Admin/Categories/CategoryPage";
 import UpdateCategoryPage from "./pages/Admin/Categories/UpdateCategoryPage";

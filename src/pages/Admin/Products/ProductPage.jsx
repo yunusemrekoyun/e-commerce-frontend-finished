@@ -1,7 +1,7 @@
 import { Button, Popconfirm, Space, Table, message, Input } from "antd";
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { fetchWithAuth } from "../../../components/Auth/fetchWithAuth";
 const { Search } = Input;
 
 const ProductPage = () => {
@@ -14,9 +14,13 @@ const ProductPage = () => {
   // Ürün silme fonksiyonu
   const deleteProduct = async (productId) => {
     try {
-      const response = await fetch(`${apiUrl}/api/products/${productId}`, {
-        method: "DELETE",
-      });
+      const response = await fetchWithAuth(
+        `${apiUrl}/api/products/${productId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
       if (response.ok) {
         message.success("Ürün başarıyla silindi.");
         setDataSource((prev) =>
