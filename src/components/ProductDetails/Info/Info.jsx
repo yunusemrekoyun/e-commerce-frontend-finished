@@ -89,8 +89,10 @@ const Info = ({ singleProduct, compact = false }) => {
 
   return (
     <div className="product-info">
+      {/* 1. Ürün Adı */}
       <h1 className="product-title">{singleProduct?.name}</h1>
 
+      {/* 2. Yıldızlar + Yorum Sayısı */}
       {!compact && (
         <div className="product-review">
           {renderStars(averageRating)}
@@ -100,74 +102,76 @@ const Info = ({ singleProduct, compact = false }) => {
         </div>
       )}
 
+      {/* 3. Açıklama */}
+      <div className="product-description">
+        <p>{singleProduct?.description}</p>
+      </div>
+
+      {/* 4. Varyasyon Seçimleri */}
+      <div className="variations">
+        {colors.length > 0 && (
+          <div className="colors">
+            <div className="colors-wrapper">
+              {colors.map((color, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  className={`color-button ${
+                    selectedColor === color ? "active" : ""
+                  }`}
+                  style={{ backgroundColor: color }}
+                  onClick={() => handleColorChange(color)}
+                />
+              ))}
+            </div>
+            {colorError && (
+              <div className="error-message">Renk seçmek zorunludur.</div>
+            )}
+          </div>
+        )}
+
+        {sizes.length > 0 && (
+          <div className="sizes">
+            <div className="values-list">
+              {sizes.map((size, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  className={`size-button ${
+                    selectedSize === size ? "active" : ""
+                  }`}
+                  onClick={() => handleSizeChange(size)}
+                >
+                  {size.toUpperCase()}
+                </button>
+              ))}
+            </div>
+            {sizeError && (
+              <div className="error-message">Boyut seçmek zorunludur.</div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* 5. Fiyat */}
       <div className="product-price">
-        <s className="old-price">₺{originalPrice.toFixed(2)}</s>
+        {discountPercentage > 0 && (
+          <s className="old-price">₺{originalPrice.toFixed(2)}</s>
+        )}
         <strong className="new-price">₺{discountedPrice.toFixed(2)}</strong>
       </div>
 
-      {/* Yıldızların altında Ürün Bilgisi kısmı */}
-      <div className="product-description">
-        <p>{singleProduct?.description}</p>{" "}
-        {/* Ürün açıklaması buraya gelecek */}
+      {/* 6. Sepete Ekle */}
+      <div className="cart-button">
+        <input type="number" defaultValue="1" min="1" ref={quantityRef} />
+        <button
+          type="button"
+          className="btn btn-lg btn-primary"
+          onClick={handleAddToCart}
+        >
+          Sepete Ekle
+        </button>
       </div>
-
-      <form className="variations-form">
-        <div className="variations">
-          {colors.length > 0 && (
-            <div className="colors">
-              <div className="colors-wrapper">
-                {colors.map((color, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    className={`color-button ${
-                      selectedColor === color ? "active" : ""
-                    }`}
-                    style={{ backgroundColor: color }}
-                    onClick={() => handleColorChange(color)}
-                  />
-                ))}
-              </div>
-              {colorError && (
-                <div className="error-message">Renk seçmek zorunludur.</div>
-              )}
-            </div>
-          )}
-
-          {sizes.length > 0 && (
-            <div className="sizes">
-              <div className="values-list">
-                {sizes.map((size, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    className={`size-button ${
-                      selectedSize === size ? "active" : ""
-                    }`}
-                    onClick={() => handleSizeChange(size)}
-                  >
-                    {size.toUpperCase()}
-                  </button>
-                ))}
-              </div>
-              {sizeError && (
-                <div className="error-message">Boyut seçmek zorunludur.</div>
-              )}
-            </div>
-          )}
-
-          <div className="cart-button">
-            <input type="number" defaultValue="1" min="1" ref={quantityRef} />
-            <button
-              type="button"
-              className="btn btn-lg btn-primary"
-              onClick={handleAddToCart}
-            >
-              Sepete Ekle
-            </button>
-          </div>
-        </div>
-      </form>
     </div>
   );
 };

@@ -98,6 +98,7 @@ const Header = ({ setIsSearchShow }) => {
                         <div className="menu-dropdown-megamenu">
                           <div className="megamenu-links">
                           <div className="megamenu-products">
+                            <div className="megamenu-products">
                               <h3 className="megamenu-products-title">
                                 Saç bakımı
                               </h3>
@@ -107,12 +108,18 @@ const Header = ({ setIsSearchShow }) => {
                                 </li>
                                 <li>
                                   <a href="/shop/sac-sekllenendiriciler">Saç Şekillendiriciler</a>
+                                  <a href="/shop/sac-sekllenendiriciler">
+                                    Saç Şekillendiriciler
+                                  </a>
                                 </li>
                                 <li>
                                   <a href="/shop/sampuan">Şampuan</a>
                                 </li>
                                 <li>
                                   <a href="/shop/erkek-sac-bakimi">Erkek Saç Bakımı</a>
+                                  <a href="/shop/erkek-sac-bakimi">
+                                    Erkek Saç Bakımı
+                                  </a>
                                 </li>
                                 <li>
                                   <a href="/shop/sac-boyalari">Saç Boyaları</a>
@@ -130,7 +137,11 @@ const Header = ({ setIsSearchShow }) => {
                                   <a href="/shop/sac-kremi">Saç Kremi</a>
                                 </li>
                                 <li>
+<<<<<<< HEAD
                                   <a href="/shop/sac-bakim-yagi">Saç Bakım Yağı</a>
+                                  <a href="/shop/sac-bakim-yagi">
+                                    Saç Bakım Yağı
+                                  </a>
                                 </li>
                                 <li>
                                   <a href="/shop/sac-spreyi">Saç Spreyi</a>
@@ -159,6 +170,9 @@ const Header = ({ setIsSearchShow }) => {
                               <ul className="megamenu-menu-list">
                                 <li>
                                   <a href="/shop/el-ve-ayak-bakimi">El ve Ayak Bakımı</a>
+                                  <a href="/shop/el-ve-ayak-bakimi">
+                                    El ve Ayak Bakımı
+                                  </a>
                                 </li>
                               </ul>
                             </div>
@@ -179,6 +193,19 @@ const Header = ({ setIsSearchShow }) => {
                                 </li>
                                 <li>
                                   <a href="/shop/fon-makinalari">Fön Makinaları</a>
+                                  <a href="/shop/sac-duzlestiriciler">
+                                    Saç Düzleştiriciler
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="/shop/sac-kesim-makinalari">
+                                    Saç Kesim Makinaları
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="/shop/fon-makinalari">
+                                    Fön Makinaları
+                                  </a>
                                 </li>
                               </ul>
                             </div>
@@ -270,4 +297,4 @@ Header.propTypes = {
   setIsSearchShow: PropTypes.func,
 };
 
-export default Header;
+export default Header;export default Header;

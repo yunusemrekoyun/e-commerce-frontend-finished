@@ -20,15 +20,23 @@ const CartCoupon = () => {
       }
 
       const data = await res.json();
-      const discountPercent = data.discountPercent;
+      const discountPercent = data.data.discountPercent; // 🔥 önemli düzeltme
 
       const updatedCartItems = cartItems.map((item) => {
-        const updatePrice = item.originalPrice
-          ? item.originalPrice * (1 - discountPercent / 100)
-          : item.price * (1 - discountPercent / 100);
+        const basePrice =
+          typeof item.originalPrice === "number"
+            ? item.originalPrice
+            : typeof item.price === "number"
+            ? item.price
+            : 0;
+
+        const updatePrice = parseFloat(
+          (basePrice * (1 - discountPercent / 100)).toFixed(2)
+        );
+
         return {
           ...item,
-          originalPrice: item.originalPrice || item.price,
+          originalPrice: item.originalPrice ?? item.price,
           price: updatePrice,
         };
       });
@@ -65,8 +73,11 @@ const CartCoupon = () => {
     <div className="actions-wrapper">
       {appliedCoupon ? (
         <div className="applied-coupon-message">
-          <p style={{ color: "green", fontWeight: "bold", marginBottom: "8px" }}>
-            ✅ {appliedCoupon.code} kuponu uygulandı (%{appliedCoupon.discountPercent} indirim)
+          <p
+            style={{ color: "green", fontWeight: "bold", marginBottom: "8px" }}
+          >
+            ✅ {appliedCoupon.code} kuponu uygulandı (%
+            {appliedCoupon.discountPercent} indirim)
           </p>
           <button className="btn" onClick={removeCoupon}>
             Kuponu Kaldır
