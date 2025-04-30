@@ -20,3 +20,23 @@
     opacity: 1;
   }
   /*! brands end  */
+  /* Mobil için düzenlemeler */
+@media (max-width: 768px) {
+  .brand-list {
+    display: flex;
+    flex-wrap: wrap; /* Öğelerin satırlara sarmasına izin verir */
+    justify-content: space-between; /* Satırdaki öğeler arasında boşluk bırakır */
+    padding: 20px 0; /* Yatayda biraz boşluk bırak */
+  }
+
+  .brand-list .brand-item {
+    flex: 0 0 48%; /* Her bir öğeye yüzde 48 genişlik ver, böylece iki öğe yan yana gelir */
+    margin-bottom: 20px; /* Öğeler arasında boşluk bırak */
+    opacity: 0.6; /* Başlangıçta biraz daha düşük opaklık */
+    transition: 0.2s ease opacity; /* Geçiş efektini koru */
+  }
+
+  .brand-list .brand-item:hover {
+    opacity: 1; /* Hoverda opaklık 1 olacak */
+  }
+}

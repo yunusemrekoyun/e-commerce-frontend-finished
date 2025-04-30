@@ -288,14 +288,15 @@ const DiscountPage = () => {
         </div>
       </Modal>
 
-      <div className="page-container">
+      <div className="page-container" style={{ overflow: 'auto', height: 'calc(100vh - 100px)' }}>
         <Table
           rowKey="_id"
           dataSource={discounted}
           columns={columns}
           pagination={{ pageSize: 10 }}
           className="discount-table"
-          scroll={{ y: "calc(100vh - 200px)" }}
+          scroll={{ x: '100%', y: 'calc(100vh - 200px)' }} // Hem yatay hem dikey kayma ekledik
+
         />
       </div>
     </Spin>

@@ -91,7 +91,7 @@ const CouponPage = () => {
   }, [fetchCategories]);
 
   return (
-    <div className="page-container">
+    <div className="page-container" style={{ overflow: 'auto', height: 'calc(100vh - 100px)' }}>
       <Table
         dataSource={dataSource}
         columns={columns}
