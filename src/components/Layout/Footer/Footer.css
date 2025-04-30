@@ -64,7 +64,6 @@
   align-items: center;
   column-gap: 10px;
 }
-
 /*! subscribe end  */
 
 /*! widgets start  */
@@ -86,7 +85,6 @@
 
 .widgets-row .footer-widgets > .brand-info {
   flex: 3;
-  /* margin-left: 500px; */
 }
 
 .footer-widgets .brand-info .footer-desc {
@@ -119,7 +117,6 @@
 .footer-widgets .widget-nav-menu ul li a:hover {
   opacity: 0.5;
 }
-
 /*! widgets end  */
 
 /*! copyright start  */
@@ -142,6 +139,8 @@
   display: flex;
   align-items: center;
   font-size: 12px;
+  text-decoration: underline; /* Linklerin altını çizer */
+
   column-gap: 10px;
 }
 
@@ -157,22 +156,49 @@
   .footer .footer-row-wrapper {
     flex-direction: column;
     row-gap: 20px;
+    padding: 0 15px; /* Footer içeriğini biraz sıkıştırabiliriz */
   }
 
-  .footer .brand-info {
-    margin-bottom: 20px;
+  .footer .subscribe-title,
+  .footer .contact-title {
+    font-size: 24px; /* Başlıkları mobilde biraz daha küçük yapalım */
+  }
+
+  .footer .subscribe-desc,
+  .footer .contact-desc {
+    font-size: 12px; /* Açıklamaları mobilde daha küçük yapalım */
+  }
+
+  .footer .footer-subscribe-bottom,
+  .footer .footer-contact-bottom {
+    margin-top: 20px;
+  }
+
+  .footer .footer-subscribe-bottom form {
+    flex-direction: column;
+  }
+
+  .footer .footer-subscribe-bottom form > input,
+  .footer .footer-subscribe-bottom form > button {
+    width: 100%; /* Input ve butonların genişliğini %100 yapalım */
+    margin-bottom: 10px; /* Input ve buton arasına boşluk ekleyelim */
+  }
+
+  .footer .privacy-text {
+    font-size: 9px; /* Mobilde daha küçük yazı tipi */
+    text-align: center; /* Gizlilik metnini ortalayalım */
+  }
+
+  .footer .footer-contact-bottom .download-app {
+    flex-direction: column; /* Download app elemanlarını dikey sıralayalım */
+    align-items: center;
+    row-gap: 10px;
   }
 
   .footer-widgets .brand-info .footer-desc {
-    width: unset;
-  }
-
-  .widgets-row .footer-widgets > div {
-    flex: unset !important;
-  }
-
-  .footer .brand-info {
-    margin-bottom: 20px;
+    width: unset; /* Mobilde açıklama genişliğini sıfırlayalım */
+    font-size: 12px; /* Mobilde daha küçük yazı tipi */
+    margin: 10px 0; /* Daha az boşluk */
   }
 
   .footer-copyright {
@@ -183,5 +209,15 @@
 
   .footer-copyright .footer-menu {
     margin-left: unset;
+  }
+
+  .footer-copyright .footer-menu-list {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-copyright .footer-menu-list .list-item {
+    padding-right: 0;
+    border-right: none;
   }
 }

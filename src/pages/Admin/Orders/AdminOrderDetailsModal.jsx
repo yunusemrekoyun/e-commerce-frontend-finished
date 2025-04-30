@@ -5,21 +5,53 @@ const AdminOrderDetailsModal = ({ visible, onClose, order }) => {
   if (!order) return null;
 
   const columns = [
-    { title: "Ürün Adı", dataIndex: "name", key: "name" },
-    { title: "Marka", dataIndex: "brand", key: "brand" },
-    { title: "Kategori", dataIndex: "category", key: "category" },
-    { title: "Renk", dataIndex: "color", key: "color" },
-    { title: "Beden", dataIndex: "size", key: "size" },
-    { title: "Adet", dataIndex: "quantity", key: "quantity" },
-    {
-      title: "Birim Fiyat",
-      dataIndex: "price",
+    { 
+      title: "Ürün Adı", 
+      dataIndex: "name", 
+      key: "name",
+      width: 200, // Başlık ve hücre genişliğini sabitliyoruz
+    },
+    { 
+      title: "Marka", 
+      dataIndex: "brand", 
+      key: "brand",
+      width: 150,
+    },
+    { 
+      title: "Kategori", 
+      dataIndex: "category", 
+      key: "category",
+      width: 150,
+    },
+    { 
+      title: "Renk", 
+      dataIndex: "color", 
+      key: "color",
+      width: 100,
+    },
+    { 
+      title: "Beden", 
+      dataIndex: "size", 
+      key: "size",
+      width: 100,
+    },
+    { 
+      title: "Adet", 
+      dataIndex: "quantity", 
+      key: "quantity",
+      width: 100,
+    },
+    { 
+      title: "Birim Fiyat", 
+      dataIndex: "price", 
       key: "price",
+      width: 150,
       render: (p) => `${p.toFixed(2)}₺`,
     },
-    {
-      title: "Ara Toplam",
+    { 
+      title: "Ara Toplam", 
       key: "subtotal",
+      width: 150,
       render: (_, item) => `${(item.price * item.quantity).toFixed(2)}₺`,
     },
   ];
@@ -37,10 +69,8 @@ const AdminOrderDetailsModal = ({ visible, onClose, order }) => {
       onCancel={onClose}
       footer={null}
       title={`Admin Sipariş Detayı - #${order._id.slice(-6)}`}
-      width="90%" // Make the modal width responsive
-      style={{ maxWidth: 800 }}
-      // bodyStyle={{ padding: "16px 24px" }} // Ensure padding is consistent on mobile  YANLIŞ KULLANIM
-      styles={{ body: { padding: "16px 24px" } }}
+      width="80%" // Modal genişliği
+      style={{ maxWidth: "1000px", overflow: "hidden" }} // Taşmayı engelleme
     >
       <Row gutter={[16, 8]}>
         <Col span={24}>
@@ -110,7 +140,8 @@ const AdminOrderDetailsModal = ({ visible, onClose, order }) => {
         pagination={false}
         rowKey={(rec) => rec.productId}
         size="small"
-        scroll={{ x: "max-content" }} // Ensure table scrolls horizontally on small screens
+        scroll={{ x: "max-content", y: 400 }} // Yatay kaydırma ve dikey kaydırma
+        style={{ overflowX: "auto", maxWidth: "100%" }} // Taşma engelleniyor, yatay kaydırma sağlanıyor
       />
 
       <div style={{ textAlign: "right", marginTop: 20 }}>

@@ -83,7 +83,7 @@ const UserPage = () => {
   }, [fetchUsers]);
 
   return (
-    <div className="page-container">
+<div className="page-container" style={{ overflow: 'auto', height: 'calc(100vh - 100px)' }}>
       {/* Kullanıcı adıyla arama kutusu */}
       <Input
         placeholder="Kullanıcı adıyla ara"

@@ -37,3 +37,39 @@
   .policy .policy-item .policy-texts span {
     font-size: 12px;
   }
+  /* Mobil için düzenlemeler */
+@media (max-width: 768px) {
+  .policy .policy-list {
+    flex-direction: column; /* Listeyi dikey hale getir */
+    align-items: center; /* Öğeleri yatayda ortala */
+    justify-content: center; /* Öğeleri dikeyde ortala */
+    padding: 15px 0; /* Yatayda biraz boşluk bırak */
+  }
+
+  .policy .policy-item {
+    margin-bottom: 15px; /* Öğeler arasında boşluk bırak */
+    justify-content: center; /* Öğeleri yatayda ortala */
+    text-align: center; /* Metinleri ortala */
+    display: flex; /* Flexbox düzeni ekle */
+    flex-direction: column; /* Öğeleri dikeyde sıralamak için */
+    align-items: center; /* Dikeyde de ortala */
+  }
+
+  .policy .policy-item i {
+    font-size: 40px; /* İkon boyutunu küçült */
+    margin-bottom: 10px; /* İkon ile metin arasına boşluk ekle */
+  }
+
+  .policy .policy-item .policy-texts {
+    align-items: center; /* Metni ve başlığı ortala */
+    text-align: center; /* Metni merkezle */
+  }
+
+  .policy .policy-item .policy-texts strong {
+    font-size: 14px; /* Başlık boyutunu biraz küçült */
+  }
+
+  .policy .policy-item .policy-texts span {
+    font-size: 12px; /* Açıklama boyutunu küçük tut */
+  }
+}
