@@ -9,23 +9,25 @@ const Breadcrumb = ({ category, brand, productName }) => {
   // Eğer category bir obje ise name'ini, değilse olduğu gibi string olarak al
   const categoryName =
     category && typeof category === "object" && category.name
-      ? category.name
-      : category;
+      ? category.name.toUpperCase()
+      : category?.toUpperCase();
 
   // Aynı mantığı brand için de uygulayabilirsin (eğer marka da obje geldiyse .name üzerinden)
   const brandName =
-    brand && typeof brand === "object" && brand.name ? brand.name : brand;
+    brand && typeof brand === "object" && brand.name
+      ? brand.name.toUpperCase()
+      : brand?.toUpperCase();
 
   return (
     <div className="single-topbar">
       <nav className="breadcrumb">
         <ul>
           <li>
-            <Link to="/">Home</Link>
+            <Link to="/">MAĞAZA</Link>
           </li>
           {categoryName && <li>{categoryName}</li>}
           {brandName && <li>{brandName}</li>}
-          <li>{productName}</li>
+          <li>{productName.toUpperCase()}</li>
         </ul>
       </nav>
       {/* <h1>{productName}</h1> */}

@@ -1,6 +1,4 @@
-/********************************************************
- * frontend/src/components/ProductDetails/ProductDetails.jsx
- ********************************************************/
+import { useLayoutEffect } from "react";
 import Breadcrumb from "./Breadcrumb/Breadcrumb";
 import Gallery from "./Gallery/Gallery";
 import PropTypes from "prop-types";
@@ -13,6 +11,28 @@ const ProductDetails = ({
   setSingleProduct,
   compact = false,
 }) => {
+  // DOM sıralamasını yalnızca ürün yüklendiğinde düzenle
+  useLayoutEffect(() => {
+    if (!singleProduct) return; // Ürün gelmeden işlem yapma
+
+    const productContent = document.querySelector(".single-content");
+    if (!productContent) return;
+
+    const galleryEl = productContent.querySelector(".gallery"); // Gallery
+    const infoEl = productContent.querySelector(".info"); // Info
+    const tabsEl = productContent.querySelector(".tabs"); // Tabs
+
+    // 1️⃣ Gallery'i, Info'dan önce taşı
+    if (galleryEl && infoEl && galleryEl !== infoEl.previousElementSibling) {
+      productContent.insertBefore(galleryEl, infoEl);
+    }
+
+    // 2️⃣ Tabs'i, Info'nun altına taşı
+    if (tabsEl && infoEl && tabsEl !== infoEl.nextElementSibling) {
+      productContent.appendChild(tabsEl);
+    }
+  }, [singleProduct]);
+
   return (
     <section className="single-product">
       <div className="container">
@@ -29,7 +49,6 @@ const ProductDetails = ({
           <div className="single-content">
             <main className="site-main">
               <Gallery singleProduct={singleProduct} />
-
               <Info singleProduct={singleProduct} />
             </main>
           </div>

@@ -100,9 +100,7 @@ const Login = () => {
             {loading ? "Loading..." : "Giriş Yap"}
           </button>
         </p>
-        <a href="#" className="form-link">
-          Şifrenizi mi unuttunuz ?
-        </a>
+
       </form>
     </div>
   );

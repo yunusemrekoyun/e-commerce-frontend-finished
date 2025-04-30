@@ -1,37 +1,38 @@
 .single-topbar {
+  margin-top: 30px;
+}
+
+.single-content {
+  margin: 30px 0;
+}
+
+.single-content .site-main {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  .site-main {
+    flex-direction: column;
+  }
+
+  .site-main .product-gallery,
+  .site-main .product-info {
+    width: 100%;
+    padding: 0;
+  }
+
+  .site-main .product-info {
     margin-top: 30px;
   }
-  
-  .single-content {
-    margin: 30px 0;
+
+  .site-main .values-list span {
+    padding: 6px !important;
+    display: inline-block;
   }
-  
-  .single-content .site-main {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  /* responsive */
-  
-  @media (max-width: 768px) {
-    .site-main {
-      flex-direction: column;
-    }
-    .site-main .product-gallery,
-    .site-main .product-info {
-      width: 100%;
-      padding: 0;
-    }
-  
-    .site-main .product-info {
-      margin-top: 30px;
-    }
-  
-    .site-main .values-list span {
-      padding: 6px !important;
-      display: inline-block;
-    }
-  }
+}
+
 /* Ürün detayları bölümünde renk ve boyut seçeneklerine boşluk ekleme */
 .product-details .options {
   margin-top: 20px;
@@ -44,7 +45,7 @@
 /* Renk ve boyut seçeneği için dikdörtgen butonlar */
 .single-product .color-options {
   display: flex;
-  gap: 50px;
+  gap: 10px; /* Renkler arasındaki boşluğu ayarladık */
   flex-wrap: wrap;
 }
 
@@ -69,7 +70,8 @@
 /* Boyut seçeneği için buton stili */
 .product-details .size-options {
   display: flex;
-  gap: 10px;
+  gap: 15px; /* Boyutlar arasındaki boşluğu ayarladık */
+  margin-bottom: 20px; /* Boyut seçeneklerinin altına boşluk ekledik */
 }
 
 .product-details .size-options .size-option {
@@ -91,18 +93,19 @@
   background-color: #333;
   color: #fff;
 }
+
 /* Renk seçenekleri arasındaki boşluk */
 .color-options {
   display: flex;
-  gap: 10px; /* Bu değer ile renkler arasındaki boşluğu ayarlayabilirsiniz */
-  margin-bottom: 20px; /* Renk seçeneklerinin altına boşluk eklemek için */
+  gap: 10px; /* Renkler arasındaki boşluğu ayarladık */
+  margin-bottom: 20px; /* Renk seçeneklerinin altına boşluk ekledik */
 }
 
 /* Boyut seçenekleri arasındaki boşluk */
 .size-options {
   display: flex;
-  gap: 15px; /* Bu değer ile boyutlar arasındaki boşluğu ayarlayabilirsiniz */
-  margin-bottom: 20px; /* Boyut seçeneklerinin altına boşluk eklemek için */
+  gap: 15px; /* Boyutlar arasındaki boşluğu ayarladık */
+  margin-bottom: 20px; /* Boyut seçeneklerinin altına boşluk ekledik */
 }
 
 /* Genel seçenekler arası boşluk */

@@ -26,6 +26,8 @@ const ShopPage = () => {
       .then((response) => setCategories(response.data || []))
       .catch((e) => console.error("Kategori alınamadı:", e));
   }, []);
+
+  // URL'deki marka parametresini kontrol et
   useEffect(() => {
     if (brandSlug) {
       setSelectedBrands([brandSlug]);
@@ -33,7 +35,8 @@ const ShopPage = () => {
       setSelectedBrands([]);
     }
   }, [brandSlug]);
-  // URL'deki kategori slug'ını çözerek kategori adını bulma
+
+  // Kategori parametresini çözerek doğru kategoriyi bul
   useEffect(() => {
     if (categorySlug && categories.length) {
       const category = categories.find(
@@ -47,10 +50,6 @@ const ShopPage = () => {
     }
   }, [categorySlug, categories]);
 
-  // Indirimli ürünleri temizlemek için
-  const clearDiscount = () =>
-    navigate(categorySlug ? `/shop/${categorySlug}` : "/shop");
-
   // Kategori parametresi ve marka parametresi birlikte kontrol ediliyor
   useEffect(() => {
     if (!categorySlug && !brandSlug) {
@@ -60,14 +59,22 @@ const ShopPage = () => {
     }
   }, [categorySlug, brandSlug]);
 
+  // Sayfayı güncelleme işlemi
+  useEffect(() => {
+    // Kategori veya marka parametreleri değişirse, yeni veriler çekilecek
+    if (categorySlug || brandSlug) {
+      setIsLoading(true);
+    }
+  }, [categorySlug, brandSlug]);
+
   return (
     <Fragment>
-      <CategoryHeader />
+      <CategoryHeader categories={categories} isLoading={isLoading} />
 
       {onlyDiscounted && (
         <div className="discount-badge">
           <span>İndirimli Ürünler</span>
-          <button className="discount-badge__close" onClick={clearDiscount}>
+          <button className="discount-badge__close" onClick={() => navigate("/shop")}>
             ×
           </button>
         </div>

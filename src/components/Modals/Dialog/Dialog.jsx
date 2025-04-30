@@ -21,18 +21,17 @@ localStorage.setItem("dialog", JSON.stringify(!checked))
         <div className="popup-wrapper">
           <div className="popup-content">
             <div className="popup-title">
-              <h3>NEWSLETTER</h3>
+              <h3>İndirimli Ürünleri Kaçırmayın!</h3>
             </div>
             <p className="popup-text">
-              Sign up to our newsletter and get exclusive deals you won find any
-              where else straight to your inbox!
+            
             </p>
             <form className="popup-form">
-              <input type="text" placeholder="Enter Email Address Here" />
-              <button className="btn btn-primary">SUBSCRIBE</button>
+              <input type="text" placeholder="Email adresinizi giriniz" />
+              <button className="btn btn-primary">BENİ İNDİRİMLERDEN HABERDAR ET</button>
               <label>
                 <input type="checkbox" onChange={handleCloseDialog} />
-                <span>Don`t show this popup again</span>
+                <span>Bir daha gösterme.</span>
               </label>
             </form>
           </div>

@@ -1,8 +1,5 @@
-/********************************************************
-/Applications/Works/kozmetik/frontend/src/components/ProductDetails/ProductDetailsModal.jsx
- ********************************************************/
 import { useEffect, useLayoutEffect, useState } from "react";
-import { Modal } from "antd";
+import { Modal, message } from "antd"; // message'ı import ettik
 import PropTypes from "prop-types";
 import ProductDetails from "./ProductDetails";
 import "./ProductDetailsModal.css";
@@ -68,6 +65,15 @@ const ProductDetailsModal = ({
     reviews: fullProduct.reviews ?? [],
   };
 
+  /* Sepete Ekle butonuna tıklama işlemi */
+  const handleAddToCart = () => {
+    // Sepete ekleme işlemi burada yapılacak
+    // Örneğin, sepete ekleme API çağrısı yapılabilir veya bir state güncellenebilir
+
+    // Başarıyla sepete eklendi mesajı
+    message.success(`${convertedProduct.name} başarıyla sepete eklendi.`);
+  };
+
   return (
     <Modal
       open={isVisible}
@@ -86,6 +92,9 @@ const ProductDetailsModal = ({
         compact={false} /* yıldız & yorum bloğu görünür */
         priceSymbol="₺"
       />
+      <button onClick={handleAddToCart} className="cart-button">
+        
+      </button>
     </Modal>
   );
 };
