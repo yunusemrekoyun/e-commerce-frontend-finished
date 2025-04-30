@@ -6,28 +6,40 @@ import ProductList from "../components/Products/ProductList";
 import "./ShopPage.css";
 
 const ShopPage = () => {
-  const { category: categorySlug } = useParams(); // Kategori Slug'ı
+  const { category: categorySlug } = useParams(); 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const onlyDiscounted = searchParams.get("discounted") === "true"; // Discount parametresi
-  const brandSlug = searchParams.get("brand"); // Brand parametresi
-  const [categories, setCategories] = useState([]); // Kategoriler
-  const [decodedCategoryName, setDecodedCategoryName] = useState(""); // Decoded kategori adı
-  const [isLoading, setIsLoading] = useState(true); // Yükleniyor durumu
+  const onlyDiscounted = searchParams.get("discounted") === "true";
+  const brandSlug = searchParams.get("brand");
+  const [categories, setCategories] = useState([]);
+  const [decodedCategoryName, setDecodedCategoryName] = useState("");
+  const [isLoading, setIsLoading] = useState(true); // Loading durumu
 
-  // URL'deki brand parametresini çöz
   const [selectedBrands, setSelectedBrands] = useState([]);
 
   // Kategorileri çekme
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/categories`)
-      .then((r) => r.json())
-      .then((response) => setCategories(response.data || []))
-      .catch((e) => console.error("Kategori alınamadı:", e));
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/categories`);
+        const data = await response.json();
+        setCategories(data.data || []);
+        
+        // Kategoriler yüklendikten sonra bir süre bekle, sonra isLoading'i false yap
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000); // 1 saniye bekle, sonra loading'i false yap
+      } catch (e) {
+        console.error("Kategori alınamadı:", e);
+        setIsLoading(false); // Hata durumunda da loading'i kaldır
+      }
+    };
+
+    fetchCategories();
   }, []);
 
-  // URL'deki marka parametresini kontrol et
+  // Marka parametresi
   useEffect(() => {
     if (brandSlug) {
       setSelectedBrands([brandSlug]);
@@ -43,27 +55,16 @@ const ShopPage = () => {
         (c) => c.name.toLowerCase().replace(/\s+/g, "-") === categorySlug
       );
       setDecodedCategoryName(category ? category.name : "");
-      setIsLoading(false); // Yükleme tamamlandı
     } else {
-      setDecodedCategoryName(""); // Eğer kategori slug'ı yoksa boş bırak
-      setIsLoading(false); // Yükleme tamamlandı
+      setDecodedCategoryName("");
     }
   }, [categorySlug, categories]);
 
-  // Kategori parametresi ve marka parametresi birlikte kontrol ediliyor
+  // Sayfa güncelleme işlemi
   useEffect(() => {
     if (!categorySlug && !brandSlug) {
-      // Eğer ne kategori ne de marka parametresi varsa
       setDecodedCategoryName("");
       setIsLoading(false);
-    }
-  }, [categorySlug, brandSlug]);
-
-  // Sayfayı güncelleme işlemi
-  useEffect(() => {
-    // Kategori veya marka parametreleri değişirse, yeni veriler çekilecek
-    if (categorySlug || brandSlug) {
-      setIsLoading(true);
     }
   }, [categorySlug, brandSlug]);
 
@@ -80,9 +81,9 @@ const ShopPage = () => {
         </div>
       )}
 
-      {/* Loading durumu */}
+      {/* Yükleniyor durumu */}
       {isLoading ? (
-        <div className="loading">Yükleniyor...</div>
+        <div className="loading"></div>
       ) : (
         <div className="shop-content">
           <div className="shop-layout">

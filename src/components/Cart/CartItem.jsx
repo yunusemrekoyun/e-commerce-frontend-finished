@@ -67,9 +67,7 @@ const CartItem = ({ cartItem }) => {
           ? (cartItem.price * cartItem.quantity).toFixed(2)
           : "0.00"}
       </td>
-      <td className="product-subtotal">
-        ₺{(cartItem.price * cartItem.quantity).toFixed(2)}
-      </td>
+
     </tr>
   );
 };

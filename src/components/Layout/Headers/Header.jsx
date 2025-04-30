@@ -97,11 +97,7 @@ const Header = ({ setIsSearchShow }) => {
                       <div className="menu-dropdown-wrapper">
                         <div className="menu-dropdown-megamenu">
                           <div className="megamenu-links">
-<<<<<<< HEAD
                           <div className="megamenu-products">
-=======
-                            <div className="megamenu-products">
->>>>>>> dev
                               <h3 className="megamenu-products-title">
                                 Saç bakımı
                               </h3>
@@ -110,52 +106,34 @@ const Header = ({ setIsSearchShow }) => {
                                   <a href="/shop/saç-bakımı">Saç Bakımı</a>
                                 </li>
                                 <li>
-<<<<<<< HEAD
-                                  <a href="/shop/sac-sekllenendiriciler">Saç Şekillendiriciler</a>
-=======
-                                  <a href="/shop/sac-sekllenendiriciler">
-                                    Saç Şekillendiriciler
-                                  </a>
->>>>>>> dev
+                                  <a href="/shop/saç-şekillenendiriciler">Saç Şekillendiriciler</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sampuan">Şampuan</a>
+                                  <a href="/shop/şampuan">Şampuan</a>
                                 </li>
                                 <li>
-<<<<<<< HEAD
-                                  <a href="/shop/erkek-sac-bakimi">Erkek Saç Bakımı</a>
-=======
-                                  <a href="/shop/erkek-sac-bakimi">
-                                    Erkek Saç Bakımı
-                                  </a>
->>>>>>> dev
+                                  <a href="/shop/erkek-saç-bakımı">Erkek Saç Bakımı</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-boyalari">Saç Boyaları</a>
+                                  <a href="/shop/saç-boyaları">Saç Boyaları</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-acicilar">Saç Açıcılar</a>
+                                  <a href="/shop/saç-açıcılar">Saç Açıcılar</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-maskesi">Saç Maskesi</a>
+                                  <a href="/shop/saç-maskesi">Saç Maskesi</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-serumu">Saç Serumu</a>
+                                  <a href="/shop/saç-serumu">Saç Serumu</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-kremi">Saç Kremi</a>
+                                  <a href="/shop/saç-kremi">Saç Kremi</a>
                                 </li>
                                 <li>
-<<<<<<< HEAD
-                                  <a href="/shop/sac-bakim-yagi">Saç Bakım Yağı</a>
-=======
-                                  <a href="/shop/sac-bakim-yagi">
-                                    Saç Bakım Yağı
-                                  </a>
->>>>>>> dev
+                                  <a href="/shop/saç-bakım-yagı">Saç Bakım Yağı</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-spreyi">Saç Spreyi</a>
+                                  <a href="/shop/saç-spreyi">Saç Spreyi</a>
                                 </li>
                               </ul>
                             </div>
@@ -180,13 +158,7 @@ const Header = ({ setIsSearchShow }) => {
                               </h3>
                               <ul className="megamenu-menu-list">
                                 <li>
-<<<<<<< HEAD
-                                  <a href="/shop/el-ve-ayak-bakimi">El ve Ayak Bakımı</a>
-=======
-                                  <a href="/shop/el-ve-ayak-bakimi">
-                                    El ve Ayak Bakımı
-                                  </a>
->>>>>>> dev
+                                  <a href="/shop/el-ve-ayak-bakımı">El ve Ayak Bakımı</a>
                                 </li>
                               </ul>
                             </div>
@@ -197,32 +169,16 @@ const Header = ({ setIsSearchShow }) => {
                               </h3>
                               <ul className="megamenu-menu-list">
                                 <li>
-                                  <a href="/shop/sac-masalar">Saç Maşaları</a>
+                                  <a href="/shop/sac-maşaları">Saç Maşaları</a>
                                 </li>
                                 <li>
-<<<<<<< HEAD
-                                  <a href="/shop/sac-duzlestiriciler">Saç Düzleştiriciler</a>
+                                  <a href="/shop/saç-duzlestiricisi">Saç Düzleştiriciler</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/sac-kesim-makinalari">Saç Kesim Makinaları</a>
+                                  <a href="/shop/saç-kesim-makinalari">Saç Kesim Makinaları</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/fon-makinalari">Fön Makinaları</a>
-=======
-                                  <a href="/shop/sac-duzlestiriciler">
-                                    Saç Düzleştiriciler
-                                  </a>
-                                </li>
-                                <li>
-                                  <a href="/shop/sac-kesim-makinalari">
-                                    Saç Kesim Makinaları
-                                  </a>
-                                </li>
-                                <li>
-                                  <a href="/shop/fon-makinalari">
-                                    Fön Makinaları
-                                  </a>
->>>>>>> dev
+                                  <a href="/shop/fön-makinalari">Fön Makinaları</a>
                                 </li>
                               </ul>
                             </div>

@@ -86,7 +86,7 @@ const ProductList = ({
             marginTop: "40px",
           }}
         >
-          <Spin tip="Yükleniyor..." size="large">
+          <Spin tip="" size="large">
             <div style={{ minHeight: "100px" }} />{" "}
           </Spin>
         </div>
