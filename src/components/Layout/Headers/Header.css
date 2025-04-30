@@ -1,7 +1,7 @@
 /*! header start  */
 /* Logo yazısının satır değiştirmesini engelle */
 .header-left .logo {
-  white-space: nowrap;  /* Alt satıra geçmesini engelle */
+  white-space: nowrap; /* Alt satıra geçmesini engelle */
   font-size: 2rem; /* Başlangıç font boyutu */
   max-width: 100%; /* Genişlik %100, ihtiyaç halinde küçülür */
   overflow: hidden; /* Taşan metin gizlenir */
@@ -206,10 +206,13 @@ header .menu-dropdown-content a:hover {
 }
 
 .megamenu-wrapper .menu-dropdown-wrapper {
-  left: 0;
-  width: 100%;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
   display: flex;
   justify-content: center;
+  pointer-events: auto;
 }
 
 .megamenu-wrapper {
@@ -295,8 +298,6 @@ header .menu-dropdown-content a:hover {
   .header-mobile {
     display: inline-block;
   }
-
- 
 
   header .menu-list i {
     display: none;
