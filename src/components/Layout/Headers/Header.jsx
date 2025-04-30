@@ -1,7 +1,7 @@
 /********************************************************
  * /Applications/Works/e-commerce/frontend/src/components/Layout/Header/Header.jsx
  ********************************************************/
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Link, useLocation } from "react-router-dom";
 import { Modal } from "antd";
@@ -46,7 +46,12 @@ const Header = ({ setIsSearchShow }) => {
     (total, item) => total + (item.quantity || 1),
     0
   );
-
+  useEffect(() => {
+    const isDesktop = window.innerWidth >= 992;
+    if (pathname === "/shop" && isDesktop) {
+      setIsDropdownOpen(true);
+    }
+  }, [pathname]);
   return (
     <header>
       <div className="header-row">
@@ -82,7 +87,15 @@ const Header = ({ setIsSearchShow }) => {
                       ANA SAYFA
                     </Link>
                   </li>
-                  <li className="menu-list-item megamenu-wrapper">
+                  <li
+                    className="menu-list-item megamenu-wrapper"
+                    onMouseEnter={() => {
+                      if (window.innerWidth >= 992) setIsDropdownOpen(true);
+                    }}
+                    onMouseLeave={() => {
+                      if (window.innerWidth >= 992) setIsDropdownOpen(false);
+                    }}
+                  >
                     <Link
                       to={"/shop"}
                       className={`menu-link ${
