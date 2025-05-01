@@ -6,74 +6,58 @@ import "./CartItem.css";
 const CartItem = ({ cartItem }) => {
   const { removeFromCart, updateCartItemQuantity } = useContext(CartContext);
 
-  const handleIncrease = () => {
+  const handleIncrease = () =>
     updateCartItemQuantity(cartItem._id, cartItem.quantity + 1);
-  };
-
-  const handleDecrease = () => {
-    if (cartItem.quantity > 1) {
-      updateCartItemQuantity(cartItem._id, cartItem.quantity - 1);
-    } else {
-      // Eğer miktar 1'e düşerse, ürünü sepetten kaldır
-      removeFromCart(cartItem);
-    }
-  };
+  const handleDecrease = () =>
+    cartItem.quantity > 1
+      ? updateCartItemQuantity(cartItem._id, cartItem.quantity - 1)
+      : removeFromCart(cartItem);
 
   return (
     <tr className="cart-item">
       <td className="cart-image">
-        <div className="single-image-wrapper">
-          <img
-            src={cartItem.img[0]?.base64}
-            alt={cartItem.name}
-            className="cart-thumbnail"
-          />
-        </div>
+        <img
+          src={cartItem.img[0]?.base64}
+          alt={cartItem.name}
+          className="cart-thumbnail"
+        />
       </td>
-      <td>
-        <div>{cartItem.name}</div>
-      </td>
-      {/* Ürün Seçeneklerini burada yerleştiriyoruz */}
+
+      <td>{cartItem.name}</td>
+
       <td className="product-options">
         {cartItem.selectedColor && (
-          <div className="cart-item-option">
+          <div>
             <strong>Renk:</strong> {cartItem.selectedColor}
           </div>
         )}
         {cartItem.selectedSize && (
-          <div className="cart-item-option">
+          <div>
             <strong>Boyut:</strong> {cartItem.selectedSize}
           </div>
         )}
       </td>
-      <td>
-        ₺
-        {typeof cartItem.price === "number"
-          ? cartItem.price.toFixed(2)
-          : "0.00"}
-      </td>
+
+      <td>₺{Number(cartItem.price).toFixed(2)}</td>
+
       <td className="product-quantity">
-        <button className="quantity-btn" onClick={handleDecrease}>
-          -
-        </button>
-        <span className="quantity-text">{cartItem.quantity}</span>
-        <button className="quantity-btn" onClick={handleIncrease}>
-          +
-        </button>
-      </td>
-      <td className="product-subtotal">
-        ₺
-        {typeof cartItem.price === "number"
-          ? (cartItem.price * cartItem.quantity).toFixed(2)
-          : "0.00"}
+        <div className="quantity-wrapper">
+          <button className="quantity-btn" onClick={handleDecrease}>
+            −
+          </button>
+          <span className="quantity-text">{cartItem.quantity}</span>
+          <button className="quantity-btn" onClick={handleIncrease}>
+            ＋
+          </button>
+        </div>
       </td>
 
+      <td className="product-subtotal">
+        ₺{(Number(cartItem.price) * cartItem.quantity).toFixed(2)}
+      </td>
     </tr>
   );
 };
 
-CartItem.propTypes = {
-  cartItem: PropTypes.object,
-};
-
+CartItem.propTypes = { cartItem: PropTypes.object };
 export default CartItem;

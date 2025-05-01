@@ -91,6 +91,7 @@ const OrderPage = () => {
           <Option value="Sipariş Onaylandı">Sipariş Onaylandı</Option>
           <Option value="Kargoya Verildi">Kargoya Verildi</Option>
           <Option value="Teslim Edildi">Teslim Edildi</Option>
+          <Option value="İptal Edildi">İptal Edildi</Option> 
         </Select>
       ),
     },

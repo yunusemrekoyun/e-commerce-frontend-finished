@@ -27,7 +27,7 @@ import UpdateCouponPage from "./pages/Admin/Coupons/UpdateCouponPage";
 import OrderPage from "./pages/Admin/Orders/OrderPage";
 import NotFound from "./pages/NotFound";
 import CommentsPage from "./pages/Admin/CommentsPage";
-
+import PolicyPage from "./pages/PolicyPage"; // Eğer Policy klasörünün içindeyse
 import MainLayout from "./layouts/MainLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import ProtectedAdminRoute from "./routes/ProtectedAdminRoute";
@@ -47,6 +47,7 @@ function App() {
         <Route path="/success" element={<Success />} />
         <Route path="/account" element={<UserAccountPage />} />
         <Route path="/shop/:category" element={<ShopPage />} />
+        <Route path="/policy" element={<PolicyPage />} />
         <Route path="*" element={<NotFound />} />
       </Route>
 

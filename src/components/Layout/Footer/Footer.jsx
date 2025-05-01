@@ -14,18 +14,18 @@ const Footer = () => {
               <div className="widget-nav-menu">
                 <h4>Hızlı Erişim</h4>
                 <ul className="menu-list">
-                <li>
-                  <a href="/">Anasayfa</a>
-                </li>
-                <li>
-                  <a href="shop">Ürünlerimiz</a>
-                </li>
-                <li>
-                  <a href="blog">Hakkımızda</a>
-                </li>
-                <li>
-                  <a href="contact">İletişim</a>
-                </li>
+                  <li>
+                    <a href="/">Anasayfa</a>
+                  </li>
+                  <li>
+                    <a href="shop">Ürünlerimiz</a>
+                  </li>
+                  <li>
+                    <a href="blog">Hakkımızda</a>
+                  </li>
+                  <li>
+                    <a href="contact">İletişim</a>
+                  </li>
                 </ul>
               </div>
               <div className="brand-info">
@@ -37,7 +37,9 @@ const Footer = () => {
                 <div className="footer-desc">
                   <p>
                     {" "}
-                    ÜNKO Kozmetik, güzelliğin doğallıkla buluştuğu yerdir. Kaliteyi cildinize, güveni ruhunuza sunar.                  </p>
+                    ÜNKO Kozmetik, güzelliğin doğallıkla buluştuğu yerdir.
+                    Kaliteyi cildinize, güveni ruhunuza sunar.{" "}
+                  </p>
                 </div>
                 <div className="footer-contact">
                   <p>
@@ -60,15 +62,15 @@ const Footer = () => {
               </a>
               <div className="footer-menu">
                 <ul className="footer-menu-list">
-                <li className="list-item">
-                  <a href="#">Gizlilik Politikası</a>
-                </li>
-                <li className="list-item">
-                  <a href="#">Şartlar ve Koşullar</a>
-                </li>
-                <li className="list-item">
-                  <a href="#">İade Politikası</a>
-                </li>
+                  <li className="list-item">
+                    <Link to="/policy#gizlilik">Gizlilik Politikası</Link>
+                  </li>
+                  <li className="list-item">
+                    <Link to="/policy#kosullar">Şartlar ve Koşullar</Link>
+                  </li>
+                  <li className="list-item">
+                    <Link to="/policy#iade">İade Politikası</Link>
+                  </li>
                 </ul>
               </div>
             </div>

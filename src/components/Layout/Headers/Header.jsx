@@ -14,14 +14,11 @@ const Header = ({ setIsSearchShow }) => {
   const { cartItems } = useContext(CartContext);
   const { pathname } = useLocation();
 
-  // Her render'da güncel token'ı oku
   const token = localStorage.getItem("token");
 
-  // Menü açık/kapalı state'i
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
-  // Gerçek çıkış işlemi
   const doLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
@@ -29,7 +26,6 @@ const Header = ({ setIsSearchShow }) => {
     window.location.href = "/";
   };
 
-  // AntD confirm modal ile sorma
   const showLogoutConfirm = () => {
     confirm({
       title: "Çıkış Yap",
@@ -41,7 +37,7 @@ const Header = ({ setIsSearchShow }) => {
   };
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  // 🔥 Toplam ürün adedi (çeşit değil, toplam)
+
   const totalItems = cartItems.reduce(
     (total, item) => total + (item.quantity || 1),
     0
@@ -52,19 +48,16 @@ const Header = ({ setIsSearchShow }) => {
       <div className="header-row">
         <div className="container">
           <div className="header-wrapper">
-            {/* Hamburger ikon */}
             <div className="header-mobile">
               <i className="bi bi-list" id="btn-menu" onClick={toggleMenu}></i>
             </div>
 
-            {/* Logo */}
             <div className="header-left">
               <Link to="/" className="logo">
                 ÜNKO KOZMETİK
               </Link>
             </div>
 
-            {/* Navigasyon */}
             <div
               className={`header-center ${isMenuOpen ? "open" : ""}`}
               id="sidebar"
@@ -82,13 +75,18 @@ const Header = ({ setIsSearchShow }) => {
                       ANA SAYFA
                     </Link>
                   </li>
-                  <li className="menu-list-item megamenu-wrapper">
+
+                  {/* MAĞAZA */}
+                  <li
+                    className="menu-list-item megamenu-wrapper"
+                    onMouseEnter={() => setIsDropdownOpen(true)}
+                    onMouseLeave={() => setIsDropdownOpen(false)}
+                  >
                     <Link
                       to={"/shop"}
                       className={`menu-link ${
                         pathname === "/shop" ? "active" : ""
                       }`}
-                      onClick={() => setIsDropdownOpen((prev) => !prev)}
                     >
                       MAĞAZA
                       <i className="bi bi-chevron-down"></i>
@@ -97,7 +95,8 @@ const Header = ({ setIsSearchShow }) => {
                       <div className="menu-dropdown-wrapper">
                         <div className="menu-dropdown-megamenu">
                           <div className="megamenu-links">
-                          <div className="megamenu-products">
+                            {/* Saç bakımı */}
+                            <div className="megamenu-products">
                               <h3 className="megamenu-products-title">
                                 Saç bakımı
                               </h3>
@@ -106,13 +105,17 @@ const Header = ({ setIsSearchShow }) => {
                                   <a href="/shop/saç-bakımı">Saç Bakımı</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/saç-şekillenendiriciler">Saç Şekillendiriciler</a>
+                                  <a href="/shop/saç-şekillenendiriciler">
+                                    Saç Şekillendiriciler
+                                  </a>
                                 </li>
                                 <li>
                                   <a href="/shop/şampuan">Şampuan</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/erkek-saç-bakımı">Erkek Saç Bakımı</a>
+                                  <a href="/shop/erkek-saç-bakımı">
+                                    Erkek Saç Bakımı
+                                  </a>
                                 </li>
                                 <li>
                                   <a href="/shop/saç-boyaları">Saç Boyaları</a>
@@ -130,7 +133,9 @@ const Header = ({ setIsSearchShow }) => {
                                   <a href="/shop/saç-kremi">Saç Kremi</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/saç-bakım-yagı">Saç Bakım Yağı</a>
+                                  <a href="/shop/saç-bakım-yagı">
+                                    Saç Bakım Yağı
+                                  </a>
                                 </li>
                                 <li>
                                   <a href="/shop/saç-spreyi">Saç Spreyi</a>
@@ -138,6 +143,7 @@ const Header = ({ setIsSearchShow }) => {
                               </ul>
                             </div>
 
+                            {/* Cilt Bakımı */}
                             <div className="megamenu-products">
                               <h3 className="megamenu-products-title">
                                 Cilt Bakımı
@@ -152,17 +158,21 @@ const Header = ({ setIsSearchShow }) => {
                               </ul>
                             </div>
 
+                            {/* El ve Ayak Bakımı */}
                             <div className="megamenu-products">
                               <h3 className="megamenu-products-title">
                                 El ve Ayak Bakımı
                               </h3>
                               <ul className="megamenu-menu-list">
                                 <li>
-                                  <a href="/shop/el-ve-ayak-bakımı">El ve Ayak Bakımı</a>
+                                  <a href="/shop/el-ve-ayak-bakımı">
+                                    El ve Ayak Bakımı
+                                  </a>
                                 </li>
                               </ul>
                             </div>
 
+                            {/* Elektronik */}
                             <div className="megamenu-products">
                               <h3 className="megamenu-products-title">
                                 Elektronik
@@ -172,13 +182,19 @@ const Header = ({ setIsSearchShow }) => {
                                   <a href="/shop/sac-maşaları">Saç Maşaları</a>
                                 </li>
                                 <li>
-                                  <a href="/shop/saç-duzlestiricisi">Saç Düzleştiriciler</a>
+                                  <a href="/shop/saç-duzlestiricisi">
+                                    Saç Düzleştiriciler
+                                  </a>
                                 </li>
                                 <li>
-                                  <a href="/shop/saç-kesim-makinalari">Saç Kesim Makinaları</a>
+                                  <a href="/shop/saç-kesim-makinalari">
+                                    Saç Kesim Makinaları
+                                  </a>
                                 </li>
                                 <li>
-                                  <a href="/shop/fön-makinalari">Fön Makinaları</a>
+                                  <a href="/shop/fön-makinalari">
+                                    Fön Makinaları
+                                  </a>
                                 </li>
                               </ul>
                             </div>
@@ -187,6 +203,7 @@ const Header = ({ setIsSearchShow }) => {
                       </div>
                     )}
                   </li>
+
                   <li>
                     <Link
                       to="/blog"
@@ -211,7 +228,7 @@ const Header = ({ setIsSearchShow }) => {
                   </li>
                 </ul>
               </nav>
-              {/* Kapatma ikonu */}
+
               <i
                 className="bi bi-x-circle"
                 id="close-sidebar"
@@ -219,10 +236,8 @@ const Header = ({ setIsSearchShow }) => {
               ></i>
             </div>
 
-            {/* Sağ simgeler */}
             <div className="header-right">
               <div className="header-right-links">
-                {/* Profil / Giriş */}
                 <Link
                   to={token ? "/account" : "/auth"}
                   className="header-account"
@@ -231,7 +246,6 @@ const Header = ({ setIsSearchShow }) => {
                   <i className="bi bi-person"></i>
                 </Link>
 
-                {/* Arama butonu */}
                 <button
                   className="search-button"
                   onClick={() => setIsSearchShow(true)}
@@ -239,7 +253,6 @@ const Header = ({ setIsSearchShow }) => {
                   <i className="bi bi-search"></i>
                 </button>
 
-                {/* Sepet */}
                 <div className="header-cart">
                   <Link
                     to="/cart"
@@ -251,7 +264,6 @@ const Header = ({ setIsSearchShow }) => {
                   </Link>
                 </div>
 
-                {/* Çıkış butonu */}
                 {token && (
                   <button className="exit-button" onClick={showLogoutConfirm}>
                     <i className="bi bi-box-arrow-right"></i>

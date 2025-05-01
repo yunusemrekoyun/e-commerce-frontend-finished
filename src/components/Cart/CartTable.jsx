@@ -1,3 +1,6 @@
+/********************************************************
+ * /Applications/Works/e-commerce/frontend/src/components/Cart/CartTable.jsx
+ ********************************************************/
 import { useContext } from "react";
 import CartItem from "./CartItem";
 import CartContext from "../../context/CartContext";
@@ -5,32 +8,36 @@ import CartContext from "../../context/CartContext";
 const CartTable = () => {
   const { cartItems } = useContext(CartContext);
 
-  // Toplam fiyat hesaplama
-  const totalPrice = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
-
   return (
     <div>
       <table className="shop-table">
+        {/* 6 sütunu SABİT uzunlukta tanımlıyoruz */}
+        <colgroup>
+          <col style={{ width: "90px" }} /> {/* resim */}
+          <col style={{ width: "32%" }} /> {/* ürün adı */}
+          <col style={{ width: "18%" }} /> {/* özellik */}
+          <col style={{ width: "12%" }} /> {/* fiyat */}
+          <col style={{ width: "120px" }} /> {/* adet (buton grubu) */}
+          <col style={{ width: "14%" }} /> {/* toplam */}
+        </colgroup>
+
         <thead>
           <tr>
-            <th className="product-thumbnail">&nbsp;</th>
-            <th className="product-name">Ürün</th>
-            <th className="product-price">Ürün Özellikleri</th>
-            <th className="product-quantity">Fiyat</th>
-            <th className="product-subtotal">Adet</th>
-            <th className="product-options">Toplam Tutar</th></tr>
+            <th />
+            <th>Ürün</th>
+            <th>Ürün Özellikleri</th>
+            <th>Fiyat</th>
+            <th>Adet</th>
+            <th>Toplam Tutar</th>
+          </tr>
         </thead>
-        <tbody className="cart-wrapper">
+
+        <tbody>
           {cartItems.map((item) => (
-            <CartItem cartItem={item} key={item._id} />
+            <CartItem key={item._id} cartItem={item} />
           ))}
         </tbody>
       </table>
-
-
     </div>
   );
 };

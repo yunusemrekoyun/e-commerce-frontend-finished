@@ -91,6 +91,12 @@ const CartCoupon = () => {
             placeholder="Kupon kodu"
             onChange={(e) => setCouponCode(e.target.value)}
             value={couponCode}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault(); // Sayfanın yenilenmesini engeller
+                applyCoupon();
+              }
+            }}
           />
           <button className="btn" type="button" onClick={applyCoupon}>
             Kuponu Uygula
