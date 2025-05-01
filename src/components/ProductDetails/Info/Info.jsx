@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import "./Info.css";
 import { useContext, useRef, useState } from "react";
 import CartContext from "../../../context/CartContext";
+// import { message } from "antd";
 
 const Info = ({ singleProduct, compact = false }) => {
   const quantityRef = useRef();
@@ -17,7 +18,6 @@ const Info = ({ singleProduct, compact = false }) => {
     : [];
   const sizes = Array.isArray(singleProduct?.sizes) ? singleProduct.sizes : [];
 
-  // Sepette varsa aynı ürünün varyantlarından ilkini al, yoksa boş bırak
   const existing =
     cartItems.find((item) => item._id === singleProduct?._id) || {};
   const [selectedColor, setSelectedColor] = useState(
@@ -27,7 +27,8 @@ const Info = ({ singleProduct, compact = false }) => {
   const [sizeError, setSizeError] = useState(false);
   const [colorError, setColorError] = useState(false);
 
-  // Artık calculateAverageRating yok, DB'den gelen değeri kullanıyoruz
+  const [addedToCart, setAddedToCart] = useState(false);
+
   const averageRating = singleProduct?.averageRating ?? 0;
   const reviewsCount = singleProduct?.reviews?.length ?? 0;
 
@@ -85,14 +86,17 @@ const Info = ({ singleProduct, compact = false }) => {
       ...(selectedColor && { selectedColor }),
       ...(selectedSize && { selectedSize }),
     });
+
+    // message.success(`${singleProduct.name} başarıyla sepete eklendi.`);
+
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 1500);
   };
 
   return (
     <div className="product-info">
-      {/* 1. Ürün Adı */}
       <h1 className="product-title">{singleProduct?.name}</h1>
 
-      {/* 2. Yıldızlar + Yorum Sayısı */}
       {!compact && (
         <div className="product-review">
           {renderStars(averageRating)}
@@ -102,12 +106,10 @@ const Info = ({ singleProduct, compact = false }) => {
         </div>
       )}
 
-      {/* 3. Açıklama */}
       <div className="product-description">
         <p>{singleProduct?.description}</p>
       </div>
 
-      {/* 4. Varyasyon Seçimleri */}
       <div className="variations">
         {colors.length > 0 && (
           <div className="colors">
@@ -153,7 +155,6 @@ const Info = ({ singleProduct, compact = false }) => {
         )}
       </div>
 
-      {/* 5. Fiyat */}
       <div className="product-price">
         {discountPercentage > 0 && (
           <s className="old-price">₺{originalPrice.toFixed(2)}</s>
@@ -161,15 +162,15 @@ const Info = ({ singleProduct, compact = false }) => {
         <strong className="new-price">₺{discountedPrice.toFixed(2)}</strong>
       </div>
 
-      {/* 6. Sepete Ekle */}
       <div className="cart-button">
         <input type="number" defaultValue="1" min="1" ref={quantityRef} />
         <button
           type="button"
-          className="btn btn-lg btn-primary"
+          className={`btn btn-lg btn-primary ${addedToCart ? "added" : ""}`}
           onClick={handleAddToCart}
+          disabled={addedToCart}
         >
-          Sepete Ekle
+          {addedToCart ? "✔ Sepete Eklendi" : "Sepete Ekle"}
         </button>
       </div>
     </div>
@@ -188,7 +189,7 @@ Info.propTypes = {
     sizes: PropTypes.arrayOf(PropTypes.string),
     reviews: PropTypes.array,
     averageRating: PropTypes.number,
-    description: PropTypes.string, // Ürün açıklamasını da ekliyoruz
+    description: PropTypes.string,
   }).isRequired,
   compact: PropTypes.bool,
 };

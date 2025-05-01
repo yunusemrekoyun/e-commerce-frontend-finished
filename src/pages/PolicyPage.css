@@ -1,0 +1,28 @@
+.policy-page {
+  padding: 60px 20px;
+  line-height: 1.8;
+  color: #333;
+}
+
+.policy-page section {
+  margin-bottom: 60px;
+}
+.policy-page section {
+  scroll-margin-top: 100px; /* veya navbar yüksekliği kadar */
+}
+.policy-page h2 {
+  font-size: 28px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  color: #111;
+}
+
+.policy-page p {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.policy-page ul {
+  margin-left: 20px;
+  list-style: disc;
+}

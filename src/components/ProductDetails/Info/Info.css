@@ -17,7 +17,6 @@
   transition: margin-top 0.3s ease-in-out; /* Yalnızca margin-top üzerinde animasyon */
 }
 
-
 /* Fiyat ve butonlar arasındaki uyum */
 .site-main .product-price {
   transition: transform 0.3s ease-in-out; /* Transform ile fiyatın hareketini kontrol et */
@@ -280,7 +279,7 @@
 /* Renk butonları için stil */
 .color-button {
   width: 40px; /* Daha geniş dikdörtgenler */
-  height: 40px; 
+  height: 40px;
   border-radius: 5px;
   border: none;
   margin: 5px; /* Aralarındaki boşluk */
@@ -398,4 +397,10 @@
   justify-content: flex-start; /* İçeriği üstten başlatır */
   height: auto; /* Yüksekliği otomatik yapıyoruz */
   transition: all 0.3s ease-in-out; /* Geçiş süresini belirliyoruz */
+}
+.cart-button .btn.added {
+  background-color: #52c41a !important;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+  pointer-events: none;
 }
