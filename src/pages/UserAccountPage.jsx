@@ -1,4 +1,3 @@
-// /Applications/Works/kozmetik/frontend/src/pages/UserAccountPage.jsx
 import { Layout, Table, Form, Input, Button, message, Collapse } from "antd";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -294,11 +293,7 @@ const UserAccountPage = () => {
                           title: "Sipariş No",
                           dataIndex: "_id",
                           key: "_id",
-                          render: (id, record) => (
-                            <a onClick={() => setModalOrder(record)}>
-                              {id.slice(-6)}
-                            </a>
-                          ),
+                          render: (id) => id.slice(-6),
                         },
                         {
                           title: "Tarih",
@@ -312,9 +307,29 @@ const UserAccountPage = () => {
                           key: "status",
                           render: (s) => s || "Processing",
                         },
+                        {
+                          title: "Sipariş Hakkında",
+                          key: "actions",
+                          render: (_, record) => (
+                            <Button
+                              type="link"
+                              onClick={() => setModalOrder(record)}
+                            >
+                              Detaylar
+                            </Button>
+                          ),
+                          responsive: ["md"], // ✅ sadece webde göster
+                        },
                       ]}
                       rowKey={(rec) => rec._id}
                       pagination={{ pageSize: 5 }}
+                      onRow={(record) => ({
+                        onClick: () => {
+                          if (window.innerWidth < 768) {
+                            setModalOrder(record); // ✅ mobilde satır tıklayınca aç
+                          }
+                        },
+                      })}
                     />
                   </div>
                 ),
